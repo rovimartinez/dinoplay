@@ -6,10 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "npm run lint && npm run test:fairness && npm run test:admin && npm run test:player",
+    "test": "npm run lint && npm run test:fairness && npm run test:admin && npm run test:player && npm run test:security",
     "test:fairness": "node test_phase2_fairness.js",
     "test:admin": "node test_phase5_admin.js",
     "test:player": "node test_phase6_player.js",
+    "test:security": "node test_phase7_security.js",
     "lint": "node --check server.js && node --check src/worker.js && node --check \"functions/api/[[path]].js\" && node --check public/admin.js && node --check public/player.js && node --check public/spectator.js && node --check public/dino-engine.js",
     "format": "npm run lint",
     "test:obstacles": "node test_obstacles_sync.js",

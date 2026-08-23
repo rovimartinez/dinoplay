@@ -177,11 +177,24 @@ function json(payload, status, request, env) {
 }
 
 function corsHeaders(request, env) {
-  const allowedOrigin = env.ALLOWED_ORIGIN || new URL(request.url).origin;
+  const requestOrigin = request.headers.get('origin');
+  let allowedOrigin = new URL(request.url).origin;
+
+  if (requestOrigin) {
+    if (
+      requestOrigin.includes('localhost') ||
+      requestOrigin.includes('127.0.0.1') ||
+      requestOrigin.endsWith('.pages.dev') ||
+      requestOrigin === env.ALLOWED_ORIGIN
+    ) {
+      allowedOrigin = requestOrigin;
+    }
+  }
+
   return {
     'access-control-allow-origin': allowedOrigin,
     'access-control-allow-methods': 'GET,POST,OPTIONS',
-    'access-control-allow-headers': 'content-type'
+    'access-control-allow-headers': 'content-type, x-admin-key'
   };
 }
 

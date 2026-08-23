@@ -244,6 +244,25 @@
     </div>
   </div>
 
+  <!-- MODAL: AUTENTICACIÓN DEL ANFITRIÓN -->
+  <div id="admin-auth-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 440px; text-align: center;">
+      <div class="modal-header" style="justify-content: center;">
+        <h2>🔑 Acceso de Anfitrión</h2>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Ingresa la clave secreta de organizador para administrar salas y torneos.
+        </p>
+        <form id="admin-auth-form">
+          <input type="password" id="input-admin-key" class="setup-input" placeholder="Clave de anfitrión" style="width: 100%; text-align: center; font-size: 1.1rem; padding: 12px; margin-bottom: 14px;" required autocomplete="current-password">
+          <button type="submit" class="btn-primary-large" style="width: 100%;">Ingresar al Panel</button>
+        </form>
+        <div id="admin-auth-error" class="error-msg" style="display: none; margin-top: 12px;"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- CANVAS PARA CONFETI -->
   <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 

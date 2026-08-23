@@ -6,9 +6,27 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
+
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'dino2026';
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : ['https://juegodino.pages.dev', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+
 const io = new Server(server, {
+  maxHttpBufferSize: 65536, // 64 KB max payload size
   cors: {
-    origin: '*',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1') ||
+        origin.endsWith('.pages.dev') ||
+        ALLOWED_ORIGINS.some(allowed => allowed === '*' || allowed === origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     methods: ['GET', 'POST']
   }
 });
@@ -20,6 +38,26 @@ const ALLOWED_ACTIONS = new Set(['running', 'jumping', 'ducking', 'crashed']);
 const ALLOWED_OBSTACLE_TYPES = new Set(['CACTUS_SMALL', 'CACTUS_LARGE', 'PTERODACTYL']);
 const MAX_OBSTACLES_PER_UPDATE = 8;
 const MAX_PLAYER_NAME_LENGTH = 16;
+
+// Rate limiting por IP
+const ipRateLimitStore = new Map();
+
+function checkIpRateLimit(ip, action, limit, windowMs) {
+  if (!ip) return true;
+  const key = `${ip}:${action}`;
+  const now = Date.now();
+  let entry = ipRateLimitStore.get(key);
+  if (!entry || now > entry.resetAt) {
+    entry = { count: 1, resetAt: now + windowMs };
+    ipRateLimitStore.set(key, entry);
+    return true;
+  }
+  entry.count++;
+  if (entry.count > limit) {
+    return false;
+  }
+  return true;
+}
 
 // Servir archivos estáticos desde /public
 app.use(express.static(path.join(__dirname, 'public')));
@@ -56,7 +94,6 @@ function getLocalIpAddresses() {
 }
 
 // Almacenamiento de salas en memoria
-// rooms[pin] = { pin, hostId, status: 'lobby'|'starting'|'playing'|'finished', players: {} }
 const rooms = new Map();
 
 function generateRoomPin() {
@@ -120,32 +157,42 @@ function getLeaderboard(room) {
   });
 }
 
-function cleanRoomPin(value) {
-  const pin = String(value || '').trim();
-  return /^\d{4,6}$/.test(pin) ? pin : '';
+function cleanPlayerName(name) {
+  if (typeof name !== 'string') return 'Dino';
+  const clean = name.trim().slice(0, MAX_PLAYER_NAME_LENGTH).replace(/[^a-zA-Z0-9_\-\s]/g, '');
+  return clean || 'Dino';
 }
 
-function cleanPlayerName(value) {
-  const name = String(value || '').trim().replace(/\s+/g, ' ').slice(0, MAX_PLAYER_NAME_LENGTH);
-  return name || 'Dino Anónimo';
+function cleanRoomPin(pin) {
+  if (typeof pin !== 'string') return '';
+  return pin.trim().slice(0, 10);
 }
 
-function cleanColor(value) {
-  return ALLOWED_COLORS.has(value) ? value : '#2E7D32';
+function cleanColor(color) {
+  if (typeof color === 'string' && ALLOWED_COLORS.has(color.toUpperCase())) {
+    return color.toUpperCase();
+  }
+  return '#2E7D32';
 }
 
-function cleanAvatar(value) {
-  return ALLOWED_AVATARS.has(value) ? value : '🦖';
+function cleanAvatar(avatar) {
+  if (typeof avatar === 'string' && ALLOWED_AVATARS.has(avatar)) {
+    return avatar;
+  }
+  return '🦖';
+}
+
+function cleanAction(action, fallback = 'running') {
+  if (typeof action === 'string' && ALLOWED_ACTIONS.has(action)) {
+    return action;
+  }
+  return fallback;
 }
 
 function clampNumber(value, min, max, fallback) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return fallback;
-  return Math.min(max, Math.max(min, number));
-}
-
-function cleanAction(value, fallback) {
-  return ALLOWED_ACTIONS.has(value) ? value : fallback;
+  const num = Number(value);
+  if (!Number.isFinite(num)) return fallback;
+  return Math.min(Math.max(num, min), max);
 }
 
 function cleanObstacles(value) {
@@ -167,23 +214,41 @@ function cleanObstacles(value) {
 }
 
 io.on('connection', (socket) => {
-  let currentRole = null; // 'admin' o 'player'
+  let currentRole = null; // 'admin' | 'player' | 'spectator'
   let currentPin = null;
 
   // ==========================================
   // 1. EVENTOS DE ANFITRIÓN (ADMIN)
   // ==========================================
 
-  socket.on('admin:create_room', () => {
+  socket.on('admin:create_room', (data) => {
+    const clientIp = socket.handshake.address || '';
+    if (!checkIpRateLimit(clientIp, 'create_room', 10, 60000)) {
+      socket.emit('admin:auth_error', { message: 'Demasiadas salas creadas recientemente. Espera un momento.' });
+      return;
+    }
+
+    const adminKey = data && data.adminKey ? String(data.adminKey).trim() : '';
+    if (ADMIN_SECRET && ADMIN_SECRET !== 'none') {
+      if (adminKey !== ADMIN_SECRET) {
+        socket.emit('admin:auth_error', {
+          code: 'UNAUTHORIZED',
+          message: 'Clave de anfitrión incorrecta.'
+        });
+        return;
+      }
+    }
+
     const pin = generateRoomPin();
     const room = {
       pin,
       hostId: socket.id,
+      adminAuthenticated: true,
       status: 'lobby',
       createdAt: Date.now(),
-      eventName: 'Torneo Dino',
-      matchName: 'Ronda 1',
-      maxPlayers: 30,
+      eventName: (data && data.eventName) || 'Torneo Dino',
+      matchName: (data && data.matchName) || 'Ronda 1',
+      maxPlayers: (data && data.maxPlayers) || 30,
       matchHistory: [],
       players: {}
     };
@@ -203,7 +268,7 @@ io.on('connection', (socket) => {
       maxPlayers: room.maxPlayers
     });
 
-    console.log(`[SALA CREADA] PIN: ${pin} | Host: ${socket.id}`);
+    console.log(`[SALA CREADA AUTORIZADA] PIN: ${pin} | Host: ${socket.id}`);
   });
 
   socket.on('admin:update_config', ({ pin, eventName, matchName, maxPlayers }) => {

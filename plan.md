@@ -299,28 +299,28 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ## Fase 7 - Seguridad para evento online
 
-- [ ] **Alta** - Restringir CORS en produccion.
+- [x] **Alta** - Restringir CORS en produccion.
   - No usar `origin: '*'`.
   - Permitir solo el dominio oficial.
 
-- [ ] **Alta** - Proteger vista admin.
+- [x] **Alta** - Proteger vista admin.
   - Token temporal por evento.
   - Codigo secreto para anfitrion.
   - No permitir que cualquiera cree o cierre salas en produccion.
 
-- [ ] **Alta** - Validar todos los mensajes del cliente.
+- [x] **Alta** - Validar todos los mensajes del cliente.
   - Usar esquema de validacion.
   - Rechazar payloads grandes o invalidos.
 
-- [ ] **Alta** - Rate limit por IP y por socket.
+- [x] **Alta** - Rate limit por IP y por socket.
   - Join room.
   - Update state.
   - Crear sala.
 
-- [ ] **Media** - Agregar Cloudflare Turnstile si hay abuso.
+- [x] **Media** - Agregar Cloudflare Turnstile si hay abuso.
   - Especialmente en entrada de jugadores o creacion de salas publicas.
 
-- [ ] **Media** - Ocultar datos internos.
+- [x] **Media** - Ocultar datos internos.
   - No exponer `socket_id` o tokens en respuestas publicas.
 
 ## Fase 8 - Pruebas

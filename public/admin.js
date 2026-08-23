@@ -232,10 +232,49 @@
     });
   }
 
+  const STORAGE_KEY_ADMIN = 'dino_admin_key';
+  const adminAuthModal = document.getElementById('admin-auth-modal');
+  const adminAuthForm = document.getElementById('admin-auth-form');
+  const inputAdminKey = document.getElementById('input-admin-key');
+  const adminAuthError = document.getElementById('admin-auth-error');
+
+  // Obtener clave de anfitrión
+  const urlParams = new URLSearchParams(window.location.search);
+  let currentAdminKey = urlParams.get('key') || sessionStorage.getItem(STORAGE_KEY_ADMIN) || 'dino2026';
+
+  function requestAdminRoomCreation() {
+    socket.emit('admin:create_room', {
+      adminKey: currentAdminKey,
+      eventName: inputEventName ? inputEventName.value : 'Torneo Dino',
+      matchName: inputMatchName ? inputMatchName.value : 'Ronda 1',
+      maxPlayers: selectMaxPlayers ? parseInt(selectMaxPlayers.value, 10) : 30
+    });
+  }
+
   // 1. CREAR SALA AL CARGAR
-  socket.emit('admin:create_room');
+  requestAdminRoomCreation();
+
+  socket.on('admin:auth_error', (data) => {
+    adminAuthModal.style.display = 'flex';
+    adminAuthError.textContent = data.message || 'Clave de anfitrión requerida.';
+    adminAuthError.style.display = 'block';
+  });
+
+  if (adminAuthForm) {
+    adminAuthForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const enteredKey = inputAdminKey.value.trim();
+      if (!enteredKey) return;
+      currentAdminKey = enteredKey;
+      sessionStorage.setItem(STORAGE_KEY_ADMIN, enteredKey);
+      adminAuthError.style.display = 'none';
+      adminAuthModal.style.display = 'none';
+      requestAdminRoomCreation();
+    });
+  }
 
   socket.on('admin:room_created', (data) => {
+    adminAuthModal.style.display = 'none';
     currentPin = data.pin;
     headerPin.textContent = data.pin;
     lobbyBigPin.textContent = data.pin;
