@@ -370,14 +370,14 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
   - Modo practica.
   - Configuracion de Cloudflare.
 
-- [ ] **Media** - Crear guia de evento.
+- [x] **Media** - Crear guia de evento.
   - Que abrir en pantalla principal.
   - Que enlace compartir.
   - Como nombrar partidas.
   - Que hacer si alguien se desconecta.
   - Como exportar resultados.
 
-- [ ] **Media** - Crear checklist antes del evento.
+- [x] **Media** - Crear checklist antes del evento.
   - Internet estable.
   - Dominio probado.
   - Base de datos conectada.
