@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Runner Multijugador</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0b0f19 90%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 36px 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .dino-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #94a3b8;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 16px 28px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
+      transition: transform 0.15s ease;
+      margin-bottom: 16px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .tip {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      text-align: left;
+    }
+
+    .tip strong {
+      color: #38bdf8;
+    }
+  </style>
+  <script>
+    // Si ya está corriendo en localhost:3000, redirigir automáticamente
+    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+      window.location.href = '/';
+    }
+  </script>
+</head>
+<body>
+
+  <div class="card">
+    <div class="dino-icon">🦖</div>
+    <h1>Dino Runner Multijugador</h1>
+    <p>Para jugar en modo multijugador con salas en tiempo real, ejecuta el archivo <strong>INICIAR_JUEGO.bat</strong> o abre el servidor web.</p>
+
+    <a href="http://localhost:3000" class="btn">Abrir en http://localhost:3000 🚀</a>
+
+    <div class="tip">
+      💡 <strong>Instrucciones:</strong><br>
+      1. Abre la carpeta del juego.<br>
+      2. Haz doble clic en el archivo <strong>INICIAR_JUEGO.bat</strong>.<br>
+      3. Se abrirá automáticamente el juego en tu navegador listo para crear o unirte a salas.
+    </div>
+  </div>
+
+</body>
+</html>

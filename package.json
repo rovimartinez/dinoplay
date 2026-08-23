@@ -1,0 +1,24 @@
+{
+  "name": "dino-multiplayer-kahoot",
+  "version": "1.0.0",
+  "description": "Juego Dino Runner Multijugador Centralizado en Tiempo Real estilo Kahoot/Quizizz",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "cf:dev": "wrangler dev --port 8787",
+    "cf:d1:local": "wrangler d1 migrations apply dino-runner-db --local",
+    "cf:d1:remote": "wrangler d1 migrations apply dino-runner-db --remote",
+    "cf:deploy:staging": "wrangler deploy --env staging",
+    "cf:deploy:production": "wrangler deploy --env production"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "puppeteer-core": "^25.8.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

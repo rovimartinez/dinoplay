@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Runner - Panel Anfitrión / Proyector</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <!-- HEADER GLOBAL DEL ANFITRIÓN -->
+  <header class="admin-header">
+    <div class="header-left">
+      <div class="header-logo">🦖 DINO TOURNAMENT</div>
+      <div class="room-pin-display">
+        <span class="pin-label">PIN DE SALA:</span>
+        <span id="header-pin" class="pin-code">----</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="connection-url-badge" class="url-badge">
+        🌐 Únete en: <strong id="host-url-text">http://localhost:3000/player</strong>
+      </div>
+      <button id="btn-sound-toggle" class="btn-icon" title="Sonido">🔊</button>
+    </div>
+  </header>
+
+  <!-- 1. VISTA: LOBBY DE ESPERA (PROYECTOR) -->
+  <section id="admin-view-lobby" class="admin-view active">
+    <div class="lobby-hero">
+      <div class="pin-card glass-panel">
+        <div class="pin-card-top">
+          <span class="pulse-indicator"></span>
+          <span>SALA ABIERTA</span>
+        </div>
+        <div class="pin-big-text">
+          <span class="pin-title">CÓDIGO DE ACCESO:</span>
+          <h1 id="lobby-big-pin" class="pin-giant">----</h1>
+        </div>
+        <p class="pin-instruction">Ingresa a <strong id="lobby-join-url">http://.../player</strong> e introduce este PIN para jugar.</p>
+      </div>
+
+      <div class="lobby-action-box">
+        <div class="players-counter-box">
+          <span class="counter-num" id="lobby-count">0</span>
+          <span class="counter-label">JUGADORES CONECTADOS</span>
+        </div>
+
+        <button id="btn-start-game" class="btn-start" disabled>
+          <span class="btn-icon-start">🎮</span>
+          <span class="btn-text">INICIAR PARTIDA</span>
+        </button>
+        <div id="start-hint" class="start-hint">Esperando que se una al menos 1 jugador...</div>
+      </div>
+    </div>
+
+    <!-- LISTA DINÁMICA DE JUGADORES EN EL LOBBY -->
+    <div class="lobby-players-container">
+      <h3 class="section-title">Participantes en el Lobby:</h3>
+      <div id="lobby-players-grid" class="lobby-players-grid">
+        <!-- Tarjetas de jugadores generadas dinámicamente -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. VISTA: CUENTA REGRESIVA SINCRONIZADA (PROYECTOR) -->
+  <section id="admin-view-countdown" class="admin-view">
+    <div class="countdown-hero glass-panel">
+      <div class="countdown-circle">
+        <span id="admin-countdown-num" class="countdown-giant-number">3</span>
+      </div>
+      <h2 class="countdown-hero-title">¡A SUS MARCAS!</h2>
+      <p class="countdown-hero-desc">La carrera comenzará simultáneamente para todos los jugadores...</p>
+    </div>
+  </section>
+
+  <!-- 3. VISTA: PARTIDA EN VIVO (PANTALLA DIVIDIDA DINÁMICA) -->
+  <section id="admin-view-game" class="admin-view">
+    <div class="game-control-bar glass-panel">
+      <div class="game-stats-summary">
+        <div class="stat-badge live">
+          <span class="dot-live"></span> <strong id="game-status-label">EN VIVO</strong>
+        </div>
+        <div class="stat-item">
+          <span>Corriendo:</span> <strong id="stat-active-count" class="text-green">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Chocados:</span> <strong id="stat-crashed-count" class="text-red">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Total:</span> <strong id="stat-total-count">0</strong>
+        </div>
+      </div>
+
+      <div class="game-control-actions">
+        <button id="btn-end-game" class="btn-danger">
+          ⏹️ Finalizar Partida
+        </button>
+      </div>
+    </div>
+
+    <!-- CUADRÍCULA MULTIJUGADOR DINÁMICA (HASTA 30+ JUGADORES) -->
+    <div class="multiscreen-container">
+      <div id="players-monitoring-grid" class="players-grid">
+        <!-- Celdas de jugadores generadas en tiempo real -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. VISTA: PODIO Y RESULTADOS FINALES -->
+  <section id="admin-view-podium" class="admin-view">
+    <div class="podium-container glass-panel">
+      <h1 class="podium-heading">🏆 GANADORES DE LA CARRERA 🏆</h1>
+      <p class="podium-subheading">¡Felicitaciones a los mejores dinosaurios!</p>
+
+      <!-- ESTRUCTURA DEL PODIO (2º, 1º, 3º) -->
+      <div class="podium-stage">
+        <!-- 2do Lugar -->
+        <div class="podium-pillar rank-2" id="podium-slot-2">
+          <div class="winner-avatar" id="winner-avatar-2">🦖</div>
+          <div class="winner-name" id="winner-name-2">--</div>
+          <div class="winner-score" id="winner-score-2">0 pts</div>
+          <div class="step step-2">
+            <span class="medal">🥈</span>
+            <span class="step-num">2</span>
+          </div>
+        </div>
+
+        <!-- 1er Lugar -->
+        <div class="podium-pillar rank-1" id="podium-slot-1">
+          <div class="crown">👑</div>
+          <div class="winner-avatar" id="winner-avatar-1">🦖</div>
+          <div class="winner-name" id="winner-name-1">--</div>
+          <div class="winner-score" id="winner-score-1">0 pts</div>
+          <div class="step step-1">
+            <span class="medal">🥇</span>
+            <span class="step-num">1</span>
+          </div>
+        </div>
+
+        <!-- 3er Lugar -->
+        <div class="podium-pillar rank-3" id="podium-slot-3">
+          <div class="winner-avatar" id="winner-avatar-3">🦖</div>
+          <div class="winner-name" id="winner-name-3">--</div>
+          <div class="winner-score" id="winner-score-3">0 pts</div>
+          <div class="step step-3">
+            <span class="medal">🥉</span>
+            <span class="step-num">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA COMPLETA DE RESULTADOS -->
+      <div class="full-leaderboard-box">
+        <h3>Tabla General de Posiciones</h3>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Posición</th>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th>Distancia</th>
+              <th>Estado Final</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-table-body">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN POST-PARTIDA -->
+      <div class="podium-actions">
+        <button id="btn-replay-same-room" class="btn-primary-large">
+          🔄 Jugar Otra Partida (Misma Sala)
+        </button>
+        <button id="btn-new-room" class="btn-secondary-large">
+          🏠 Crear Nueva Sala
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANVAS PARA CONFETI -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <script src="admin.js"></script>
+</body>
+</html>

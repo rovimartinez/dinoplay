@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dino Runner - Jugador</title>
+  <link rel="stylesheet" href="player.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="dino-engine.js"></script>
+</head>
+<body>
+
+  <!-- 1. PANTALLA DE INGRESO / LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="card glass-card">
+      <div class="logo-badge">🦖 MULTIPLAYER</div>
+      <h1 class="title">Dino Runner</h1>
+      <p class="subtitle">¡Compite en vivo contra tus amigos!</p>
+
+      <form id="join-form">
+        <div class="input-group">
+          <label for="input-pin">Código PIN de la Sala</label>
+          <input type="text" id="input-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ej: 1234" maxlength="6" required autocomplete="off">
+        </div>
+
+        <div class="input-group">
+          <label for="input-name">Tu Nombre o Apodo</label>
+          <input type="text" id="input-name" placeholder="Ej: RexPro" maxlength="15" required autocomplete="nickname">
+        </div>
+
+        <div class="color-picker-section">
+          <label>Elige el Color de tu Dino</label>
+          <div class="color-options">
+            <button type="button" class="color-btn active" data-color="#2E7D32" style="--c: #2E7D32;" title="Verde Esmeralda"></button>
+            <button type="button" class="color-btn" data-color="#0288D1" style="--c: #0288D1;" title="Azul Océano"></button>
+            <button type="button" class="color-btn" data-color="#7B1FA2" style="--c: #7B1FA2;" title="Púrpura Imperial"></button>
+            <button type="button" class="color-btn" data-color="#E65100" style="--c: #E65100;" title="Naranja Fuego"></button>
+            <button type="button" class="color-btn" data-color="#C2185B" style="--c: #C2185B;" title="Rojo Rubí"></button>
+            <button type="button" class="color-btn" data-color="#FBC02D" style="--c: #FBC02D;" title="Oro Solar"></button>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-join" class="btn-primary">
+          <span>ENTRAR A LA SALA</span> 🚀
+        </button>
+
+        <div style="margin-top: 14px; text-align: center;">
+          <a href="/practice" class="btn-practice-pill">
+            🎮 Jugar en Modo Práctica (Sin Código)
+          </a>
+        </div>
+      </form>
+
+      <div id="join-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- 2. PANTALLA DE SALA DE ESPERA (LOBBY) -->
+  <div id="screen-lobby" class="screen">
+    <div class="card glass-card text-center">
+      <div class="room-tag">SALA PIN: <strong id="lobby-pin">----</strong></div>
+      <div class="dino-avatar-preview" id="lobby-avatar-preview">
+        <div class="avatar-ring">
+          <span class="avatar-icon">🦖</span>
+        </div>
+      </div>
+      <h2 id="lobby-player-name" class="player-heading">Jugador</h2>
+      <div class="status-pill pulse">
+        <span class="status-dot"></span> Esperando al anfitrión...
+      </div>
+      <p class="waiting-hint">La partida comenzará simultáneamente para todos los jugadores cuando el anfitrión presione iniciar.</p>
+
+      <div class="players-counter-badge">
+        👥 Jugadores en sala: <strong id="lobby-player-count">1</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PANTALLA DE CUENTA REGRESIVA -->
+  <div id="screen-countdown" class="screen">
+    <div class="countdown-overlay">
+      <div class="countdown-number" id="countdown-num">3</div>
+      <div class="countdown-text">¡PREPÁRATE!</div>
+    </div>
+  </div>
+
+  <!-- 4. PANTALLA DE JUEGO ACTIVO -->
+  <div id="screen-game" class="screen">
+    <!-- HUD Superior en vivo -->
+    <div class="game-hud">
+      <div class="hud-item hud-rank" id="hud-rank-box">
+        <span class="hud-label">POSICIÓN</span>
+        <span class="hud-value" id="hud-rank">1º</span>
+      </div>
+
+      <div class="hud-item hud-leader">
+        <span class="hud-label">LÍDER ACTUAL</span>
+        <span class="hud-value leader-name" id="hud-leader">--</span>
+      </div>
+
+      <div class="hud-item hud-score">
+        <span class="hud-label">PUNTOS</span>
+        <span class="hud-value score-val" id="hud-score">00000</span>
+      </div>
+    </div>
+
+    <!-- Notificación emergente de subida/bajada de ranking -->
+    <div id="rank-toast" class="rank-toast"></div>
+
+    <!-- Contenedor del Juego -->
+    <div class="game-viewport-wrapper">
+      <div id="dino-game-container" class="dino-runner-canvas-box"></div>
+    </div>
+
+    <!-- Controles táctiles en pantalla para móviles -->
+    <div class="touch-controls-bar">
+      <button type="button" id="touch-duck" class="touch-btn duck-btn">
+        <span class="icon">🔻</span>
+        <span class="txt">AGACHARSE (↓)</span>
+      </button>
+      <button type="button" id="touch-jump" class="touch-btn jump-btn">
+        <span class="icon">🔺</span>
+        <span class="txt">SALTAR (ESPACIO)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. PANTALLA DE CHOCADO / MODO ESPECTADOR -->
+  <div id="screen-crashed" class="screen">
+    <div class="card glass-card text-center crash-card">
+      <div class="crash-icon">💥</div>
+      <h2>¡Has chocado!</h2>
+      <p class="crash-desc">Tu resultado final ha sido registrado en el servidor:</p>
+
+      <div class="final-stats-grid">
+        <div class="stat-box">
+          <span class="stat-lbl">PUNTAJE FINAL</span>
+          <strong id="crash-score" class="stat-num">0</strong>
+        </div>
+        <div class="stat-box">
+          <span class="stat-lbl">POSICIÓN ACTUAL</span>
+          <strong id="crash-rank" class="stat-num">#--</strong>
+        </div>
+      </div>
+
+      <div class="status-pill">
+        <span class="status-dot"></span> Esperando a que termine la ronda...
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. PANTALLA DE RESULTADOS / PODIO FINAL -->
+  <div id="screen-podium" class="screen">
+    <div class="card glass-card text-center podium-card">
+      <div class="podium-badge" id="podium-badge">🏆</div>
+      <h2 id="podium-title">¡Partida Finalizada!</h2>
+      <p id="podium-subtitle">Gran carrera de dinosaurios</p>
+
+      <div class="top3-list" id="podium-top3-list"></div>
+
+      <div class="your-final-result" id="your-final-result">
+        Tu posición final: <strong id="your-final-rank">#--</strong> con <strong id="your-final-score">0 pts</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="player.js"></script>
+</body>
+</html>

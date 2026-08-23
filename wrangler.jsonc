@@ -1,0 +1,57 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "dino-runner-multiplayer",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-23",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "ENVIRONMENT": "local",
+    "ALLOWED_ORIGIN": "http://localhost:8787"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dino-runner-db",
+      "database_id": "local-dino-runner-db",
+      "migrations_dir": "./migrations"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "env": {
+    "staging": {
+      "name": "dino-runner-multiplayer-staging",
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ALLOWED_ORIGIN": "https://staging.example.com"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "dino-runner-db-staging",
+          "database_id": "REPLACE_WITH_STAGING_D1_DATABASE_ID",
+          "migrations_dir": "./migrations"
+        }
+      ]
+    },
+    "production": {
+      "name": "dino-runner-multiplayer",
+      "vars": {
+        "ENVIRONMENT": "production",
+        "ALLOWED_ORIGIN": "https://example.com"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "dino-runner-db",
+          "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_ID",
+          "migrations_dir": "./migrations"
+        }
+      ]
+    }
+  }
+}
