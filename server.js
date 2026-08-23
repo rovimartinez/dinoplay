@@ -65,10 +65,27 @@ function generateRoomPin() {
 
 function getLeaderboard(room) {
   const playersList = Object.values(room.players);
-  // Ordenar por puntaje descendente, y en caso de empate por menor tiempo / distancia
+  // Reglas de desempate ordenadas estrictamente:
+  // 1. Mayor puntaje
+  // 2. Mayor distancia
+  // 3. Jugador sobreviviente (!crashed) antes que chocado (crashed)
+  // 4. Mayor tiempo de supervivencia / momento de choque más tardío (crashed_at o survival_ms)
+  // 5. Orden de ingreso (joinedAt)
   playersList.sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
-    return b.distance - a.distance;
+    if (b.distance !== a.distance) return b.distance - a.distance;
+    if (a.crashed !== b.crashed) {
+      return a.crashed ? 1 : -1;
+    }
+    const aCrashTime = a.crashed_at || 0;
+    const bCrashTime = b.crashed_at || 0;
+    if (bCrashTime !== aCrashTime) return bCrashTime - aCrashTime;
+
+    const aSurvival = a.survival_ms || 0;
+    const bSurvival = b.survival_ms || 0;
+    if (bSurvival !== aSurvival) return bSurvival - aSurvival;
+
+    return (a.joinedAt || 0) - (b.joinedAt || 0);
   });
 
   return playersList.map((player, index) => {
@@ -90,6 +107,8 @@ function getLeaderboard(room) {
       distance: player.distance,
       action: player.action, // 'running', 'jumping', 'ducking', 'crashed'
       crashed: player.crashed,
+      crashed_at: player.crashed_at || null,
+      survival_ms: player.survival_ms || 0,
       obstacles: player.obstacles || [],
       rank: newRank,
       rankChange: rankChange
@@ -186,29 +205,49 @@ io.on('connection', (socket) => {
     }
 
     room.status = 'starting';
+    const raceSeed = Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36);
+    room.race_seed = raceSeed;
+    room.raceConfig = {
+      race_seed: raceSeed,
+      started_at: null,
+      initial_speed: 6,
+      acceleration: 0.001,
+      max_speed: 13
+    };
+    room.suspiciousEvents = [];
+
     // Reiniciar puntuaciones para todos los jugadores de la sala
     Object.values(room.players).forEach(p => {
       p.score = 0;
       p.distance = 0;
       p.action = 'running';
       p.crashed = false;
+      p.crashed_at = null;
+      p.survival_ms = 0;
       p.prevRank = null;
+      p.lastUpdateAt = 0;
     });
 
-    console.log(`[INICIANDO PARTIDA] Sala: ${safePin}`);
+    console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Semilla: ${raceSeed}`);
 
     let countdown = 3;
-    io.to(safePin).emit('game:countdown', { countdown });
+    io.to(safePin).emit('game:countdown', { countdown, race_seed: raceSeed });
 
     const interval = setInterval(() => {
       countdown--;
       if (countdown > 0) {
-        io.to(safePin).emit('game:countdown', { countdown });
+        io.to(safePin).emit('game:countdown', { countdown, race_seed: raceSeed });
       } else {
         clearInterval(interval);
         room.status = 'playing';
-        io.to(safePin).emit('game:start');
-        console.log(`[PARTIDA EN VIVO] Sala: ${safePin}`);
+        room.started_at = Date.now();
+        room.raceConfig.started_at = room.started_at;
+        io.to(safePin).emit('game:start', {
+          race_seed: raceSeed,
+          speed: 6,
+          acceleration: 0.001
+        });
+        console.log(`[PARTIDA EN VIVO] Sala: ${safePin} | Semilla: ${raceSeed}`);
       }
     }, 1000);
   });
@@ -231,12 +270,18 @@ io.on('connection', (socket) => {
     if (!room || room.hostId !== socket.id) return;
 
     room.status = 'lobby';
+    room.race_seed = null;
+    room.started_at = null;
+    room.raceConfig = null;
     Object.values(room.players).forEach(p => {
       p.score = 0;
       p.distance = 0;
       p.action = 'running';
       p.crashed = false;
+      p.crashed_at = null;
+      p.survival_ms = 0;
       p.prevRank = null;
+      p.lastUpdateAt = 0;
     });
 
     io.to(pin).emit('game:reset_to_lobby', {
@@ -320,10 +365,58 @@ io.on('connection', (socket) => {
     if (!room || !room.players[socket.id]) return;
 
     const player = room.players[socket.id];
-    player.score = clampNumber(score, 0, 999999, player.score);
-    player.distance = clampNumber(distance, 0, 999999, player.distance);
+    const now = Date.now();
+
+    // 1. Rate limiting por socket (máximo 40 updates/seg / mínimo 25ms de intervalo)
+    if (player.lastUpdateAt && (now - player.lastUpdateAt) < 25) {
+      return;
+    }
+    player.lastUpdateAt = now;
+
+    // 2. Anti-Trampa: cálculo de límites físicos según tiempo de partida
+    let safeDistance = clampNumber(distance, 0, 999999, player.distance);
+    let safeScore = clampNumber(score, 0, 999999, player.score);
+
+    if (room.status === 'playing' && room.started_at) {
+      const elapsedSeconds = Math.max(0.1, (now - room.started_at) / 1000);
+      // Velocidad máxima: 13 px/frame * 60 fps = 780 px/s. Con margen de latencia y aceleración:
+      const maxPossibleDistance = Math.ceil(elapsedSeconds * 13 * 60 * 1.5) + 300;
+      const maxPossibleScore = Math.ceil(maxPossibleDistance * 0.025 * 1.5) + 100;
+
+      if (safeDistance > maxPossibleDistance || safeScore > maxPossibleScore) {
+        if (!room.suspiciousEvents) room.suspiciousEvents = [];
+        room.suspiciousEvents.push({
+          playerId: socket.id,
+          playerName: player.name,
+          attemptedDistance: safeDistance,
+          maxPossibleDistance,
+          timestamp: now
+        });
+        safeDistance = Math.min(safeDistance, maxPossibleDistance);
+        safeScore = Math.min(safeScore, maxPossibleScore);
+      }
+    }
+
+    // Asegurar que puntaje y distancia sean monótonamente crecientes mientras está vivo
+    if (safeDistance >= player.distance) {
+      player.distance = safeDistance;
+    }
+    if (safeScore >= player.score) {
+      player.score = safeScore;
+    }
+
     player.action = cleanAction(action, player.action);
-    player.crashed = !!crashed;
+
+    // 3. Manejo de choque y tiempo de supervivencia
+    const isCrashed = !!crashed;
+    if (!player.crashed && isCrashed) {
+      player.crashed = true;
+      player.crashed_at = now;
+      player.survival_ms = Math.max(0, now - (room.started_at || now));
+    } else if (!player.crashed) {
+      player.survival_ms = Math.max(0, now - (room.started_at || now));
+    }
+
     player.obstacles = cleanObstacles(obstacles);
 
     // Si todos los jugadores han chocado en partida activa, podemos autocompletar la partida

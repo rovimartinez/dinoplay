@@ -59,29 +59,29 @@ Preparar el juego para eventos reales en linea, manteniendo pruebas locales, con
 
 ## Fase 2 - Justicia competitiva y anti-trampa
 
-- [ ] **Alta** - Usar semilla compartida por partida.
+- [x] **Alta** - Usar semilla compartida por partida.
   - Generar una `race_seed` en el servidor al iniciar cada ronda.
   - Enviar esa semilla a todos los jugadores junto con `game:start`.
   - Usar un generador pseudoaleatorio deterministico en el motor.
   - Objetivo: que todos los jugadores tengan la misma secuencia de obstaculos.
 
-- [ ] **Alta** - Guardar configuracion de carrera.
+- [x] **Alta** - Guardar configuracion de carrera.
   - Guardar velocidad inicial, aceleracion, semilla, fecha de inicio y reglas de puntuacion.
   - Esto permite auditar resultados despues del evento.
 
-- [ ] **Alta** - No confiar ciegamente en el puntaje enviado por el cliente.
+- [x] **Alta** - No confiar ciegamente en el puntaje enviado por el cliente.
   - Opcion inicial: validar que `score` y `distance` no suban mas rapido de lo posible.
   - Opcion robusta: el servidor calcula o verifica el puntaje a partir de tiempo, semilla y eventos.
 
-- [ ] **Alta** - Rate limit para `player:update_state`.
+- [x] **Alta** - Rate limit para `player:update_state`.
   - Limitar frecuencia por jugador.
   - Ignorar updates demasiado frecuentes.
   - Detectar saltos imposibles de puntaje/distancia.
 
-- [ ] **Media** - Registrar eventos sospechosos.
+- [x] **Media** - Registrar eventos sospechosos.
   - Guardar casos como puntaje imposible, demasiados updates, color invalido, pin invalido repetido.
 
-- [ ] **Media** - Definir reglas de desempate.
+- [x] **Media** - Definir reglas de desempate.
   - Puntaje mayor.
   - Distancia mayor.
   - Tiempo de supervivencia mayor.

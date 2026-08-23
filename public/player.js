@@ -141,7 +141,7 @@
   });
 
   // Inicio de partida
-  socket.on('game:start', () => {
+  socket.on('game:start', (data) => {
     showScreen('game');
 
     // Limpiar contenedor anterior si existe
@@ -155,9 +155,10 @@
       }
     };
 
-    // Crear el motor del Dino Runner
+    // Crear el motor del Dino Runner con semilla determinista de carrera
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
+      seed: data && data.race_seed ? data.race_seed : null,
       onEngineReady: () => {
         startRunning();
       },

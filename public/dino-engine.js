@@ -22,6 +22,31 @@
         } : { r: 46, g: 125, b: 50 };
     }
 
+    function createPRNG(seed) {
+        var s = 0;
+        if (typeof seed === 'number') {
+            s = seed | 0;
+        } else if (typeof seed === 'string') {
+            for (var i = 0; i < seed.length; i++) {
+                s = (Math.imul(31, s) + seed.charCodeAt(i)) | 0;
+            }
+        }
+        if (s === 0) s = 123456789;
+        return function () {
+            var t = s += 0x6D2B79F5;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function engineRandom() {
+        if (Runner.instance_ && typeof Runner.instance_.random === 'function') {
+            return Runner.instance_.random();
+        }
+        return Math.random();
+    }
+
     // Copyright (c) 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -44,6 +69,12 @@
         this.detailsButton = null;
 
         this.config = Object.assign({}, Runner.config, opt_config || {});
+
+        this.seed = this.config.seed || null;
+        this.rng = this.seed ? createPRNG(this.seed) : null;
+        this.random = function () {
+            return this.rng ? this.rng() : Math.random();
+        }.bind(this);
 
         this.dimensions = Runner.defaultDimensions;
 
@@ -277,6 +308,15 @@
                     document.querySelector('.icon').classList.add('icon-disabled');
                 }
             }.bind(this));
+        },
+
+        /**
+         * Set the random seed for deterministic obstacle and game generation.
+         * @param {string|number} seed
+         */
+        setSeed: function (seed) {
+            this.seed = seed;
+            this.rng = seed ? createPRNG(seed) : null;
         },
 
         /**
@@ -1098,13 +1138,13 @@
 
 
     /**
-     * Get random number.
+     * Get random number using deterministic PRNG when active.
      * @param {number} min
      * @param {number} max
-     * @param {number}
+     * @return {number}
      */
     function getRandomNum(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        return Math.floor(engineRandom() * (max - min + 1)) + min;
     }
 
 
@@ -1512,7 +1552,7 @@
 
                 // For obstacles that go at a different speed from the horizon.
                 if (this.typeConfig.speedOffset) {
-                    this.speedOffset = Math.random() > 0.5 ? this.typeConfig.speedOffset :
+                    this.speedOffset = engineRandom() > 0.5 ? this.typeConfig.speedOffset :
                         -this.typeConfig.speedOffset;
                 }
 
@@ -2615,7 +2655,7 @@
          * Return the crop x position of a type.
          */
         getRandomType: function () {
-            return Math.random() > this.bumpThreshold ? this.dimensions.WIDTH : 0;
+            return engineRandom() > this.bumpThreshold ? this.dimensions.WIDTH : 0;
         },
 
         /**
@@ -2775,7 +2815,7 @@
                 // Check for adding a new cloud.
                 if (numClouds < this.config.MAX_CLOUDS &&
                     (this.dimensions.WIDTH - lastCloud.xPos) > lastCloud.cloudGap &&
-                    this.cloudFrequency > Math.random()) {
+                    this.cloudFrequency > engineRandom()) {
                     this.addCloud();
                 }
 
@@ -2912,6 +2952,9 @@ function onDocumentLoad() {
     window.createDinoGame = function(containerSelector, options) {
         options = options || {};
         var runner = new Runner(containerSelector, options);
+        if (options.seed) {
+            runner.setSeed(options.seed);
+        }
         if (options.dinoColor) {
             runner.customDinoColor = hexToRgb(options.dinoColor);
         }
