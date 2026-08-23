@@ -21,24 +21,24 @@ Preparar el juego para eventos reales en linea, manteniendo pruebas locales, con
 
 ## Fase 1 - Correcciones inmediatas locales
 
-- [ ] **Alta** - Bloquear doble inicio de partida.
+- [x] **Alta** - Bloquear doble inicio de partida.
   - Evitar que `admin:start_game` funcione si la sala ya esta en `starting`, `playing` o `finished`.
   - Archivo relacionado: `server.js`.
 
-- [ ] **Alta** - Corregir tabla final del admin.
+- [x] **Alta** - Corregir tabla final del admin.
   - Actualmente la tabla declara columna "Distancia", pero no se renderiza la celda correspondiente.
   - Opcion A: mostrar distancia.
   - Opcion B: quitar la columna.
   - Archivos relacionados: `public/admin.html`, `public/admin.js`.
 
-- [ ] **Alta** - Validar datos enviados por jugadores.
+- [x] **Alta** - Validar datos enviados por jugadores.
   - Validar `name`, `pin`, `color`, `avatar`, `score`, `distance`, `action`, `crashed` y `obstacles`.
   - Rechazar colores no permitidos.
   - Limitar longitud de nombre.
   - Limitar cantidad y tamano de obstaculos enviados.
   - Archivo relacionado: `server.js`.
 
-- [ ] **Alta** - Evitar `innerHTML` con datos de usuario.
+- [x] **Alta** - Evitar `innerHTML` con datos de usuario.
   - Cambiar renderizados peligrosos por `textContent` o creacion segura de nodos.
   - Revisar especialmente el podio del jugador.
   - Archivos relacionados: `public/player.js`, `public/admin.js`.
@@ -47,11 +47,11 @@ Preparar el juego para eventos reales en linea, manteniendo pruebas locales, con
   - El boton existe en HTML, pero no tiene logica conectada.
   - Archivos relacionados: `public/admin.html`, `public/admin.js`.
 
-- [ ] **Media** - Mover `puppeteer-core` a `devDependencies`.
+- [x] **Media** - Mover `puppeteer-core` a `devDependencies`.
   - Parece usarse solo para pruebas.
   - Archivo relacionado: `package.json`.
 
-- [ ] **Media** - Agregar scripts basicos.
+- [x] **Media** - Agregar scripts basicos.
   - `npm start`
   - `npm test`
   - `npm run lint`
@@ -105,7 +105,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
 
 ### Modelo inicial de tablas
 
-- [ ] **Alta** - Crear tabla `events`.
+- [x] **Alta** - Crear tabla `events`.
   - `id`
   - `name`
   - `description`
@@ -113,7 +113,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - `created_at`
   - Ejemplos de `name`: "Torneo colegio", "Dia de la familia".
 
-- [ ] **Alta** - Crear tabla `matches`.
+- [x] **Alta** - Crear tabla `matches`.
   - `id`
   - `event_id`
   - `name`
@@ -128,7 +128,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - Ejemplos de `name`: "Cuarto grado", "Semifinal", "Final".
   - Ejemplos de `stage`: `practice`, `qualifier`, `semifinal`, `final`.
 
-- [ ] **Alta** - Crear tabla `players`.
+- [x] **Alta** - Crear tabla `players`.
   - `id`
   - `display_name`
   - `color`
@@ -136,7 +136,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - `created_at`
   - Nota: no guardar datos personales sensibles si no son necesarios.
 
-- [ ] **Alta** - Crear tabla `match_players`.
+- [x] **Alta** - Crear tabla `match_players`.
   - `id`
   - `match_id`
   - `player_id`
@@ -145,7 +145,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - `left_at`
   - `status`
 
-- [ ] **Alta** - Crear tabla `results`.
+- [x] **Alta** - Crear tabla `results`.
   - `id`
   - `match_id`
   - `player_id`
@@ -157,7 +157,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - `crashed_at`
   - `created_at`
 
-- [ ] **Media** - Crear tabla `race_events`.
+- [x] **Media** - Crear tabla `race_events`.
   - `id`
   - `match_id`
   - `player_id`
@@ -166,7 +166,7 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
   - `created_at`
   - Usar para auditoria, no para cada frame.
 
-- [ ] **Media** - Crear tabla `admin_sessions`.
+- [x] **Media** - Crear tabla `admin_sessions`.
   - `id`
   - `event_id`
   - `match_id`
@@ -176,17 +176,17 @@ Base sugerida: **Cloudflare D1** porque el juego necesita datos relacionales sim
 
 ### Migraciones
 
-- [ ] **Alta** - Crear carpeta de migraciones.
+- [x] **Alta** - Crear carpeta de migraciones.
   - Ejemplo: `migrations/0001_initial_schema.sql`.
 
-- [ ] **Alta** - Crear base local para pruebas.
+- [x] **Alta** - Crear base local para pruebas.
   - Usar Wrangler con D1 local.
 
-- [ ] **Alta** - Crear base remota para produccion.
+- [x] **Alta** - Crear base remota para produccion.
   - Crear la base en Cloudflare.
   - Agregar binding `DB` al Worker.
 
-- [ ] **Media** - Crear consultas basicas.
+- [x] **Media** - Crear consultas basicas.
   - Crear evento.
   - Crear partida.
   - Registrar jugador.
@@ -206,7 +206,7 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ### Tareas de migracion
 
-- [ ] **Alta** - Crear proyecto Cloudflare Worker.
+- [x] **Alta** - Crear proyecto Cloudflare Worker.
   - Preparar `wrangler.jsonc`.
   - Definir entorno local, staging y produccion.
 
@@ -227,7 +227,7 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
   - El Durable Object debe escribir resumen final en D1.
   - No guardar cada frame en D1.
 
-- [ ] **Alta** - Configurar dominio publico.
+- [x] **Alta** - Configurar dominio publico.
   - Ejemplo: `dino.tudominio.com`.
   - Rutas esperadas:
     - `/`
@@ -236,12 +236,12 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
     - `/practice`
     - `/api/*`
 
-- [ ] **Media** - Configurar ambientes.
+- [x] **Media** - Configurar ambientes.
   - Local: pruebas con `wrangler dev`.
   - Staging: prueba online cerrada.
   - Produccion: evento real.
 
-- [ ] **Media** - Agregar logs y observabilidad.
+- [x] **Media** - Agregar logs y observabilidad.
   - Ver conexiones.
   - Ver errores.
   - Ver salas activas.
@@ -362,7 +362,7 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ## Fase 9 - Documentacion
 
-- [ ] **Alta** - Crear `README.md` actualizado.
+- [x] **Alta** - Crear `README.md` actualizado.
   - Instalacion.
   - Ejecutar local.
   - Entrar como admin.
