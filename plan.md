@@ -325,7 +325,7 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ## Fase 8 - Pruebas
 
-- [ ] **Alta** - Crear pruebas unitarias.
+- [x] **Alta** - Crear pruebas unitarias.
   - Ranking.
   - Empates.
   - Crear sala.
@@ -334,24 +334,24 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
   - Reiniciar a lobby.
   - Fin automatico cuando todos chocan.
 
-- [ ] **Alta** - Crear pruebas contra trampas.
+- [x] **Alta** - Crear pruebas contra trampas.
   - Puntaje imposible.
   - Distancia negativa.
   - Color invalido.
   - Obstaculos gigantes.
   - Updates excesivos.
 
-- [ ] **Media** - Crear test e2e portable.
+- [x] **Media** - Crear test e2e portable.
   - No depender de ruta fija de Chrome.
   - Guardar screenshots dentro del proyecto, por ejemplo `test-results/`.
 
-- [ ] **Media** - Probar carga.
+- [x] **Media** - Probar carga.
   - 10 jugadores.
   - 30 jugadores.
   - 50 jugadores.
   - Ver consumo, latencia y estabilidad.
 
-- [ ] **Media** - Probar evento completo.
+- [x] **Media** - Probar evento completo.
   - Crear evento.
   - Crear partida "Cuarto grado".
   - Jugar.
