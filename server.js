@@ -403,26 +403,48 @@ io.on('connection', (socket) => {
     const room = rooms.get(safePin);
 
     if (!room) {
-      socket.emit('player:join_error', { message: 'La sala con el PIN indicado no existe.' });
+      socket.emit('player:join_error', {
+        code: 'ROOM_NOT_FOUND',
+        message: 'La sala con el PIN indicado no existe o fue cerrada.'
+      });
       return;
     }
 
     if (room.status !== 'lobby') {
-      socket.emit('player:join_error', { message: 'La partida ya no acepta jugadores. Espera a la siguiente ronda.' });
+      socket.emit('player:join_error', {
+        code: 'GAME_IN_PROGRESS',
+        pin: safePin,
+        message: 'La partida ya está en curso. Puedes ver las posiciones en vivo en modo espectador.',
+        allowSpectator: true
+      });
       return;
     }
 
     if (room.maxPlayers > 0 && Object.keys(room.players).length >= room.maxPlayers) {
-      socket.emit('player:join_error', { message: `La sala ha alcanzado el límite máximo de ${room.maxPlayers} jugadores.` });
+      socket.emit('player:join_error', {
+        code: 'ROOM_FULL',
+        message: `La sala ha alcanzado el límite máximo de ${room.maxPlayers} jugadores.`
+      });
       return;
     }
 
     const cleanName = cleanPlayerName(name);
+    const isDuplicate = Object.values(room.players).some(p => p.name.toLowerCase() === cleanName.toLowerCase());
+    if (isDuplicate) {
+      socket.emit('player:join_error', {
+        code: 'NAME_TAKEN',
+        message: `El nombre "${cleanName}" ya está en uso en esta sala. Elige otro nombre.`
+      });
+      return;
+    }
+
     const validColor = cleanColor(color);
     const validAvatar = cleanAvatar(avatar);
+    const sessionToken = Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36);
 
     room.players[socket.id] = {
       id: socket.id,
+      sessionToken,
       name: cleanName,
       color: validColor,
       avatar: validAvatar,
@@ -434,7 +456,9 @@ io.on('connection', (socket) => {
       survival_ms: 0,
       rank: Object.keys(room.players).length + 1,
       prevRank: null,
-      joinedAt: Date.now()
+      joinedAt: Date.now(),
+      disconnected: false,
+      disconnectedAt: null
     };
 
     currentRole = 'player';
@@ -443,6 +467,7 @@ io.on('connection', (socket) => {
 
     socket.emit('player:join_success', {
       pin: safePin,
+      sessionToken,
       player: room.players[socket.id],
       roomStatus: room.status,
       eventName: room.eventName,
@@ -455,7 +480,63 @@ io.on('connection', (socket) => {
       count: Object.keys(room.players).length
     });
 
-    console.log(`[JUGADOR UNIDO] ${cleanName} (${socket.id}) a sala ${safePin}`);
+    console.log(`[JUGADOR UNIDO] ${cleanName} a la sala ${safePin}`);
+  });
+
+  socket.on('player:reconnect', ({ pin, sessionToken, name }) => {
+    const safePin = cleanRoomPin(pin);
+    const room = rooms.get(safePin);
+    if (!room) {
+      socket.emit('player:reconnect_error', {
+        code: 'ROOM_NOT_FOUND',
+        message: 'La sala ya no existe o fue cerrada.'
+      });
+      return;
+    }
+
+    let existingPlayer = Object.values(room.players).find(p => p.sessionToken && p.sessionToken === sessionToken);
+    if (!existingPlayer && name) {
+      existingPlayer = Object.values(room.players).find(p => p.name.toLowerCase() === String(name).trim().toLowerCase());
+    }
+
+    if (!existingPlayer) {
+      socket.emit('player:reconnect_error', {
+        code: 'SESSION_NOT_FOUND',
+        message: 'No se encontró la sesión previa en esta sala.'
+      });
+      return;
+    }
+
+    const oldId = existingPlayer.id;
+    if (oldId !== socket.id) {
+      delete room.players[oldId];
+      existingPlayer.id = socket.id;
+      room.players[socket.id] = existingPlayer;
+    }
+
+    existingPlayer.disconnected = false;
+    existingPlayer.disconnectedAt = null;
+
+    currentRole = 'player';
+    currentPin = safePin;
+    socket.join(safePin);
+
+    socket.emit('player:reconnect_success', {
+      pin: safePin,
+      sessionToken: existingPlayer.sessionToken,
+      player: existingPlayer,
+      roomStatus: room.status,
+      eventName: room.eventName,
+      matchName: room.matchName,
+      race_seed: room.race_seed
+    });
+
+    io.to(safePin).emit('room:players_update', {
+      players: Object.values(room.players),
+      count: Object.keys(room.players).length
+    });
+
+    console.log(`[JUGADOR RECONECTADO] ${existingPlayer.name} a sala ${safePin} (Status: ${room.status})`);
   });
 
   socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles }) => {
@@ -518,23 +599,34 @@ io.on('connection', (socket) => {
 
     player.obstacles = cleanObstacles(obstacles);
 
-    // Si todos los jugadores han chocado en partida activa, podemos autocompletar la partida
+    // Si todos los jugadores han chocado en partida activa, autocompletar la partida
     if (room.status === 'playing') {
       const allPlayers = Object.values(room.players);
       const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
       if (allCrashed) {
         room.status = 'finished';
         const leaderboard = getLeaderboard(room);
-        io.to(safePin).emit('game:ended', {
+        const resultSummary = {
+          id: Date.now().toString(36),
+          pin: room.pin,
+          eventName: room.eventName || 'Torneo',
+          matchName: room.matchName || 'Carrera',
+          date: new Date().toISOString(),
+          winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
+          winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
+          totalPlayers: leaderboard.length,
           podium: leaderboard.slice(0, 3),
           leaderboard: leaderboard
-        });
+        };
+        if (!room.matchHistory) room.matchHistory = [];
+        room.matchHistory.unshift(resultSummary);
+        io.to(safePin).emit('game:ended', resultSummary);
       }
     }
   });
 
   // ==========================================
-  // 3. DESCONEXIÓN
+  // 4. DESCONEXIÓN
   // ==========================================
 
   socket.on('disconnect', () => {
@@ -546,14 +638,32 @@ io.on('connection', (socket) => {
         rooms.delete(currentPin);
         console.log(`[SALA CERRADA] PIN ${currentPin} porque el admin se desconectó.`);
       } else if (currentRole === 'player') {
-        if (room.players[socket.id]) {
-          const playerName = room.players[socket.id].name;
-          delete room.players[socket.id];
-          io.to(currentPin).emit('room:players_update', {
-            players: Object.values(room.players),
-            count: Object.keys(room.players).length
-          });
-          console.log(`[JUGADOR DESCONECTADO] ${playerName} de sala ${currentPin}`);
+        const player = room.players[socket.id];
+        if (player) {
+          const playerName = player.name;
+          if (room.status === 'playing' || room.status === 'starting') {
+            // Mantener jugador durante ventana de gracia de reconexión
+            player.disconnected = true;
+            player.disconnectedAt = Date.now();
+            console.log(`[JUGADOR DESCONECTADO TEMPORALMENTE] ${playerName} de sala ${currentPin} (puede reconectarse)`);
+            setTimeout(() => {
+              if (room.players[socket.id] && room.players[socket.id].disconnected) {
+                delete room.players[socket.id];
+                io.to(currentPin).emit('room:players_update', {
+                  players: Object.values(room.players),
+                  count: Object.keys(room.players).length
+                });
+                console.log(`[JUGADOR EXPIRADO] ${playerName} removido tras tiempo de gracia.`);
+              }
+            }, 45000);
+          } else {
+            delete room.players[socket.id];
+            io.to(currentPin).emit('room:players_update', {
+              players: Object.values(room.players),
+              count: Object.keys(room.players).length
+            });
+            console.log(`[JUGADOR DESCONECTADO] ${playerName} de sala ${currentPin}`);
+          }
         }
       }
     }

@@ -277,24 +277,24 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ## Fase 6 - Experiencia del jugador
 
-- [ ] **Alta** - Pantalla de reconexion.
+- [x] **Alta** - Pantalla de reconexion.
   - Si el jugador recarga o pierde internet, intentar recuperar su participacion.
 
-- [ ] **Alta** - Evitar que un jugador entre cuando la partida ya esta en curso.
+- [x] **Alta** - Evitar que un jugador entre cuando la partida ya esta en curso.
   - Actualmente se bloquea si `status === playing`; tambien revisar `starting` y `finished`.
 
-- [ ] **Media** - Mensajes claros para errores.
+- [x] **Media** - Mensajes claros para errores.
   - PIN inexistente.
   - Sala llena.
   - Partida iniciada.
   - Nombre repetido.
   - Conexion perdida.
 
-- [ ] **Media** - Mejorar soporte movil.
+- [x] **Media** - Mejorar soporte movil.
   - Verificar que botones tactiles no tapen el juego.
   - Probar en pantallas pequenas.
 
-- [ ] **Baja** - Permitir seleccionar avatar.
+- [x] **Baja** - Permitir seleccionar avatar.
   - Mantener lista cerrada de avatares permitidos.
 
 ## Fase 7 - Seguridad para evento online

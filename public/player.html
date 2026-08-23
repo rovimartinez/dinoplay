@@ -10,6 +10,12 @@
 </head>
 <body>
 
+  <!-- BANNER DE ESTADO DE CONEXIÓN / RECONEXIÓN -->
+  <div id="reconnect-banner" class="reconnect-banner" style="display: none;">
+    <span class="pulse-warning"></span>
+    <span id="reconnect-banner-text">Reconectando con la sala...</span>
+  </div>
+
   <!-- 1. PANTALLA DE INGRESO / LOGIN -->
   <div id="screen-login" class="screen active">
     <div class="card glass-card">
@@ -46,12 +52,17 @@
 
         <div style="margin-top: 14px; text-align: center;">
           <a href="/practice" class="btn-practice-pill">
-            🎮 Jugar en Modo Práctica (Sin Código)
+            🎮 Jugar en Modo Práctica Solo (Sin Código)
           </a>
         </div>
       </form>
 
-      <div id="join-error" class="error-msg"></div>
+      <div id="join-error-box" class="error-card" style="display: none;">
+        <div id="join-error-msg" class="error-msg-text"></div>
+        <div id="join-error-actions" style="margin-top: 10px; display: none;">
+          <button id="btn-error-spectator" class="btn-secondary-sm">👁️ Ver como espectador</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -68,10 +79,22 @@
       <div class="status-pill pulse">
         <span class="status-dot"></span> Esperando al anfitrión...
       </div>
-      <p class="waiting-hint">La partida comenzará simultáneamente para todos los jugadores cuando el anfitrión presione iniciar.</p>
+      <p class="waiting-hint">La partida comenzará simultáneamente para todos cuando el anfitrión presione iniciar.</p>
 
       <div class="players-counter-badge">
         👥 Jugadores en sala: <strong id="lobby-player-count">1</strong>
+      </div>
+
+      <!-- SECCIÓN DE CALENTAMIENTO / PRÁCTICA EN EL LOBBY -->
+      <div class="lobby-practice-box">
+        <div class="practice-box-header">
+          <span>🎯 Calentar dedos mientras esperas</span>
+          <button id="btn-toggle-practice" class="btn-practice-toggle">▶ Probar Salto</button>
+        </div>
+        <div id="lobby-practice-viewport" class="lobby-practice-viewport" style="display: none;">
+          <div id="lobby-mini-canvas-container"></div>
+          <p class="practice-tip">Toca la pantalla o presiona [Espacio] para saltar.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -108,7 +131,7 @@
     <div id="rank-toast" class="rank-toast"></div>
 
     <!-- Contenedor del Juego -->
-    <div class="game-viewport-wrapper">
+    <div class="game-viewport-wrapper" id="game-viewport-wrapper">
       <div id="dino-game-container" class="dino-runner-canvas-box"></div>
     </div>
 

@@ -3,6 +3,11 @@
 
   const socket = io();
 
+  const STORAGE_KEY_NAME = 'dino_player_name';
+  const STORAGE_KEY_COLOR = 'dino_player_color';
+  const STORAGE_KEY_PIN = 'dino_player_pin';
+  const STORAGE_KEY_TOKEN = 'dino_session_token';
+
   // Elementos DOM
   const screens = {
     login: document.getElementById('screen-login'),
@@ -13,16 +18,26 @@
     podium: document.getElementById('screen-podium')
   };
 
+  const reconnectBanner = document.getElementById('reconnect-banner');
+  const reconnectBannerText = document.getElementById('reconnect-banner-text');
+
   const joinForm = document.getElementById('join-form');
   const inputPin = document.getElementById('input-pin');
   const inputName = document.getElementById('input-name');
   const colorBtns = document.querySelectorAll('.color-btn');
-  const joinError = document.getElementById('join-error');
+  const joinErrorBox = document.getElementById('join-error-box');
+  const joinErrorMsg = document.getElementById('join-error-msg');
+  const joinErrorActions = document.getElementById('join-error-actions');
+  const btnErrorSpectator = document.getElementById('btn-error-spectator');
 
   const lobbyPin = document.getElementById('lobby-pin');
   const lobbyPlayerName = document.getElementById('lobby-player-name');
   const lobbyPlayerCount = document.getElementById('lobby-player-count');
   const lobbyAvatarPreview = document.getElementById('lobby-avatar-preview');
+
+  const btnTogglePractice = document.getElementById('btn-toggle-practice');
+  const lobbyPracticeViewport = document.getElementById('lobby-practice-viewport');
+  const lobbyMiniCanvasContainer = document.getElementById('lobby-mini-canvas-container');
 
   const countdownNum = document.getElementById('countdown-num');
 
@@ -30,6 +45,7 @@
   const hudLeader = document.getElementById('hud-leader');
   const hudScore = document.getElementById('hud-score');
   const rankToast = document.getElementById('rank-toast');
+  const gameViewportWrapper = document.getElementById('game-viewport-wrapper');
 
   const crashScore = document.getElementById('crash-score');
   const crashRank = document.getElementById('crash-rank');
@@ -46,9 +62,11 @@
   let myPlayerInfo = null;
   let currentPin = '';
   let dinoGame = null;
+  let miniPracticeGame = null;
   let currentRank = 1;
   let lastScore = 0;
   let toastTimeout = null;
+  let lastRaceSeed = null;
 
   // Cambiar pantalla activa
   function showScreen(name) {
@@ -61,11 +79,38 @@
     });
   }
 
-  // Prellenar PIN si viene en la URL (?pin=1234)
+  // Prellenar datos desde localStorage
+  const savedName = localStorage.getItem(STORAGE_KEY_NAME);
+  if (savedName) inputName.value = savedName;
+
+  const savedColor = localStorage.getItem(STORAGE_KEY_COLOR);
+  if (savedColor) {
+    selectedColor = savedColor;
+    colorBtns.forEach((b) => {
+      if (b.getAttribute('data-color') === savedColor) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+  }
+
+  // Prellenar PIN si viene en la URL (?pin=1234) o en localStorage
   const urlParams = new URLSearchParams(window.location.search);
   const pinFromUrl = urlParams.get('pin');
   if (pinFromUrl) {
     inputPin.value = pinFromUrl;
+  } else {
+    const savedPin = localStorage.getItem(STORAGE_KEY_PIN);
+    if (savedPin) inputPin.value = savedPin;
+  }
+
+  // Intentar reconexión automática si existe token guardado
+  const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN);
+  const targetPin = pinFromUrl || localStorage.getItem(STORAGE_KEY_PIN);
+  if (savedToken && targetPin) {
+    socket.emit('player:reconnect', {
+      pin: targetPin,
+      sessionToken: savedToken,
+      name: savedName || ''
+    });
   }
 
   // Selector de colores
@@ -74,6 +119,7 @@
       colorBtns.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       selectedColor = btn.getAttribute('data-color');
+      localStorage.setItem(STORAGE_KEY_COLOR, selectedColor);
     });
   });
 
@@ -90,16 +136,20 @@
   // Formulario de unirse
   joinForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    joinError.textContent = '';
+    hideError();
     const pin = inputPin.value.trim();
     const name = inputName.value.trim();
 
     if (!pin || !name) {
-      joinError.textContent = 'Por favor ingresa el PIN y tu nombre.';
+      showError('Por favor ingresa el PIN y tu nombre.');
       return;
     }
 
     currentPin = pin;
+    localStorage.setItem(STORAGE_KEY_NAME, name);
+    localStorage.setItem(STORAGE_KEY_PIN, pin);
+    localStorage.setItem(STORAGE_KEY_COLOR, selectedColor);
+
     socket.emit('player:join_room', {
       pin: pin,
       name: name,
@@ -108,11 +158,36 @@
     });
   });
 
+  function showError(msg, allowSpectator = false, errorPin = '') {
+    joinErrorMsg.textContent = msg;
+    joinErrorBox.style.display = 'block';
+    if (allowSpectator) {
+      joinErrorActions.style.display = 'block';
+      btnErrorSpectator.onclick = () => {
+        const specPin = errorPin || currentPin || inputPin.value.trim();
+        window.location.href = `/spectator?pin=${specPin}`;
+      };
+    } else {
+      joinErrorActions.style.display = 'none';
+    }
+  }
+
+  function hideError() {
+    joinErrorBox.style.display = 'none';
+    joinErrorActions.style.display = 'none';
+  }
+
   // Respuesta de unión exitosa
   socket.on('player:join_success', (data) => {
     myPlayerInfo = data.player;
+    currentPin = data.pin;
     lobbyPin.textContent = data.pin;
     lobbyPlayerName.textContent = data.player.name;
+
+    if (data.sessionToken) {
+      localStorage.setItem(STORAGE_KEY_TOKEN, data.sessionToken);
+    }
+    localStorage.setItem(STORAGE_KEY_PIN, data.pin);
 
     // Actualizar anillo de avatar en el lobby
     const ring = lobbyAvatarPreview.querySelector('.avatar-ring');
@@ -124,8 +199,44 @@
     showScreen('lobby');
   });
 
+  // Respuesta de reconexión exitosa
+  socket.on('player:reconnect_success', (data) => {
+    myPlayerInfo = data.player;
+    currentPin = data.pin;
+    selectedColor = data.player.color;
+    lastRaceSeed = data.race_seed;
+    lobbyPin.textContent = data.pin;
+    lobbyPlayerName.textContent = data.player.name;
+
+    if (data.sessionToken) {
+      localStorage.setItem(STORAGE_KEY_TOKEN, data.sessionToken);
+    }
+    localStorage.setItem(STORAGE_KEY_PIN, data.pin);
+
+    reconnectBanner.style.display = 'none';
+
+    if (data.roomStatus === 'playing') {
+      showScreen('game');
+      if (!dinoGame) {
+        startLiveGame(data.race_seed);
+      }
+    } else if (data.roomStatus === 'finished') {
+      showScreen('podium');
+    } else if (data.roomStatus === 'starting') {
+      showScreen('countdown');
+    } else {
+      showScreen('lobby');
+    }
+  });
+
+  socket.on('player:reconnect_error', () => {
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
+    reconnectBanner.style.display = 'none';
+    showScreen('login');
+  });
+
   socket.on('player:join_error', (data) => {
-    joinError.textContent = data.message || 'Error al unirse a la sala.';
+    showError(data.message || 'Error al unirse a la sala.', data.allowSpectator, data.pin);
   });
 
   socket.on('room:players_update', (data) => {
@@ -134,17 +245,60 @@
     }
   });
 
+  // Práctica en el Lobby
+  if (btnTogglePractice) {
+    btnTogglePractice.addEventListener('click', () => {
+      if (lobbyPracticeViewport.style.display === 'none') {
+        lobbyPracticeViewport.style.display = 'block';
+        btnTogglePractice.textContent = '⏹ Cerrar Práctica';
+        startMiniPractice();
+      } else {
+        stopMiniPractice();
+        lobbyPracticeViewport.style.display = 'none';
+        btnTogglePractice.textContent = '▶ Probar Salto';
+      }
+    });
+  }
+
+  function startMiniPractice() {
+    stopMiniPractice();
+    lobbyMiniCanvasContainer.innerHTML = '';
+    miniPracticeGame = window.createDinoGame('#lobby-mini-canvas-container', {
+      dinoColor: selectedColor,
+      onEngineReady: () => {
+        if (miniPracticeGame) {
+          miniPracticeGame.startGame();
+          miniPracticeGame.update();
+        }
+      }
+    });
+  }
+
+  function stopMiniPractice() {
+    if (miniPracticeGame) {
+      miniPracticeGame.stop();
+      miniPracticeGame = null;
+    }
+  }
+
   // Cuenta regresiva
   socket.on('game:countdown', (data) => {
+    stopMiniPractice();
+    if (lobbyPracticeViewport) lobbyPracticeViewport.style.display = 'none';
     showScreen('countdown');
     countdownNum.textContent = data.countdown;
+    lastRaceSeed = data.race_seed;
   });
 
   // Inicio de partida
   socket.on('game:start', (data) => {
+    stopMiniPractice();
+    startLiveGame(data && data.race_seed ? data.race_seed : lastRaceSeed);
+  });
+
+  function startLiveGame(seed) {
     showScreen('game');
 
-    // Limpiar contenedor anterior si existe
     const container = document.getElementById('dino-game-container');
     container.innerHTML = '';
 
@@ -155,10 +309,9 @@
       }
     };
 
-    // Crear el motor del Dino Runner con semilla determinista de carrera
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
-      seed: data && data.race_seed ? data.race_seed : null,
+      seed: seed || null,
       onEngineReady: () => {
         startRunning();
       },
@@ -179,6 +332,18 @@
       onCrash: (state) => {
         const validScore = Number.isFinite(state.score) ? state.score : 0;
         lastScore = validScore;
+
+        // Feedback háptico (Vibración)
+        if (navigator.vibrate) {
+          try { navigator.vibrate([120, 60, 120]); } catch (e) {}
+        }
+
+        // Sacudida visual de pantalla
+        if (gameViewportWrapper) {
+          gameViewportWrapper.classList.add('screen-shake');
+          setTimeout(() => gameViewportWrapper.classList.remove('screen-shake'), 450);
+        }
+
         socket.emit('player:update_state', {
           pin: currentPin,
           score: validScore,
@@ -197,7 +362,7 @@
     });
 
     startRunning();
-  });
+  }
 
   // Sincronización de posición / ranking individual
   socket.on('player:rank_sync', (data) => {
@@ -279,23 +444,44 @@
 
   // Expulsión o sala cerrada
   socket.on('player:kicked', (data) => {
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
     alert(data.message || 'Has sido expulsado de la sala.');
     window.location.reload();
   });
 
   socket.on('room:closed', (data) => {
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
     alert(data.message || 'La sala ha sido cerrada por el anfitrión.');
     window.location.reload();
+  });
+
+  // Monitoreo de desconexión de red
+  socket.on('disconnect', () => {
+    reconnectBanner.style.display = 'flex';
+    reconnectBannerText.textContent = 'Conexión perdida. Reconectando...';
+  });
+
+  socket.on('connect', () => {
+    reconnectBanner.style.display = 'none';
+    const activeToken = localStorage.getItem(STORAGE_KEY_TOKEN);
+    if (activeToken && currentPin) {
+      socket.emit('player:reconnect', {
+        pin: currentPin,
+        sessionToken: activeToken,
+        name: localStorage.getItem(STORAGE_KEY_NAME) || ''
+      });
+    }
   });
 
   // Controles táctiles virtuales para móviles
   if (touchJump) {
     const triggerJump = (e) => {
       e.preventDefault();
-      if (dinoGame && dinoGame.playing && !dinoGame.crashed) {
-        if (!dinoGame.tRex.jumping && !dinoGame.tRex.ducking) {
-          dinoGame.playSound(dinoGame.soundFx.BUTTON_PRESS);
-          dinoGame.tRex.startJump(dinoGame.currentSpeed);
+      const activeGame = dinoGame || miniPracticeGame;
+      if (activeGame && activeGame.playing && !activeGame.crashed) {
+        if (!activeGame.tRex.jumping && !activeGame.tRex.ducking) {
+          activeGame.playSound(activeGame.soundFx.BUTTON_PRESS);
+          activeGame.tRex.startJump(activeGame.currentSpeed);
         }
       }
     };
@@ -306,20 +492,22 @@
   if (touchDuck) {
     const startDuck = (e) => {
       e.preventDefault();
-      if (dinoGame && dinoGame.playing && !dinoGame.crashed) {
-        if (dinoGame.tRex.jumping) {
-          dinoGame.tRex.setSpeedDrop();
+      const activeGame = dinoGame || miniPracticeGame;
+      if (activeGame && activeGame.playing && !activeGame.crashed) {
+        if (activeGame.tRex.jumping) {
+          activeGame.tRex.setSpeedDrop();
         } else {
-          dinoGame.tRex.setDuck(true);
+          activeGame.tRex.setDuck(true);
         }
       }
     };
 
     const endDuck = (e) => {
       e.preventDefault();
-      if (dinoGame && dinoGame.playing) {
-        dinoGame.tRex.speedDrop = false;
-        dinoGame.tRex.setDuck(false);
+      const activeGame = dinoGame || miniPracticeGame;
+      if (activeGame && activeGame.playing) {
+        activeGame.tRex.speedDrop = false;
+        activeGame.tRex.setDuck(false);
       }
     };
 
