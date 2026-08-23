@@ -7,14 +7,14 @@
     "start": "node server.js",
     "dev": "node server.js",
     "test": "npm run lint",
-    "lint": "node --check server.js && node --check src/worker.js && node --check public/admin.js && node --check public/player.js && node --check public/dino-engine.js",
+    "lint": "node --check server.js && node --check src/worker.js && node --check \"functions/api/[[path]].js\" && node --check public/admin.js && node --check public/player.js && node --check public/dino-engine.js",
     "format": "npm run lint",
     "test:obstacles": "node test_obstacles_sync.js",
-    "cf:dev": "wrangler dev --port 8787",
-    "cf:d1:local": "wrangler d1 migrations apply dino-runner-db --local",
-    "cf:d1:remote": "wrangler d1 migrations apply dino-runner-db --remote",
-    "cf:deploy:staging": "wrangler deploy --env staging",
-    "cf:deploy:production": "wrangler deploy --env production"
+    "cf:dev": "wrangler pages dev public --port 8787",
+    "cf:d1:local": "wrangler d1 migrations apply dinoplay-db --local",
+    "cf:d1:remote": "wrangler d1 migrations apply dinoplay-db --remote",
+    "cf:deploy": "wrangler pages deploy public --project-name juegodino",
+    "cf:deploy:production": "wrangler pages deploy public --project-name juegodino --branch main"
   },
   "dependencies": {
     "express": "^4.21.2",
