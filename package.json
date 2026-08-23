@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "test": "npm run lint",
+    "lint": "node --check server.js && node --check src/worker.js && node --check public/admin.js && node --check public/player.js && node --check public/dino-engine.js",
+    "format": "npm run lint",
+    "test:obstacles": "node test_obstacles_sync.js",
     "cf:dev": "wrangler dev --port 8787",
     "cf:d1:local": "wrangler d1 migrations apply dino-runner-db --local",
     "cf:d1:remote": "wrangler d1 migrations apply dino-runner-db --remote",
@@ -14,11 +18,11 @@
   },
   "dependencies": {
     "express": "^4.21.2",
-    "puppeteer-core": "^25.8.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
+    "puppeteer-core": "^25.8.0",
     "wrangler": "^4.0.0"
   }
 }

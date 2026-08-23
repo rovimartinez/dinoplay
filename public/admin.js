@@ -195,6 +195,14 @@
     // NO saltamos a 'game' de inmediato; esperamos la cuenta regresiva sincronizada
   });
 
+  socket.on('admin:start_error', (data) => {
+    btnStartGame.disabled = true;
+    if (startHint) {
+      startHint.textContent = data.message || 'La partida ya fue iniciada.';
+      startHint.style.color = '#f87171';
+    }
+  });
+
   // 4. CUENTA REGRESIVA SINCRONIZADA
   socket.on('game:countdown', (data) => {
     showView('countdown');
