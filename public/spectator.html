@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Runner - Pantalla Espectador</title>
+  <link rel="stylesheet" href="spectator.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <!-- HEADER ESPECTADOR -->
+  <header class="spec-header">
+    <div class="header-left">
+      <div class="header-logo">🦖 DINO LIVE</div>
+      <div class="room-pin-display">
+        <span class="pin-label">SALA:</span>
+        <span id="spec-pin" class="pin-code">----</span>
+      </div>
+      <div id="spec-match-badge" class="match-info-badge" style="display: none;">
+        <span id="spec-event-name">Torneo</span> • <strong id="spec-match-name">Carrera</strong>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-indicator">
+        <span class="pulse-dot"></span>
+        <span id="spec-status-label">EN ESPERA</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. VISTA: INGRESAR PIN (SI NO VIENE EN LA URL) -->
+  <section id="spec-view-pin" class="spec-view active">
+    <div class="pin-entry-card glass-panel">
+      <h1>👁️ Modo Espectador</h1>
+      <p>Sigue la carrera y la tabla de posiciones en vivo en tiempo real.</p>
+      <form id="spec-pin-form">
+        <input type="text" id="spec-input-pin" placeholder="Ingresa el PIN de 4 dígitos" maxlength="6" autofocus autocomplete="off">
+        <button type="submit" class="btn-join-spec">Conectar Pantalla</button>
+      </form>
+      <div id="spec-pin-error" class="error-msg" style="display: none;"></div>
+    </div>
+  </section>
+
+  <!-- 2. VISTA: LOBBY / ESPERA -->
+  <section id="spec-view-lobby" class="spec-view">
+    <div class="spec-lobby-hero glass-panel">
+      <div class="spec-lobby-top">
+        <span class="pulse-indicator"></span>
+        <span>SALA DE ESPERA</span>
+      </div>
+      <h1 id="spec-lobby-title" class="spec-hero-title">Esperando Inicio de Carrera...</h1>
+      <p class="spec-hero-desc">Los participantes están ingresando a la sala. La transmisión comenzará automáticamente.</p>
+      <div class="spec-players-counter">
+        <span id="spec-players-count" class="counter-val">0</span>
+        <span class="counter-tag">JUGADORES CONECTADOS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. VISTA: CUENTA REGRESIVA -->
+  <section id="spec-view-countdown" class="spec-view">
+    <div class="countdown-hero glass-panel">
+      <div class="countdown-circle">
+        <span id="spec-countdown-num" class="countdown-giant-number">3</span>
+      </div>
+      <h2 class="countdown-hero-title">¡A SUS MARCAS!</h2>
+      <p class="countdown-hero-desc">La carrera está a punto de comenzar...</p>
+    </div>
+  </section>
+
+  <!-- 4. VISTA: TABLA EN VIVO -->
+  <section id="spec-view-game" class="spec-view">
+    <div class="game-top-bar glass-panel">
+      <div class="spec-stats">
+        <span>🏃 Corriendo: <strong id="spec-active-num" class="text-green">0</strong></span>
+        <span>💥 Chocados: <strong id="spec-crashed-num" class="text-red">0</strong></span>
+        <span>👥 Total: <strong id="spec-total-num">0</strong></span>
+      </div>
+    </div>
+
+    <div class="spec-leaderboard-container">
+      <div id="spec-leaderboard-list" class="spec-leaderboard-list">
+        <!-- Tarjetas del ranking generadas dinámicamente -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. VISTA: PODIO FINAL -->
+  <section id="spec-view-podium" class="spec-view">
+    <div class="podium-container glass-panel">
+      <div class="podium-header-meta">
+        <div id="spec-podium-title" class="podium-match-title">Resultados Finales</div>
+        <div id="spec-podium-subtitle" class="podium-match-subtitle"></div>
+      </div>
+
+      <h1 class="podium-heading">🏆 GANADORES DE LA CARRERA 🏆</h1>
+
+      <!-- ESTRUCTURA DEL PODIO (2º, 1º, 3º) -->
+      <div class="podium-stage">
+        <!-- 2do Lugar -->
+        <div class="podium-pillar rank-2" id="spec-podium-2">
+          <div class="winner-avatar" id="spec-avatar-2">🦖</div>
+          <div class="winner-name" id="spec-name-2">--</div>
+          <div class="winner-score" id="spec-score-2">0 pts</div>
+          <div class="step step-2">
+            <span class="medal">🥈</span>
+            <span class="step-num">2</span>
+          </div>
+        </div>
+
+        <!-- 1er Lugar -->
+        <div class="podium-pillar rank-1" id="spec-podium-1">
+          <div class="crown">👑</div>
+          <div class="winner-avatar" id="spec-avatar-1">🦖</div>
+          <div class="winner-name" id="spec-name-1">--</div>
+          <div class="winner-score" id="spec-score-1">0 pts</div>
+          <div class="step step-1">
+            <span class="medal">🥇</span>
+            <span class="step-num">1</span>
+          </div>
+        </div>
+
+        <!-- 3er Lugar -->
+        <div class="podium-pillar rank-3" id="spec-podium-3">
+          <div class="winner-avatar" id="spec-avatar-3">🦖</div>
+          <div class="winner-name" id="spec-name-3">--</div>
+          <div class="winner-score" id="spec-score-3">0 pts</div>
+          <div class="step step-3">
+            <span class="medal">🥉</span>
+            <span class="step-num">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA COMPLETA DE RESULTADOS -->
+      <div class="full-leaderboard-box">
+        <h3>Tabla General de Posiciones</h3>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Posición</th>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th>Distancia</th>
+              <th>Supervivencia</th>
+              <th>Estado Final</th>
+            </tr>
+          </thead>
+          <tbody id="spec-leaderboard-table-body">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANVAS PARA CONFETI -->
+  <canvas id="spec-confetti-canvas" class="confetti-canvas"></canvas>
+
+  <script src="spectator.js"></script>
+</body>
+</html>

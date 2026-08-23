@@ -249,30 +249,30 @@ Para un evento en linea, el proyecto no deberia depender de un servidor Express 
 
 ## Fase 5 - Panel de administracion
 
-- [ ] **Alta** - Permitir nombrar la partida antes de crear la sala.
+- [x] **Alta** - Permitir nombrar la partida antes de crear la sala.
   - Campo: `Nombre de partida`.
   - Ejemplos: "Cuarto grado", "Semifinal", "Final".
 
-- [ ] **Alta** - Permitir seleccionar o crear evento.
+- [x] **Alta** - Permitir seleccionar o crear evento.
   - Campo: `Evento`.
   - Ejemplo: "Torneo matematico 2026".
 
-- [ ] **Media** - Mostrar historial de partidas.
+- [x] **Media** - Mostrar historial de partidas.
   - Nombre.
   - Fecha.
   - Numero de jugadores.
   - Ganador.
   - Boton para ver resultados.
 
-- [ ] **Media** - Exportar resultados.
+- [x] **Media** - Exportar resultados.
   - CSV.
   - JSON.
   - Vista imprimible.
 
-- [ ] **Media** - Agregar limite de jugadores por partida.
+- [x] **Media** - Agregar limite de jugadores por partida.
   - Ejemplo: 10, 20, 30, 50.
 
-- [ ] **Baja** - Agregar modo espectador publico.
+- [x] **Baja** - Agregar modo espectador publico.
   - URL separada para ver leaderboard sin controles de admin.
 
 ## Fase 6 - Experiencia del jugador

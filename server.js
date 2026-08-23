@@ -37,6 +37,10 @@ app.get('/practice', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'practice.html'));
 });
 
+app.get('/spectator', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'spectator.html'));
+});
+
 // Función para obtener IPs locales (para conectar celulares en la misma red WiFi)
 function getLocalIpAddresses() {
   const interfaces = os.networkInterfaces();
@@ -177,6 +181,10 @@ io.on('connection', (socket) => {
       hostId: socket.id,
       status: 'lobby',
       createdAt: Date.now(),
+      eventName: 'Torneo Dino',
+      matchName: 'Ronda 1',
+      maxPlayers: 30,
+      matchHistory: [],
       players: {}
     };
 
@@ -189,13 +197,32 @@ io.on('connection', (socket) => {
     socket.emit('admin:room_created', {
       pin,
       localIps: ips,
-      port: PORT
+      port: PORT,
+      eventName: room.eventName,
+      matchName: room.matchName,
+      maxPlayers: room.maxPlayers
     });
 
     console.log(`[SALA CREADA] PIN: ${pin} | Host: ${socket.id}`);
   });
 
-  socket.on('admin:start_game', ({ pin }) => {
+  socket.on('admin:update_config', ({ pin, eventName, matchName, maxPlayers }) => {
+    const safePin = cleanRoomPin(pin);
+    const room = rooms.get(safePin);
+    if (!room || room.hostId !== socket.id) return;
+
+    if (eventName !== undefined) room.eventName = String(eventName).trim().slice(0, 50) || 'Torneo';
+    if (matchName !== undefined) room.matchName = String(matchName).trim().slice(0, 50) || 'Ronda 1';
+    if (maxPlayers !== undefined) room.maxPlayers = Math.max(0, parseInt(maxPlayers, 10) || 0);
+
+    io.to(safePin).emit('room:config_updated', {
+      eventName: room.eventName,
+      matchName: room.matchName,
+      maxPlayers: room.maxPlayers
+    });
+  });
+
+  socket.on('admin:start_game', ({ pin, eventName, matchName, maxPlayers }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
     if (!room || room.hostId !== socket.id) return;
@@ -203,6 +230,10 @@ io.on('connection', (socket) => {
       socket.emit('admin:start_error', { message: 'La sala ya fue iniciada o finalizada.' });
       return;
     }
+
+    if (eventName) room.eventName = String(eventName).trim().slice(0, 50);
+    if (matchName) room.matchName = String(matchName).trim().slice(0, 50);
+    if (maxPlayers !== undefined) room.maxPlayers = Math.max(0, parseInt(maxPlayers, 10) || 0);
 
     room.status = 'starting';
     const raceSeed = Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36);
@@ -212,7 +243,9 @@ io.on('connection', (socket) => {
       started_at: null,
       initial_speed: 6,
       acceleration: 0.001,
-      max_speed: 13
+      max_speed: 13,
+      eventName: room.eventName,
+      matchName: room.matchName
     };
     room.suspiciousEvents = [];
 
@@ -228,15 +261,25 @@ io.on('connection', (socket) => {
       p.lastUpdateAt = 0;
     });
 
-    console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Semilla: ${raceSeed}`);
+    console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Evento: ${room.eventName} | Partida: ${room.matchName} | Semilla: ${raceSeed}`);
 
     let countdown = 3;
-    io.to(safePin).emit('game:countdown', { countdown, race_seed: raceSeed });
+    io.to(safePin).emit('game:countdown', {
+      countdown,
+      race_seed: raceSeed,
+      eventName: room.eventName,
+      matchName: room.matchName
+    });
 
     const interval = setInterval(() => {
       countdown--;
       if (countdown > 0) {
-        io.to(safePin).emit('game:countdown', { countdown, race_seed: raceSeed });
+        io.to(safePin).emit('game:countdown', {
+          countdown,
+          race_seed: raceSeed,
+          eventName: room.eventName,
+          matchName: room.matchName
+        });
       } else {
         clearInterval(interval);
         room.status = 'playing';
@@ -245,7 +288,9 @@ io.on('connection', (socket) => {
         io.to(safePin).emit('game:start', {
           race_seed: raceSeed,
           speed: 6,
-          acceleration: 0.001
+          acceleration: 0.001,
+          eventName: room.eventName,
+          matchName: room.matchName
         });
         console.log(`[PARTIDA EN VIVO] Sala: ${safePin} | Semilla: ${raceSeed}`);
       }
@@ -258,11 +303,24 @@ io.on('connection', (socket) => {
 
     room.status = 'finished';
     const leaderboard = getLeaderboard(room);
-    io.to(pin).emit('game:ended', {
+    const resultSummary = {
+      id: Date.now().toString(36),
+      pin: room.pin,
+      eventName: room.eventName || 'Torneo',
+      matchName: room.matchName || 'Carrera',
+      date: new Date().toISOString(),
+      winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
+      winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
+      totalPlayers: leaderboard.length,
       podium: leaderboard.slice(0, 3),
       leaderboard: leaderboard
-    });
-    console.log(`[PARTIDA FINALIZADA] Sala: ${pin}`);
+    };
+
+    if (!room.matchHistory) room.matchHistory = [];
+    room.matchHistory.unshift(resultSummary);
+
+    io.to(pin).emit('game:ended', resultSummary);
+    console.log(`[PARTIDA FINALIZADA] Sala: ${pin} | Ganador: ${resultSummary.winner}`);
   });
 
   socket.on('admin:reset_to_lobby', ({ pin }) => {
@@ -285,7 +343,10 @@ io.on('connection', (socket) => {
     });
 
     io.to(pin).emit('game:reset_to_lobby', {
-      players: Object.values(room.players)
+      players: Object.values(room.players),
+      eventName: room.eventName,
+      matchName: room.matchName,
+      maxPlayers: room.maxPlayers
     });
   });
 
@@ -298,14 +359,43 @@ io.on('connection', (socket) => {
       delete room.players[playerId];
       io.to(playerId).emit('player:kicked', { message: 'Has sido expulsado de la sala' });
       io.to(pin).emit('room:players_update', {
-        players: Object.values(room.players)
+        players: Object.values(room.players),
+        count: Object.keys(room.players).length
       });
       console.log(`[JUGADOR EXPULSADO] ${playerName} de la sala ${pin}`);
     }
   });
 
   // ==========================================
-  // 2. EVENTOS DEL JUGADOR (PLAYER)
+  // 2. EVENTOS DEL ESPECTADOR (SPECTATOR)
+  // ==========================================
+
+  socket.on('spectator:join_room', ({ pin }) => {
+    const safePin = cleanRoomPin(pin);
+    const room = rooms.get(safePin);
+    if (!room) {
+      socket.emit('spectator:error', { message: 'La sala con el PIN indicado no existe.' });
+      return;
+    }
+
+    currentRole = 'spectator';
+    currentPin = safePin;
+    socket.join(safePin);
+
+    const leaderboard = getLeaderboard(room);
+    socket.emit('spectator:joined', {
+      pin: safePin,
+      status: room.status,
+      eventName: room.eventName || 'Torneo',
+      matchName: room.matchName || 'Carrera',
+      leaderboard: leaderboard,
+      totalPlayers: leaderboard.length
+    });
+    console.log(`[ESPECTADOR CONECTADO] a sala ${safePin}`);
+  });
+
+  // ==========================================
+  // 3. EVENTOS DEL JUGADOR (PLAYER)
   // ==========================================
 
   socket.on('player:join_room', ({ pin, name, color, avatar }) => {
@@ -322,6 +412,11 @@ io.on('connection', (socket) => {
       return;
     }
 
+    if (room.maxPlayers > 0 && Object.keys(room.players).length >= room.maxPlayers) {
+      socket.emit('player:join_error', { message: `La sala ha alcanzado el límite máximo de ${room.maxPlayers} jugadores.` });
+      return;
+    }
+
     const cleanName = cleanPlayerName(name);
     const validColor = cleanColor(color);
     const validAvatar = cleanAvatar(avatar);
@@ -335,6 +430,8 @@ io.on('connection', (socket) => {
       distance: 0,
       action: 'running',
       crashed: false,
+      crashed_at: null,
+      survival_ms: 0,
       rank: Object.keys(room.players).length + 1,
       prevRank: null,
       joinedAt: Date.now()
@@ -347,7 +444,9 @@ io.on('connection', (socket) => {
     socket.emit('player:join_success', {
       pin: safePin,
       player: room.players[socket.id],
-      roomStatus: room.status
+      roomStatus: room.status,
+      eventName: room.eventName,
+      matchName: room.matchName
     });
 
     // Notificar al admin y a la sala

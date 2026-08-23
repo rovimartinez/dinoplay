@@ -14,6 +14,18 @@
 
   const headerPin = document.getElementById('header-pin');
   const hostUrlText = document.getElementById('host-url-text');
+  const headerMatchBadge = document.getElementById('header-match-badge');
+  const headerEventName = document.getElementById('header-event-name');
+  const headerMatchName = document.getElementById('header-match-name');
+  const btnOpenSpectator = document.getElementById('btn-open-spectator');
+  const btnOpenHistory = document.getElementById('btn-open-history');
+  const btnSoundToggle = document.getElementById('btn-sound-toggle');
+
+  const inputEventName = document.getElementById('input-event-name');
+  const inputMatchName = document.getElementById('input-match-name');
+  const selectMaxPlayers = document.getElementById('select-max-players');
+  const maxPlayersLabel = document.getElementById('max-players-label');
+
   const lobbyBigPin = document.getElementById('lobby-big-pin');
   const lobbyJoinUrl = document.getElementById('lobby-join-url');
   const lobbyCount = document.getElementById('lobby-count');
@@ -28,6 +40,17 @@
   const btnEndGame = document.getElementById('btn-end-game');
   const playersMonitoringGrid = document.getElementById('players-monitoring-grid');
 
+  const podiumMatchTitle = document.getElementById('podium-match-title');
+  const podiumMatchSubtitle = document.getElementById('podium-match-subtitle');
+  const btnExportCsv = document.getElementById('btn-export-csv');
+  const btnExportJson = document.getElementById('btn-export-json');
+  const btnPrintResults = document.getElementById('btn-print-results');
+
+  const historyModal = document.getElementById('history-modal');
+  const btnCloseHistory = document.getElementById('btn-close-history');
+  const historyList = document.getElementById('history-list');
+  const historyEmpty = document.getElementById('history-empty');
+
   const btnReplaySameRoom = document.getElementById('btn-replay-same-room');
   const btnNewRoom = document.getElementById('btn-new-room');
   const leaderboardTableBody = document.getElementById('leaderboard-table-body');
@@ -38,6 +61,87 @@
   let currentPlayers = [];
   let previousRanks = new Map();
   let confettiActive = false;
+  let soundEnabled = true;
+  let audioCtx = null;
+  let lastGameResult = null;
+  let sessionHistory = [];
+
+  // Audio FX con Web Audio API
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtx = new AudioContextClass();
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function playTone(freq, duration, type = 'sine') {
+    if (!soundEnabled) return;
+    try {
+      initAudio();
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  function playBeep(countdown) {
+    if (countdown === 1) {
+      playTone(880, 0.4, 'triangle');
+    } else {
+      playTone(440, 0.2, 'sine');
+    }
+  }
+
+  function playFanfare() {
+    if (!soundEnabled) return;
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => playTone(freq, 0.22, 'triangle'), idx * 110);
+    });
+  }
+
+  btnSoundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    btnSoundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+    btnSoundToggle.title = soundEnabled ? 'Sonido activado' : 'Sonido desactivado';
+  });
+
+  // Sincronizar cambios de configuración
+  function updateRoomConfigToServer() {
+    if (!currentPin) return;
+    const eventName = inputEventName.value.trim() || 'Torneo Dino';
+    const matchName = inputMatchName.value.trim() || 'Ronda 1';
+    const maxPlayers = parseInt(selectMaxPlayers.value, 10) || 0;
+
+    socket.emit('admin:update_config', {
+      pin: currentPin,
+      eventName,
+      matchName,
+      maxPlayers
+    });
+
+    headerEventName.textContent = eventName;
+    headerMatchName.textContent = matchName;
+    headerMatchBadge.style.display = 'inline-flex';
+    maxPlayersLabel.textContent = maxPlayers > 0 ? `(Límite: ${maxPlayers})` : '';
+  }
+
+  inputEventName.addEventListener('change', updateRoomConfigToServer);
+  inputMatchName.addEventListener('change', updateRoomConfigToServer);
+  selectMaxPlayers.addEventListener('change', updateRoomConfigToServer);
 
   // Mapa de estados de animación para cada jugador
   const playerVisualizers = new Map();
@@ -136,6 +240,15 @@
     headerPin.textContent = data.pin;
     lobbyBigPin.textContent = data.pin;
 
+    if (data.eventName) inputEventName.value = data.eventName;
+    if (data.matchName) inputMatchName.value = data.matchName;
+    if (data.maxPlayers !== undefined) selectMaxPlayers.value = String(data.maxPlayers);
+
+    headerEventName.textContent = data.eventName || 'Torneo';
+    headerMatchName.textContent = data.matchName || 'Ronda 1';
+    headerMatchBadge.style.display = 'inline-flex';
+    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `(Límite: ${data.maxPlayers})` : '';
+
     const host = window.location.hostname;
     const port = window.location.port ? `:${window.location.port}` : '';
     let displayIp = host;
@@ -147,6 +260,13 @@
     const joinUrl = `http://${displayIp}${port}/player?pin=${data.pin}`;
     hostUrlText.textContent = joinUrl;
     lobbyJoinUrl.textContent = joinUrl;
+  });
+
+  socket.on('room:config_updated', (data) => {
+    headerEventName.textContent = data.eventName;
+    headerMatchName.textContent = data.matchName;
+    headerMatchBadge.style.display = 'inline-flex';
+    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `(Límite: ${data.maxPlayers})` : '';
   });
 
   // 2. ACTUALIZACIÓN DE JUGADORES EN EL LOBBY
@@ -191,8 +311,16 @@
   btnStartGame.addEventListener('click', () => {
     if (currentPlayers.length < 1) return;
     btnStartGame.disabled = true;
-    socket.emit('admin:start_game', { pin: currentPin });
-    // NO saltamos a 'game' de inmediato; esperamos la cuenta regresiva sincronizada
+    const eventName = inputEventName.value.trim() || 'Torneo Dino';
+    const matchName = inputMatchName.value.trim() || 'Ronda 1';
+    const maxPlayers = parseInt(selectMaxPlayers.value, 10) || 0;
+
+    socket.emit('admin:start_game', {
+      pin: currentPin,
+      eventName,
+      matchName,
+      maxPlayers
+    });
   });
 
   socket.on('admin:start_error', (data) => {
@@ -206,125 +334,92 @@
   // 4. CUENTA REGRESIVA SINCRONIZADA
   socket.on('game:countdown', (data) => {
     showView('countdown');
-    if (adminCountdownNum) {
-      adminCountdownNum.textContent = data.countdown;
-    }
+    adminCountdownNum.textContent = data.countdown;
+    playBeep(data.countdown);
   });
 
-  // 5. INICIO DE PARTIDA SIMULTÁNEO
+  // 5. INICIO DE LA CARRERA EN VIVO
   socket.on('game:start', () => {
     showView('game');
-    // Limpiar estados de animación de los visualizadores para arrancar limpios
-    playerVisualizers.forEach(v => {
-      v.jumpY = 0;
-      v.jumpVel = 0;
-      v.groundX = 0;
+    playTone(880, 0.4, 'square');
+    playerVisualizers.clear();
+    playersMonitoringGrid.innerHTML = '';
+
+    currentPlayers.forEach((player) => {
+      createPlayerVisualizerCard(player);
     });
   });
 
-  // 6. SINCRONIZACIÓN DE PANTALLA DIVIDIDA / LEADERBOARD EN VIVO
+  function createPlayerVisualizerCard(player) {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.id = `admin-player-card-${player.id}`;
+    card.style.setProperty('--p-color', player.color);
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-player-info">
+          <span class="card-avatar">${player.avatar || '🦖'}</span>
+          <span class="card-player-name">${escapeHtml(player.name)}</span>
+        </div>
+        <div class="card-header-badges">
+          <span class="player-rank-badge">#--</span>
+          <span class="player-action-tag running">🏃 Corriendo</span>
+        </div>
+      </div>
+      <div class="card-canvas-box">
+        <canvas id="card-canvas-${player.id}" class="card-dino-canvas" width="300" height="120"></canvas>
+      </div>
+      <div class="card-bottom">
+        <div class="card-track-bar">
+          <div class="card-track-fill" style="width: 0%;"></div>
+        </div>
+        <div class="card-score-box">
+          00000 <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>
+        </div>
+      </div>
+    `;
+
+    playersMonitoringGrid.appendChild(card);
+
+    const canvas = card.querySelector('.card-dino-canvas');
+    const ctx = canvas.getContext('2d');
+
+    playerVisualizers.set(player.id, {
+      cardEl: card,
+      canvas: canvas,
+      ctx: ctx,
+      color: player.color,
+      legFrame: 0,
+      legTimer: 0,
+      jumpY: 0,
+      jumpVel: 0,
+      groundX: 0
+    });
+  }
+
+  // 6. SINCRONIZACIÓN DE ESTADOS EN TIEMPO REAL
   socket.on('leaderboard:sync', (data) => {
     const leaderboard = data.leaderboard || [];
     statActiveCount.textContent = data.activeCount || 0;
     statCrashedCount.textContent = data.crashedCount || 0;
     statTotalCount.textContent = data.totalPlayers || 0;
 
-    // Ajustar clase de cuadrícula según cantidad de jugadores
-    playersMonitoringGrid.className = 'players-grid';
-    if (leaderboard.length <= 1) {
-      playersMonitoringGrid.classList.add('count-1');
-    } else if (leaderboard.length <= 4) {
-      playersMonitoringGrid.classList.add('count-3');
-    } else if (leaderboard.length <= 12) {
-      playersMonitoringGrid.classList.add('count-medium');
-    } else {
-      playersMonitoringGrid.classList.add('count-large');
-    }
-
-    let maxDistance = 500;
-    leaderboard.forEach(p => { if (p.distance > maxDistance) maxDistance = p.distance; });
-
-    // Actualizar o crear tarjetas para cada jugador
-    const currentIds = new Set(leaderboard.map(p => p.id));
-
-    // Limpiar visualizadores de jugadores que salieron
-    playerVisualizers.forEach((v, id) => {
-      if (!currentIds.has(id)) {
-        if (v.cardEl && v.cardEl.parentNode) v.cardEl.parentNode.removeChild(v.cardEl);
-        playerVisualizers.delete(id);
-      }
+    let maxDistance = 1000;
+    leaderboard.forEach((p) => {
+      if (p.distance > maxDistance) maxDistance = p.distance;
     });
 
     leaderboard.forEach((player) => {
       let vis = playerVisualizers.get(player.id);
-
       if (!vis) {
-        // Crear tarjeta DOM
-        const card = document.createElement('div');
-        card.className = 'player-monitor-card';
-        card.setAttribute('data-player-id', player.id);
-
-        card.innerHTML = `
-          <div class="card-top-row">
-            <span class="player-rank-badge">1º</span>
-            <span class="player-action-tag running">🏃 Corriendo</span>
-          </div>
-          <div class="card-main-info">
-            <div class="card-avatar">${player.avatar || '🦖'}</div>
-            <div class="card-details">
-              <div class="card-player-name">${escapeHtml(player.name)}</div>
-              <div class="card-score-box">00000 <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span></div>
-            </div>
-          </div>
-          <div class="card-dino-viewport">
-            <canvas class="card-dino-canvas" width="600" height="150"></canvas>
-          </div>
-          <div class="card-track-container">
-            <div class="card-track-bar">
-              <div class="card-track-fill" style="width: 0%;"></div>
-            </div>
-          </div>
-        `;
-
-        playersMonitoringGrid.appendChild(card);
-        const canvas = card.querySelector('.card-dino-canvas');
-        const ctx = canvas.getContext('2d');
-
-        vis = {
-          cardEl: card,
-          canvas: canvas,
-          ctx: ctx,
-          player: player,
-          jumpY: 0,
-          jumpVel: 0,
-          legFrame: 0,
-          legTimer: 0,
-          groundX: 0,
-          cloudX: 300
-        };
-
-        playerVisualizers.set(player.id, vis);
+        createPlayerVisualizerCard(player);
+        vis = playerVisualizers.get(player.id);
       }
+      if (!vis) return;
 
-      // Actualizar datos del jugador
-      vis.player = player;
       const card = vis.cardEl;
-      card.style.setProperty('--p-color', player.color);
-
-      // Clases de rango y choque
-      const rankClass = player.rank <= 3 ? `rank-${player.rank}` : '';
-      card.className = `player-monitor-card ${rankClass} ${player.crashed ? 'crashed' : ''}`;
-
-      // Destellos
-      const prevRank = previousRanks.get(player.id);
-      if (prevRank !== undefined) {
-        if (player.rank < prevRank) card.classList.add('flash-up');
-        else if (player.rank > prevRank) card.classList.add('flash-down');
-      }
-      previousRanks.set(player.id, player.rank);
-
-      // Etiquetas y medallas
-      let medalSymbol = `${player.rank}º`;
+      let medalSymbol = `#${player.rank}`;
       if (player.rank === 1) medalSymbol = '🥇 1º';
       else if (player.rank === 2) medalSymbol = '🥈 2º';
       else if (player.rank === 3) medalSymbol = '🥉 3º';
@@ -340,19 +435,13 @@
       actTag.textContent = actionLabel;
       actTag.className = `player-action-tag ${actionClass}`;
 
-      card.querySelector('.card-player-name').textContent = player.name;
       card.querySelector('.card-score-box').innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>`;
 
       const progressPct = Math.min(100, Math.round((player.distance / maxDistance) * 100));
       card.querySelector('.card-track-fill').style.width = progressPct + '%';
-    });
 
-    // Ordenar tarjetas en el DOM según el ranking
-    leaderboard.forEach((player) => {
-      const vis = playerVisualizers.get(player.id);
-      if (vis && vis.cardEl) {
-        playersMonitoringGrid.appendChild(vis.cardEl);
-      }
+      if (player.crashed) card.classList.add('crashed');
+      else card.classList.remove('crashed');
     });
   });
 
@@ -366,47 +455,40 @@
 
     if (!views.game.classList.contains('active')) return;
 
-    playerVisualizers.forEach((vis) => {
+    playerVisualizers.forEach((vis, playerId) => {
       const ctx = vis.ctx;
-      const canvas = vis.canvas;
-      const p = vis.player;
-      const sprite = getColoredSprite(p.color);
+      const p = currentPlayers.find((x) => x.id === playerId);
+      if (!p) return;
 
-      const W = canvas.width;
-      const H = canvas.height;
+      const canvasW = 300;
+      const canvasH = 120;
+      const groundY = 96;
+      const dinoBaseY = 56;
 
-      // Limpiar lienzo blanco
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, canvasW, canvasH);
+      const sprite = getColoredSprite(vis.color || '#2E7D32');
 
-      const horizonY = 127;
-      const dinoBaseY = 93;
-      const speed = p.crashed ? 0 : 5.5;
+      // 1. Suelo animado
+      if (!p.crashed) {
+        vis.groundX = (vis.groundX - 4.5) % 300;
+      }
+      ctx.drawImage(sprite, 2, 54, 300, 16, vis.groundX, groundY, 300, 16);
+      ctx.drawImage(sprite, 2, 54, 300, 16, vis.groundX + 300, groundY, 300, 16);
 
-      // 1. Nubes de fondo
-      vis.cloudX -= (speed * 0.15);
-      if (vis.cloudX < -60) vis.cloudX = W + 40;
-      // Cloud sprite: x: 86, y: 2, w: 46, h: 14
-      ctx.drawImage(sprite, 86, 2, 46, 14, vis.cloudX, 18, 46, 14);
-
-      // 2. Línea de horizonte / suelo desértico
-      vis.groundX = (vis.groundX - speed) % 600;
-      // Horizon sprite: x: 2, y: 54, w: 600, h: 12
-      ctx.drawImage(sprite, 2, 54, 600, 12, vis.groundX, horizonY, 600, 12);
-      ctx.drawImage(sprite, 2, 54, 600, 12, vis.groundX + 600, horizonY, 600, 12);
-
-      // 3. Obstáculos reales sincronizados del jugador (Cactus y Pterodáctilos)
+      // 2. Obstáculos
       if (p.obstacles && p.obstacles.length > 0) {
         p.obstacles.forEach((obs) => {
-          const obsX = Number.isFinite(obs.x) ? obs.x : 0;
-          const obsY = Number.isFinite(obs.y) ? obs.y : horizonY - (obs.height || 35);
-          if (obsX > -60 && obsX < W + 60) {
-            const size = obs.size || 1;
+          const obsX = (obs.x / 600) * canvasW;
+          const obsY = groundY - (obs.height ? (obs.height * 0.7) : 32);
+
+          if (obsX > -60 && obsX < canvasW + 60) {
             if (obs.type === 'CACTUS_SMALL') {
-              const sx = 228 + (17 * size) * (0.5 * (size - 1));
+              const size = obs.size || 1;
+              const sx = 228;
               ctx.drawImage(sprite, sx, 2, 17 * size, 35, obsX, obsY, 17 * size, 35);
             } else if (obs.type === 'CACTUS_LARGE') {
-              const sx = 332 + (25 * size) * (0.5 * (size - 1));
+              const size = obs.size || 1;
+              const sx = 332;
               ctx.drawImage(sprite, sx, 2, 25 * size, 50, obsX, obsY, 25 * size, 50);
             } else if (obs.type === 'PTERODACTYL') {
               ctx.drawImage(sprite, 134, 2, 46, 40, obsX, obsY, 46, 40);
@@ -415,11 +497,11 @@
         });
       }
 
-      // 4. Física del Salto del Dino (sincronizado con player.action)
+      // 3. Física de salto
       if (p.action === 'jumping' && !p.crashed) {
-        if (vis.jumpY === 0) vis.jumpVel = -11; // Impulso inicial
+        if (vis.jumpY === 0) vis.jumpVel = -11;
         vis.jumpY += vis.jumpVel;
-        vis.jumpVel += 0.55; // Gravedad
+        vis.jumpVel += 0.55;
         if (vis.jumpY >= 0) {
           vis.jumpY = 0;
           vis.jumpVel = 0;
@@ -431,38 +513,27 @@
         }
       }
 
-      // 5. Animación de patas al correr
+      // 4. Animación de patas
       vis.legTimer += dt;
       if (vis.legTimer > 90) {
         vis.legTimer = 0;
         vis.legFrame = (vis.legFrame === 0) ? 1 : 0;
       }
 
-      // 6. Dibujar el Dinosaurio según su acción real
+      // 5. Dibujar Dino
       const dinoX = 50;
       const dinoGroundY = dinoBaseY + vis.jumpY;
 
       if (p.crashed) {
-        // Dibujar el cactus de la colisión justo donde chocó el dino
         ctx.drawImage(sprite, 332, 2, 25, 50, dinoX + 28, 90, 25, 50);
-
-        // Dino chocado (x: 1024, y: 0, w: 44, h: 47)
         ctx.drawImage(sprite, 1024, 0, 44, 47, dinoX, dinoBaseY, 44, 47);
-
-        // Estrellita / efecto de choque
-        ctx.fillStyle = '#ef4444';
-        ctx.font = 'bold 16px sans-serif';
-        ctx.fillText('💥', dinoX + 34, dinoBaseY - 8);
-      } else if (p.action === 'ducking') {
-        // Dino agachado (ducking 1: 1112, ducking 2: 1171, w: 59, h: 47)
-        const duckSx = vis.legFrame === 0 ? 1112 : 1171;
-        ctx.drawImage(sprite, duckSx, 0, 59, 47, dinoX, dinoBaseY, 59, 47);
-      } else if (p.action === 'jumping' || vis.jumpY < 0) {
-        // Dino saltando en el aire (x: 848, y: 0, w: 44, h: 47)
+      } else if (p.action === 'jumping') {
         ctx.drawImage(sprite, 848, 0, 44, 47, dinoX, dinoGroundY, 44, 47);
+      } else if (p.action === 'ducking') {
+        const duckSx = (vis.legFrame === 0) ? 1112 : 1171;
+        ctx.drawImage(sprite, duckSx, 17, 59, 30, dinoX, dinoBaseY + 17, 59, 30);
       } else {
-        // Dino corriendo (running 1: 936, running 2: 980, w: 44, h: 47)
-        const runSx = vis.legFrame === 0 ? 936 : 980;
+        const runSx = (vis.legFrame === 0) ? 936 : 980;
         ctx.drawImage(sprite, runSx, 0, 44, 47, dinoX, dinoGroundY, 44, 47);
       }
     });
@@ -480,9 +551,16 @@
   // 9. RESULTADOS / PODIO DE GANADORES
   socket.on('game:ended', (data) => {
     showView('podium');
+    lastGameResult = data;
+    sessionHistory.unshift(data);
+
+    playFanfare();
 
     const podium = data.podium || [];
     const leaderboard = data.leaderboard || [];
+
+    podiumMatchTitle.textContent = `${data.eventName || 'Torneo'} • ${data.matchName || 'Carrera'}`;
+    podiumMatchSubtitle.textContent = `PIN: ${data.pin || currentPin} • Fecha: ${new Date(data.date || Date.now()).toLocaleString()}`;
 
     for (let place = 1; place <= 3; place++) {
       const p = podium[place - 1];
@@ -506,6 +584,7 @@
     leaderboardTableBody.innerHTML = '';
     leaderboard.forEach((player) => {
       const row = document.createElement('tr');
+      const survivalSec = player.survival_ms ? (player.survival_ms / 1000).toFixed(1) + 's' : '-';
       row.innerHTML = `
         <td><strong>#${player.rank}</strong></td>
         <td>
@@ -516,6 +595,7 @@
         </td>
         <td><strong style="color: #4ade80; font-family: monospace;">${player.score}</strong></td>
         <td>${Math.round(Number(player.distance) || 0)}</td>
+        <td>${survivalSec}</td>
         <td><span class="status-chip ${player.crashed ? 'crashed' : 'alive'}">${player.crashed ? '💥 Chocado' : '🏃 Sobreviviente'}</span></td>
       `;
       leaderboardTableBody.appendChild(row);
@@ -524,7 +604,117 @@
     launchConfetti();
   });
 
-  // 10. ACCIONES DEL PODIO
+  // 10. EXPORTACIÓN DE RESULTADOS
+  function exportCSV(resultData) {
+    const data = resultData || lastGameResult;
+    if (!data || !data.leaderboard || data.leaderboard.length === 0) {
+      alert('No hay resultados disponibles para exportar.');
+      return;
+    }
+
+    let csv = '\uFEFF';
+    csv += 'Posicion,Jugador,Puntaje,Distancia,Supervivencia_Segundos,Estado,Evento,Partida,PIN,Fecha\n';
+
+    data.leaderboard.forEach((p) => {
+      const survivalSec = p.survival_ms ? (p.survival_ms / 1000).toFixed(1) : '0';
+      const status = p.crashed ? 'Chocado' : 'Sobreviviente';
+      const safeName = `"${(p.name || '').replace(/"/g, '""')}"`;
+      const safeEvent = `"${(data.eventName || 'Torneo').replace(/"/g, '""')}"`;
+      const safeMatch = `"${(data.matchName || 'Carrera').replace(/"/g, '""')}"`;
+      csv += `${p.rank},${safeName},${p.score},${Math.round(p.distance || 0)},${survivalSec},${status},${safeEvent},${safeMatch},${data.pin || currentPin},${data.date || new Date().toISOString()}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const filename = `resultados_${(data.matchName || 'carrera').replace(/[^a-zA-Z0-9_-]/g, '_')}_PIN${data.pin || currentPin}.csv`;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportJSON(resultData) {
+    const data = resultData || lastGameResult;
+    if (!data || !data.leaderboard || data.leaderboard.length === 0) {
+      alert('No hay resultados disponibles para exportar.');
+      return;
+    }
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const filename = `resultados_${(data.matchName || 'carrera').replace(/[^a-zA-Z0-9_-]/g, '_')}_PIN${data.pin || currentPin}.json`;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  btnExportCsv.addEventListener('click', () => exportCSV());
+  btnExportJson.addEventListener('click', () => exportJSON());
+  btnPrintResults.addEventListener('click', () => window.print());
+
+  // 11. MODAL DE HISTORIAL DE PARTIDAS
+  function renderHistoryList() {
+    if (sessionHistory.length === 0) {
+      historyEmpty.style.display = 'block';
+      historyList.innerHTML = '';
+      return;
+    }
+
+    historyEmpty.style.display = 'none';
+    historyList.innerHTML = '';
+
+    sessionHistory.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      const timeStr = new Date(item.date).toLocaleTimeString();
+      div.innerHTML = `
+        <div class="history-item-info">
+          <strong>${escapeHtml(item.matchName || 'Carrera')} (${escapeHtml(item.eventName || 'Torneo')})</strong>
+          <div class="history-item-meta">
+            PIN: ${item.pin || '--'} • Hora: ${timeStr} • Jugadores: ${item.totalPlayers || 0}
+          </div>
+          <div class="history-item-winner">
+            👑 Ganador: ${escapeHtml(item.winner)} (${item.winnerScore} pts)
+          </div>
+        </div>
+        <button class="btn-export btn-hist-dl" data-idx="${idx}">📥 CSV</button>
+      `;
+
+      div.querySelector('.btn-hist-dl').addEventListener('click', () => {
+        exportCSV(sessionHistory[idx]);
+      });
+
+      historyList.appendChild(div);
+    });
+  }
+
+  btnOpenHistory.addEventListener('click', () => {
+    renderHistoryList();
+    historyModal.style.display = 'flex';
+  });
+
+  btnCloseHistory.addEventListener('click', () => {
+    historyModal.style.display = 'none';
+  });
+
+  historyModal.addEventListener('click', (e) => {
+    if (e.target === historyModal) {
+      historyModal.style.display = 'none';
+    }
+  });
+
+  btnOpenSpectator.addEventListener('click', () => {
+    if (currentPin) {
+      window.open(`/spectator?pin=${currentPin}`, '_blank');
+    } else {
+      window.open('/spectator', '_blank');
+    }
+  });
+
+  // 12. ACCIONES DEL PODIO
   btnReplaySameRoom.addEventListener('click', () => {
     socket.emit('admin:reset_to_lobby', { pin: currentPin });
     showView('lobby');
@@ -535,7 +725,7 @@
     window.location.reload();
   });
 
-  // 11. ANIMACIÓN DE CONFETI
+  // 13. ANIMACIÓN DE CONFETI
   function launchConfetti() {
     if (confettiActive) return;
     confettiActive = true;

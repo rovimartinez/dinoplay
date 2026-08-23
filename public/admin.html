@@ -17,17 +17,45 @@
         <span class="pin-label">PIN DE SALA:</span>
         <span id="header-pin" class="pin-code">----</span>
       </div>
+      <div id="header-match-badge" class="match-info-badge" style="display: none;">
+        <span id="header-event-name">Torneo</span> • <strong id="header-match-name">Ronda</strong>
+      </div>
     </div>
     <div class="header-right">
       <div id="connection-url-badge" class="url-badge">
         🌐 Únete en: <strong id="host-url-text">http://localhost:3000/player</strong>
       </div>
+      <button id="btn-open-spectator" class="btn-nav" title="Abrir pantalla para espectadores">👁️ Espectador</button>
+      <button id="btn-open-history" class="btn-nav" title="Ver historial de partidas">📜 Historial</button>
       <button id="btn-sound-toggle" class="btn-icon" title="Sonido">🔊</button>
     </div>
   </header>
 
   <!-- 1. VISTA: LOBBY DE ESPERA (PROYECTOR) -->
   <section id="admin-view-lobby" class="admin-view active">
+    <!-- BARRA DE CONFIGURACIÓN DE PARTIDA Y EVENTO -->
+    <div class="match-setup-panel glass-panel">
+      <div class="setup-group">
+        <label for="input-event-name">🏆 Evento:</label>
+        <input type="text" id="input-event-name" class="setup-input" placeholder="Ej: Torneo Matemático 2026" maxlength="40">
+      </div>
+      <div class="setup-group">
+        <label for="input-match-name">🏁 Nombre de Partida:</label>
+        <input type="text" id="input-match-name" class="setup-input" placeholder="Ej: Cuarto Grado / Semifinal" maxlength="40">
+      </div>
+      <div class="setup-group">
+        <label for="select-max-players">👥 Límite Jugadores:</label>
+        <select id="select-max-players" class="setup-select">
+          <option value="0">Sin límite</option>
+          <option value="10">10 jugadores</option>
+          <option value="20">20 jugadores</option>
+          <option value="30" selected>30 jugadores</option>
+          <option value="50">50 jugadores</option>
+          <option value="100">100 jugadores</option>
+        </select>
+      </div>
+    </div>
+
     <div class="lobby-hero">
       <div class="pin-card glass-panel">
         <div class="pin-card-top">
@@ -45,6 +73,7 @@
         <div class="players-counter-box">
           <span class="counter-num" id="lobby-count">0</span>
           <span class="counter-label">JUGADORES CONECTADOS</span>
+          <span id="max-players-label" class="max-players-indicator"></span>
         </div>
 
         <button id="btn-start-game" class="btn-start" disabled>
@@ -108,9 +137,14 @@
     </div>
   </section>
 
-  <!-- 3. VISTA: PODIO Y RESULTADOS FINALES -->
+  <!-- 4. VISTA: PODIO Y RESULTADOS FINALES -->
   <section id="admin-view-podium" class="admin-view">
     <div class="podium-container glass-panel">
+      <div class="podium-header-meta">
+        <div id="podium-match-title" class="podium-match-title">Resultados de la Carrera</div>
+        <div id="podium-match-subtitle" class="podium-match-subtitle"></div>
+      </div>
+
       <h1 class="podium-heading">🏆 GANADORES DE LA CARRERA 🏆</h1>
       <p class="podium-subheading">¡Felicitaciones a los mejores dinosaurios!</p>
 
@@ -151,6 +185,19 @@
         </div>
       </div>
 
+      <!-- BARRA DE EXPORTACIÓN DE RESULTADOS -->
+      <div class="export-toolbar">
+        <button id="btn-export-csv" class="btn-export">
+          📥 Exportar CSV
+        </button>
+        <button id="btn-export-json" class="btn-export">
+          📋 Exportar JSON
+        </button>
+        <button id="btn-print-results" class="btn-export">
+          🖨️ Imprimir Reporte
+        </button>
+      </div>
+
       <!-- TABLA COMPLETA DE RESULTADOS -->
       <div class="full-leaderboard-box">
         <h3>Tabla General de Posiciones</h3>
@@ -161,6 +208,7 @@
               <th>Jugador</th>
               <th>Puntaje</th>
               <th>Distancia</th>
+              <th>Supervivencia</th>
               <th>Estado Final</th>
             </tr>
           </thead>
@@ -181,6 +229,20 @@
       </div>
     </div>
   </section>
+
+  <!-- MODAL: HISTORIAL DE PARTIDAS -->
+  <div id="history-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <h2>📜 Historial de Partidas</h2>
+        <button id="btn-close-history" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="history-empty" class="history-empty-msg">No hay partidas registradas en esta sesión todavía.</div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- CANVAS PARA CONFETI -->
   <canvas id="confetti-canvas" class="confetti-canvas"></canvas>

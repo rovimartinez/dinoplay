@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "npm run lint && npm run test:fairness",
+    "test": "npm run lint && npm run test:fairness && npm run test:admin",
     "test:fairness": "node test_phase2_fairness.js",
-    "lint": "node --check server.js && node --check src/worker.js && node --check \"functions/api/[[path]].js\" && node --check public/admin.js && node --check public/player.js && node --check public/dino-engine.js",
+    "test:admin": "node test_phase5_admin.js",
+    "lint": "node --check server.js && node --check src/worker.js && node --check \"functions/api/[[path]].js\" && node --check public/admin.js && node --check public/player.js && node --check public/spectator.js && node --check public/dino-engine.js",
     "format": "npm run lint",
     "test:obstacles": "node test_obstacles_sync.js",
     "cf:dev": "wrangler pages dev public --port 8787",
