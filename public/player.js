@@ -1,7 +1,15 @@
 (function () {
   'use strict';
 
-  const socket = io();
+  const urlParams = new URLSearchParams(window.location.search);
+  const customBackendUrl = urlParams.get('server') || localStorage.getItem('dino_backend_url');
+  if (urlParams.get('server')) {
+    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  }
+
+  const socket = (typeof io !== 'undefined')
+    ? (customBackendUrl ? io(customBackendUrl) : io())
+    : null;
 
   const STORAGE_KEY_NAME = 'dino_player_name';
   const STORAGE_KEY_COLOR = 'dino_player_color';
@@ -93,7 +101,6 @@
   }
 
   // Prellenar PIN si viene en la URL (?pin=1234) o en localStorage
-  const urlParams = new URLSearchParams(window.location.search);
   const pinFromUrl = urlParams.get('pin');
   if (pinFromUrl) {
     inputPin.value = pinFromUrl;

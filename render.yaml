@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: dinoplay
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_SECRET
+        value: dino2026
+      - key: NODE_ENV
+        value: production

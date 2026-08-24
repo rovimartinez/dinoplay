@@ -1,7 +1,15 @@
 (function () {
   'use strict';
 
-  const socket = io();
+  const urlParams = new URLSearchParams(window.location.search);
+  const customBackendUrl = urlParams.get('server') || localStorage.getItem('dino_backend_url');
+  if (urlParams.get('server')) {
+    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  }
+
+  const socket = (typeof io !== 'undefined')
+    ? (customBackendUrl ? io(customBackendUrl) : io())
+    : null;
 
   // Elementos DOM
   const views = {
@@ -49,7 +57,6 @@
   }
 
   // Leer PIN desde URL params (ej: /spectator?pin=1234)
-  const urlParams = new URLSearchParams(window.location.search);
   const pinFromUrl = urlParams.get('pin');
   if (pinFromUrl) {
     joinRoomAsSpectator(pinFromUrl);
