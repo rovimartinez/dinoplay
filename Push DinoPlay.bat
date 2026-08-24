@@ -1,66 +1,80 @@
 @echo off
-:: Cambia la codificación a UTF-8 para mostrar tildes y signos correctamente
-chcp 65001 >nul
 title Actualizador DinoPlay (GitHub)
 color 0b
-
-:: Obtiene la ruta de este proyecto automáticamente
-set "REPO_PATH=%~dp0"
+cd /d "%~dp0"
 
 echo =====================================================
-echo    🦖 DINOPLAY - ACTUALIZADOR A GITHUB
+echo    DINOPLAY - ACTUALIZADOR A GITHUB
 echo =====================================================
 echo.
-echo Accediendo al repositorio en: %REPO_PATH%
-cd /d "%REPO_PATH%"
+
+where git >nul 2>nul
+if %errorlevel% neq 0 (
+    color 0c
+    echo [ERROR] Git no esta instalado o no se encuentra en el PATH.
+    echo Descarga e instala Git desde: https://git-scm.com/
+    echo.
+    pause
+    exit /b 1
+)
 
 if not exist ".git" (
     color 0c
     echo =====================================================
-    echo ERROR: No se encontró el repositorio .git en:
-    echo %REPO_PATH%
+    echo [ERROR] No se encontro el repositorio .git en:
+    echo %~dp0
     echo =====================================================
     pause
-    exit /b
+    exit /b 1
 )
 
+echo Accediendo al repositorio en: %~dp0
 echo.
-echo === 📁 Archivos modificados detectados ===
+echo === [1/4] Archivos modificados detectados ===
 git status -s
-
 echo.
-echo === 📦 Preparando archivos (git add .) ===
+
+echo === [2/4] Preparando archivos (git add .) ===
 git add .
+echo [OK] Archivos preparados correctamente.
+echo.
+
+echo === [3/4] Mensaje del cambio ===
+set "msg="
+set /p "msg=Que cambios hiciste? (Presiona ENTER para mensaje automatico): "
+
+if not defined msg set "msg=Actualizacion DinoPlay - %date% %time%"
+if "%msg%"=="" set "msg=Actualizacion DinoPlay - %date% %time%"
 
 echo.
-set /p msg="¿Qué cambios hiciste hoy? (ENTER para mensaje automático): "
+echo === [4/4] Guardando y subiendo a GitHub ===
 
-if "%msg%"=="" (
-    set "msg=Actualización DinoPlay - %date% %time%"
+git diff --cached --quiet
+if %errorlevel% neq 0 (
+    git commit -m "%msg%"
+) else (
+    echo [INFO] No hay cambios nuevos para registrar. Todo esta al dia.
 )
 
 echo.
-echo === 💾 Guardando cambios locales (commit) ===
-git commit -m "%msg%"
-
-echo.
-echo === 🚀 Subiendo a GitHub (git push origin main) ===
+echo Subiendo cambios a GitHub (git push origin main)...
 git push origin main
 
-if %ERRORLEVEL% equ 0 (
+if %errorlevel% equ 0 (
     color 0a
     echo.
     echo =====================================================
-    echo   ✅ ¡Actualización subida a GitHub con éxito!
-    echo   Repositorio: rovimartinez/dinoplay
+    echo   [EXITO] Actualizacion subida a GitHub correctamente!
+    echo   Repositorio: rovimartinez/dinoplay - Rama: main
     echo =====================================================
 ) else (
     color 0c
     echo.
     echo =====================================================
-    echo   ❌ Ocurrió un error al subir los cambios a GitHub.
-    echo   Verifica tu conexión o permisos de acceso.
+    echo   [ERROR] Ocurrio un error al subir los cambios a GitHub.
+    echo   Verifica tu conexion a internet o permisos de acceso.
     echo =====================================================
 )
 
+echo.
 pause
