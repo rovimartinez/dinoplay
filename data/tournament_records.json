@@ -1,0 +1,1594 @@
+{
+  "events": [],
+  "matches": [
+    {
+      "id": "mt7cd1ig",
+      "pin": "1552",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt7ccz6o-82jpdd",
+      "max_players": 30,
+      "started_at": "2026-08-24T14:38:44.968Z",
+      "created_at": "2026-08-24T14:38:44.968Z",
+      "ended_at": "2026-08-24T14:38:57.695Z",
+      "winner": "RONNY",
+      "winnerScore": 126
+    },
+    {
+      "id": "mt7ca6y5",
+      "pin": "7272",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-08-24T14:36:32.045Z"
+    },
+    {
+      "id": "mt6nvn0h",
+      "pin": "7570",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6nvkoj-1dznra",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:13:22.241Z",
+      "created_at": "2026-08-24T03:13:22.241Z"
+    },
+    {
+      "id": "mt6nthxa",
+      "pin": "3382",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6ntfln-9j5np9",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:11:42.333Z",
+      "created_at": "2026-08-24T03:11:42.334Z"
+    },
+    {
+      "id": "mt6nrhp6",
+      "pin": "3146",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6nrfd9-2i6n1e",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:10:08.729Z",
+      "created_at": "2026-08-24T03:10:08.730Z"
+    },
+    {
+      "id": "mt6no4rt",
+      "pin": "4978",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6no2fj-7vax0f",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:07:32.009Z",
+      "created_at": "2026-08-24T03:07:32.009Z"
+    },
+    {
+      "id": "mt6nn4ku",
+      "pin": "2001",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt6nn298-7m5vqw",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:06:45.101Z",
+      "created_at": "2026-08-24T03:06:45.102Z",
+      "ended_at": "2026-08-24T03:06:49.746Z",
+      "winner": "DinoMorado",
+      "winnerScore": 43
+    },
+    {
+      "id": "mt6nmcms",
+      "pin": "1045",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6nmab4-3ydglu",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:06:08.884Z",
+      "created_at": "2026-08-24T03:06:08.884Z"
+    },
+    {
+      "id": "mt6nk12d",
+      "pin": "8886",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt6njyqc-1ckg68",
+      "max_players": 30,
+      "started_at": "2026-08-24T03:04:20.580Z",
+      "created_at": "2026-08-24T03:04:20.581Z",
+      "ended_at": "2026-08-24T03:04:25.150Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 42
+    },
+    {
+      "id": "mt6ne3k5",
+      "pin": "1883",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "playing",
+      "race_seed": "mt6ne188-ctgk0l",
+      "max_players": 30,
+      "started_at": "2026-08-24T02:59:43.877Z",
+      "created_at": "2026-08-24T02:59:43.877Z"
+    },
+    {
+      "id": "mt6ncpyg",
+      "pin": "6335",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt6ncnm5-acf0v7",
+      "max_players": 30,
+      "started_at": "2026-08-24T02:58:39.592Z",
+      "created_at": "2026-08-24T02:58:39.592Z",
+      "ended_at": "2026-08-24T02:58:44.169Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 42
+    },
+    {
+      "id": "mt6n9xxt",
+      "pin": "5105",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt6n9vlt-1u3eid",
+      "max_players": 30,
+      "started_at": "2026-08-24T02:56:29.969Z",
+      "created_at": "2026-08-24T02:56:29.969Z",
+      "ended_at": "2026-08-24T02:56:34.686Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 44
+    },
+    {
+      "id": "mt6mtsvq",
+      "pin": "1274",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": "mt6mtqjr-wfmea",
+      "max_players": 30,
+      "started_at": "2026-08-24T02:43:56.918Z",
+      "created_at": "2026-08-24T02:43:56.918Z",
+      "ended_at": "2026-08-24T02:44:05.240Z",
+      "winner": "DinoAzul",
+      "winnerScore": 81
+    }
+  ],
+  "players": [
+    {
+      "id": "LeOruHthn6Iq2YvAAAAF",
+      "name": "Martin",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "1552",
+      "joined_at": "2026-08-24T14:38:00.351Z"
+    },
+    {
+      "id": "mUQVXNziSuSigSnsAAAD",
+      "name": "RONNY",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "1552",
+      "joined_at": "2026-08-24T14:37:51.678Z"
+    },
+    {
+      "id": "n0Dc85sOQx3hfW_HAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7570",
+      "joined_at": "2026-08-24T03:13:18.207Z"
+    },
+    {
+      "id": "_1zU8k2Aoo5F7KIXAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "7570",
+      "joined_at": "2026-08-24T03:13:16.494Z"
+    },
+    {
+      "id": "8rwoI6CtddYoZu8nAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "3382",
+      "joined_at": "2026-08-24T03:11:38.301Z"
+    },
+    {
+      "id": "rynsfPBvIbVanHKjAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "3382",
+      "joined_at": "2026-08-24T03:11:36.509Z"
+    },
+    {
+      "id": "1f6xJp0mVTPBGTWYAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "3146",
+      "joined_at": "2026-08-24T03:10:04.692Z"
+    },
+    {
+      "id": "yNhEo9KsjV8mGVz6AAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "3146",
+      "joined_at": "2026-08-24T03:10:02.935Z"
+    },
+    {
+      "id": "ZF-Xe6JlDxGTWbb_AAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "4978",
+      "joined_at": "2026-08-24T03:07:27.946Z"
+    },
+    {
+      "id": "jVz5QZdgUcmk5GNeAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "4978",
+      "joined_at": "2026-08-24T03:07:26.058Z"
+    },
+    {
+      "id": "0g0eziiM1c5oha2OAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "2001",
+      "joined_at": "2026-08-24T03:06:40.872Z"
+    },
+    {
+      "id": "mKa0f7okqmeSHgflAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "2001",
+      "joined_at": "2026-08-24T03:06:38.906Z"
+    },
+    {
+      "id": "34ivE0IX_Es-qdw7AAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "1045",
+      "joined_at": "2026-08-24T03:06:04.651Z"
+    },
+    {
+      "id": "TwuTETxsK0PNCt3_AAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "1045",
+      "joined_at": "2026-08-24T03:06:02.813Z"
+    },
+    {
+      "id": "EjZwdRzcv1mQ2z1PAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8886",
+      "joined_at": "2026-08-24T03:04:16.339Z"
+    },
+    {
+      "id": "fdhLfjanaHX6wpYbAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "8886",
+      "joined_at": "2026-08-24T03:04:14.582Z"
+    },
+    {
+      "id": "lwCt1nFumI0pv-eSAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "1883",
+      "joined_at": "2026-08-24T02:59:39.640Z"
+    },
+    {
+      "id": "iUamU7yIcv0X1LfDAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "1883",
+      "joined_at": "2026-08-24T02:59:37.908Z"
+    },
+    {
+      "id": "W95qUQr1vIPREM6_AAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "6335",
+      "joined_at": "2026-08-24T02:58:35.330Z"
+    },
+    {
+      "id": "w9KJEU96ygWJdu6fAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "6335",
+      "joined_at": "2026-08-24T02:58:33.510Z"
+    },
+    {
+      "id": "EAlsyIF5NFyLxkNzAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "5105",
+      "joined_at": "2026-08-24T02:56:25.728Z"
+    },
+    {
+      "id": "8nx02qM5SEMdw_EvAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "5105",
+      "joined_at": "2026-08-24T02:56:23.940Z"
+    },
+    {
+      "id": "oZpaoeBYe23RxoWiAAAF",
+      "name": "DinoVerde",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "1274",
+      "joined_at": "2026-08-24T02:43:52.684Z"
+    },
+    {
+      "id": "UvYX2x96gKFq-AhPAAAD",
+      "name": "DinoAzul",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "1274",
+      "joined_at": "2026-08-24T02:43:50.970Z"
+    }
+  ],
+  "live_scores": {
+    "1045": {
+      "TwuTETxsK0PNCt3_AAAD": {
+        "playerId": "TwuTETxsK0PNCt3_AAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 37,
+        "distance": 1453,
+        "rank": 1,
+        "status": "jumping",
+        "crashed": false,
+        "survival_ms": 4028,
+        "updated_at": "2026-08-24T03:06:12.912Z"
+      },
+      "34ivE0IX_Es-qdw7AAAF": {
+        "playerId": "34ivE0IX_Es-qdw7AAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 37,
+        "distance": 1442,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 3998,
+        "updated_at": "2026-08-24T03:06:12.882Z"
+      }
+    },
+    "1274": {
+      "UvYX2x96gKFq-AhPAAAD": {
+        "playerId": "UvYX2x96gKFq-AhPAAAD",
+        "playerName": "DinoAzul",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 81,
+        "distance": 3213,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 8320,
+        "updated_at": "2026-08-24T02:44:05.238Z",
+        "crashed_at": "2026-08-24T02:44:05.238Z"
+      },
+      "oZpaoeBYe23RxoWiAAAF": {
+        "playerId": "oZpaoeBYe23RxoWiAAAF",
+        "playerName": "DinoVerde",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1665,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4538,
+        "updated_at": "2026-08-24T02:44:01.457Z",
+        "crashed_at": "2026-08-24T02:44:01.457Z"
+      }
+    },
+    "1552": {
+      "mUQVXNziSuSigSnsAAAD": {
+        "playerId": "mUQVXNziSuSigSnsAAAD",
+        "playerName": "RONNY",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 126,
+        "distance": 5025,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 12722,
+        "updated_at": "2026-08-24T14:38:57.690Z",
+        "crashed_at": "2026-08-24T14:38:57.690Z"
+      },
+      "LeOruHthn6Iq2YvAAAAF": {
+        "playerId": "LeOruHthn6Iq2YvAAAAF",
+        "playerName": "Martin",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 43,
+        "distance": 1720,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4823,
+        "updated_at": "2026-08-24T14:38:49.792Z",
+        "crashed_at": "2026-08-24T14:38:49.792Z"
+      }
+    },
+    "1883": {
+      "iUamU7yIcv0X1LfDAAAD": {
+        "playerId": "iUamU7yIcv0X1LfDAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 34,
+        "distance": 1340,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 3684,
+        "updated_at": "2026-08-24T02:59:47.561Z"
+      },
+      "lwCt1nFumI0pv-eSAAAF": {
+        "playerId": "lwCt1nFumI0pv-eSAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 34,
+        "distance": 1324,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 3652,
+        "updated_at": "2026-08-24T02:59:47.529Z"
+      }
+    },
+    "2001": {
+      "mKa0f7okqmeSHgflAAAD": {
+        "playerId": "mKa0f7okqmeSHgflAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1674,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4575,
+        "updated_at": "2026-08-24T03:06:49.676Z",
+        "crashed_at": "2026-08-24T03:06:49.676Z"
+      },
+      "0g0eziiM1c5oha2OAAAF": {
+        "playerId": "0g0eziiM1c5oha2OAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 43,
+        "distance": 1686,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4642,
+        "updated_at": "2026-08-24T03:06:49.743Z",
+        "crashed_at": "2026-08-24T03:06:49.743Z"
+      }
+    },
+    "3146": {
+      "yNhEo9KsjV8mGVz6AAAD": {
+        "playerId": "yNhEo9KsjV8mGVz6AAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 25,
+        "distance": 981,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 2753,
+        "updated_at": "2026-08-24T03:10:11.482Z"
+      },
+      "1f6xJp0mVTPBGTWYAAAF": {
+        "playerId": "1f6xJp0mVTPBGTWYAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 13,
+        "distance": 508,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 1488,
+        "updated_at": "2026-08-24T03:10:10.217Z"
+      }
+    },
+    "3382": {
+      "rynsfPBvIbVanHKjAAAD": {
+        "playerId": "rynsfPBvIbVanHKjAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 27,
+        "distance": 1041,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 2906,
+        "updated_at": "2026-08-24T03:11:45.239Z"
+      },
+      "8rwoI6CtddYoZu8nAAAF": {
+        "playerId": "8rwoI6CtddYoZu8nAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 14,
+        "distance": 522,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 1529,
+        "updated_at": "2026-08-24T03:11:43.862Z",
+        "crashed_at": "2026-08-24T03:11:43.862Z"
+      }
+    },
+    "4978": {
+      "jVz5QZdgUcmk5GNeAAAD": {
+        "playerId": "jVz5QZdgUcmk5GNeAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 24,
+        "distance": 952,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 2715,
+        "updated_at": "2026-08-24T03:07:34.724Z"
+      },
+      "ZF-Xe6JlDxGTWbb_AAAF": {
+        "playerId": "ZF-Xe6JlDxGTWbb_AAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 24,
+        "distance": 933,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 2701,
+        "updated_at": "2026-08-24T03:07:34.710Z"
+      }
+    },
+    "5105": {
+      "8nx02qM5SEMdw_EvAAAD": {
+        "playerId": "8nx02qM5SEMdw_EvAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1730,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4715,
+        "updated_at": "2026-08-24T02:56:34.684Z",
+        "crashed_at": "2026-08-24T02:56:34.684Z"
+      },
+      "EAlsyIF5NFyLxkNzAAAF": {
+        "playerId": "EAlsyIF5NFyLxkNzAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 43,
+        "distance": 1684,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4601,
+        "updated_at": "2026-08-24T02:56:34.570Z",
+        "crashed_at": "2026-08-24T02:56:34.570Z"
+      }
+    },
+    "6335": {
+      "w9KJEU96ygWJdu6fAAAD": {
+        "playerId": "w9KJEU96ygWJdu6fAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1670,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4559,
+        "updated_at": "2026-08-24T02:58:44.151Z",
+        "crashed_at": "2026-08-24T02:58:44.151Z"
+      },
+      "W95qUQr1vIPREM6_AAAF": {
+        "playerId": "W95qUQr1vIPREM6_AAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1666,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4575,
+        "updated_at": "2026-08-24T02:58:44.167Z",
+        "crashed_at": "2026-08-24T02:58:44.167Z"
+      }
+    },
+    "7570": {
+      "_1zU8k2Aoo5F7KIXAAAD": {
+        "playerId": "_1zU8k2Aoo5F7KIXAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 26,
+        "distance": 1023,
+        "rank": 1,
+        "status": "running",
+        "crashed": false,
+        "survival_ms": 2861,
+        "updated_at": "2026-08-24T03:13:25.102Z"
+      },
+      "n0Dc85sOQx3hfW_HAAAF": {
+        "playerId": "n0Dc85sOQx3hfW_HAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 13,
+        "distance": 517,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 1512,
+        "updated_at": "2026-08-24T03:13:23.753Z",
+        "crashed_at": "2026-08-24T03:13:23.753Z"
+      }
+    },
+    "8886": {
+      "fdhLfjanaHX6wpYbAAAD": {
+        "playerId": "fdhLfjanaHX6wpYbAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1679,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4552,
+        "updated_at": "2026-08-24T03:04:25.133Z",
+        "crashed_at": "2026-08-24T03:04:25.133Z"
+      },
+      "EjZwdRzcv1mQ2z1PAAAF": {
+        "playerId": "EjZwdRzcv1mQ2z1PAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 42,
+        "distance": 1670,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4566,
+        "updated_at": "2026-08-24T03:04:25.146Z",
+        "crashed_at": "2026-08-24T03:04:25.146Z"
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "mt7cdbbz",
+      "pin": "1552",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T14:38:57.695Z",
+      "winner": "RONNY",
+      "winnerScore": 126,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "mUQVXNziSuSigSnsAAAD",
+          "name": "RONNY",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 126,
+          "distance": 5025,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787582337690,
+          "survival_ms": 12722,
+          "obstacles": [],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "LeOruHthn6Iq2YvAAAAF",
+          "name": "Martin",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1720,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787582329791,
+          "survival_ms": 4823,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 90,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 378,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 615,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "mUQVXNziSuSigSnsAAAD",
+          "name": "RONNY",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 126,
+          "distance": 5025,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787582337690,
+          "survival_ms": 12722,
+          "obstacles": [],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "LeOruHthn6Iq2YvAAAAF",
+          "name": "Martin",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1720,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787582329791,
+          "survival_ms": 4823,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 90,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 378,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 615,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mt6nn85u",
+      "pin": "2001",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T03:06:49.746Z",
+      "winner": "DinoMorado",
+      "winnerScore": 43,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "0g0eziiM1c5oha2OAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1686,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540809743,
+          "survival_ms": 4642,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 400,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "mKa0f7okqmeSHgflAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1674,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540809676,
+          "survival_ms": 4575,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 87,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 408,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "0g0eziiM1c5oha2OAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1686,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540809743,
+          "survival_ms": 4642,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 400,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "mKa0f7okqmeSHgflAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1674,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540809676,
+          "survival_ms": 4575,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 87,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 408,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mt6nk4la",
+      "pin": "8886",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T03:04:25.150Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 42,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "fdhLfjanaHX6wpYbAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1679,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540665132,
+          "survival_ms": 4552,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 74,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 559,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 92,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "EjZwdRzcv1mQ2z1PAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1670,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540665146,
+          "survival_ms": 4566,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 81,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 565,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "fdhLfjanaHX6wpYbAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1679,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540665132,
+          "survival_ms": 4552,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 74,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 559,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 92,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "EjZwdRzcv1mQ2z1PAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1670,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540665146,
+          "survival_ms": 4566,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 81,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 565,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mt6ncthl",
+      "pin": "6335",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T02:58:44.169Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 42,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "w9KJEU96ygWJdu6fAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1670,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540324151,
+          "survival_ms": 4559,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 90,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 428,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "W95qUQr1vIPREM6_AAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1666,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540324167,
+          "survival_ms": 4575,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 89,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 470,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "w9KJEU96ygWJdu6fAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1670,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540324151,
+          "survival_ms": 4559,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 90,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 428,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "W95qUQr1vIPREM6_AAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1666,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540324167,
+          "survival_ms": 4575,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 89,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 470,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mt6na1ku",
+      "pin": "5105",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T02:56:34.686Z",
+      "winner": "DinoAmarillo",
+      "winnerScore": 44,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "8nx02qM5SEMdw_EvAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1730,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540194684,
+          "survival_ms": 4715,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 31,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 562,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 71,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "EAlsyIF5NFyLxkNzAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1684,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540194570,
+          "survival_ms": 4601,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "8nx02qM5SEMdw_EvAAAD",
+          "name": "DinoAmarillo",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1730,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540194684,
+          "survival_ms": 4715,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 31,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 562,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 71,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "EAlsyIF5NFyLxkNzAAAF",
+          "name": "DinoMorado",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 43,
+          "distance": 1684,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787540194570,
+          "survival_ms": 4601,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mt6mtzaw",
+      "pin": "1274",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-08-24T02:44:05.240Z",
+      "winner": "DinoAzul",
+      "winnerScore": 81,
+      "totalPlayers": 2,
+      "podium": [
+        {
+          "id": "UvYX2x96gKFq-AhPAAAD",
+          "name": "DinoAzul",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 81,
+          "distance": 3213,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787539445238,
+          "survival_ms": 8320,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 382,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "oZpaoeBYe23RxoWiAAAF",
+          "name": "DinoVerde",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1665,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787539441456,
+          "survival_ms": 4538,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 86,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 533,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "UvYX2x96gKFq-AhPAAAD",
+          "name": "DinoAzul",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 81,
+          "distance": 3213,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787539445238,
+          "survival_ms": 8320,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 382,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "oZpaoeBYe23RxoWiAAAF",
+          "name": "DinoVerde",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 42,
+          "distance": 1665,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1787539441456,
+          "survival_ms": 4538,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 86,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 533,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "rank": 2,
+          "rankChange": "same"
+        }
+      ]
+    }
+  ],
+  "last_updated": "2026-08-24T14:38:57.770Z"
+}

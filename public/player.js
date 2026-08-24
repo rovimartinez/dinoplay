@@ -181,6 +181,7 @@
   socket.on('player:join_success', (data) => {
     myPlayerInfo = data.player;
     currentPin = data.pin;
+    selectedColor = data.player.color || selectedColor;
     lobbyPin.textContent = data.pin;
     lobbyPlayerName.textContent = data.player.name;
 
@@ -326,7 +327,9 @@
           distance: Number.isFinite(state.distance) ? state.distance : 0,
           action: state.action,
           crashed: state.crashed,
-          obstacles: state.obstacles || []
+          obstacles: state.obstacles || [],
+          dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
+          speed: Number.isFinite(state.speed) ? state.speed : 6
         });
       },
       onCrash: (state) => {
@@ -350,7 +353,9 @@
           distance: Number.isFinite(state.distance) ? state.distance : 0,
           action: 'crashed',
           crashed: true,
-          obstacles: state.obstacles || []
+          obstacles: state.obstacles || [],
+          dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
+          speed: 0
         });
 
         setTimeout(() => {
@@ -361,6 +366,7 @@
       }
     });
 
+    window.dinoGame = dinoGame;
     startRunning();
   }
 

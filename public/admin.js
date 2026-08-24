@@ -389,31 +389,50 @@
     });
   });
 
+  function updateGridClass(count) {
+    playersMonitoringGrid.className = 'players-grid';
+    if (count <= 2) playersMonitoringGrid.classList.add(`count-${count || 1}`);
+    else if (count <= 4) playersMonitoringGrid.classList.add(`count-${count}`);
+    else if (count <= 12) playersMonitoringGrid.classList.add('count-medium');
+    else playersMonitoringGrid.classList.add('count-large');
+  }
+
   function createPlayerVisualizerCard(player) {
+    let existing = document.getElementById(`admin-player-card-${player.id}`);
+    if (existing) return;
+
     const card = document.createElement('div');
-    card.className = 'player-card';
+    card.className = 'player-monitor-card player-card';
     card.id = `admin-player-card-${player.id}`;
     card.style.setProperty('--p-color', player.color);
 
     card.innerHTML = `
-      <div class="card-header">
-        <div class="card-player-info">
-          <span class="card-avatar">${player.avatar || '🦖'}</span>
-          <span class="card-player-name">${escapeHtml(player.name)}</span>
+      <div class="card-top-row">
+        <div class="card-player-info" style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+          <span class="card-avatar" style="width: 28px; height: 28px; font-size: 1rem; border-radius: 50%; background: ${player.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${player.avatar || '🦖'}</span>
+          <span class="card-player-name" style="font-weight: 800; font-size: 1.05rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(player.name)}</span>
         </div>
-        <div class="card-header-badges">
+        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
           <span class="player-rank-badge">#--</span>
           <span class="player-action-tag running">🏃 Corriendo</span>
         </div>
       </div>
-      <div class="card-canvas-box">
-        <canvas id="card-canvas-${player.id}" class="card-dino-canvas" width="300" height="120"></canvas>
+      <div class="card-dino-viewport">
+        <canvas id="card-canvas-${player.id}" class="card-dino-canvas" width="600" height="150"></canvas>
+        <div class="eliminated-overlay" id="elim-overlay-${player.id}">
+          <div class="elim-stamp-box">
+            <div class="elim-giant-x">✕</div>
+            <div class="elim-player-name">${escapeHtml(player.name)}</div>
+            <div class="elim-badge-text">ELIMINADO</div>
+            <div class="elim-sub-stats">Puntaje: <span class="elim-score-val">0</span> pts</div>
+          </div>
+        </div>
       </div>
-      <div class="card-bottom">
-        <div class="card-track-bar">
+      <div class="card-track-container" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px;">
+        <div class="card-track-bar" style="flex: 1;">
           <div class="card-track-fill" style="width: 0%;"></div>
         </div>
-        <div class="card-score-box">
+        <div class="card-score-box" style="font-size: 1.15rem; font-weight: 900; color: #4ade80; font-family: monospace;">
           00000 <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>
         </div>
       </div>
@@ -431,18 +450,28 @@
       color: player.color,
       legFrame: 0,
       legTimer: 0,
+      pteroFrame: 0,
+      pteroTimer: 0,
+      dinoY: 93,
+      targetDinoY: 93,
       jumpY: 0,
       jumpVel: 0,
-      groundX: 0
+      groundX: 0,
+      speed: 6,
+      obstacles: [],
+      playerState: player
     });
   }
 
   // 6. SINCRONIZACIÓN DE ESTADOS EN TIEMPO REAL
   socket.on('leaderboard:sync', (data) => {
     const leaderboard = data.leaderboard || [];
+    currentPlayers = leaderboard;
     statActiveCount.textContent = data.activeCount || 0;
     statCrashedCount.textContent = data.crashedCount || 0;
     statTotalCount.textContent = data.totalPlayers || 0;
+
+    updateGridClass(leaderboard.length);
 
     let maxDistance = 1000;
     leaderboard.forEach((p) => {
@@ -457,6 +486,11 @@
       }
       if (!vis) return;
 
+      vis.playerState = player;
+      vis.obstacles = (player.obstacles || []).map((o) => ({ ...o }));
+      vis.targetDinoY = (player.dinoY !== undefined) ? player.dinoY : 93;
+      vis.speed = (player.speed !== undefined) ? player.speed : 6;
+
       const card = vis.cardEl;
       let medalSymbol = `#${player.rank}`;
       if (player.rank === 1) medalSymbol = '🥇 1º';
@@ -467,7 +501,7 @@
       let actionClass = 'running';
       if (player.action === 'jumping') { actionLabel = '🦘 Saltando'; actionClass = 'jumping'; }
       else if (player.action === 'ducking') { actionLabel = '🦆 Agachado'; actionClass = 'ducking'; }
-      if (player.crashed) { actionLabel = '💥 Chocado'; actionClass = 'crashed'; }
+      if (player.crashed) { actionLabel = '❌ ELIMINADO'; actionClass = 'crashed'; }
 
       card.querySelector('.player-rank-badge').textContent = medalSymbol;
       const actTag = card.querySelector('.player-action-tag');
@@ -476,11 +510,30 @@
 
       card.querySelector('.card-score-box').innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>`;
 
+      const elimScore = card.querySelector('.elim-score-val');
+      if (elimScore) elimScore.textContent = player.score;
+
       const progressPct = Math.min(100, Math.round((player.distance / maxDistance) * 100));
       card.querySelector('.card-track-fill').style.width = progressPct + '%';
 
-      if (player.crashed) card.classList.add('crashed');
-      else card.classList.remove('crashed');
+      // Efecto de adelantamiento
+      const prevRank = previousRanks.get(player.id);
+      if (prevRank && prevRank !== player.rank) {
+        if (player.rank < prevRank) {
+          card.classList.add('flash-up');
+          setTimeout(() => card.classList.remove('flash-up'), 600);
+        } else {
+          card.classList.add('flash-down');
+          setTimeout(() => card.classList.remove('flash-down'), 600);
+        }
+      }
+      previousRanks.set(player.id, player.rank);
+
+      if (player.crashed) {
+        card.classList.add('crashed');
+      } else {
+        card.classList.remove('crashed');
+      }
     });
   });
 
@@ -496,89 +549,127 @@
 
     playerVisualizers.forEach((vis, playerId) => {
       const ctx = vis.ctx;
-      const p = currentPlayers.find((x) => x.id === playerId);
+      const p = vis.playerState || currentPlayers.find((x) => x.id === playerId);
       if (!p) return;
 
-      const canvasW = 300;
-      const canvasH = 120;
-      const groundY = 96;
-      const dinoBaseY = 56;
+      const canvasW = 600;
+      const canvasH = 150;
+      const groundY = 127;
+      const dinoBaseY = 93;
+      const dinoX = 50;
 
       ctx.clearRect(0, 0, canvasW, canvasH);
       const sprite = getColoredSprite(vis.color || '#2E7D32');
+      const speed = p.speed || vis.speed || 6;
 
       // 1. Suelo animado
       if (!p.crashed) {
-        vis.groundX = (vis.groundX - 4.5) % 300;
+        vis.groundX = (vis.groundX - speed * (dt / 16.6)) % 600;
       }
-      ctx.drawImage(sprite, 2, 54, 300, 16, vis.groundX, groundY, 300, 16);
-      ctx.drawImage(sprite, 2, 54, 300, 16, vis.groundX + 300, groundY, 300, 16);
+      ctx.drawImage(sprite, 2, 54, 600, 16, vis.groundX, groundY, 600, 16);
+      ctx.drawImage(sprite, 2, 54, 600, 16, vis.groundX + 600, groundY, 600, 16);
 
-      // 2. Obstáculos
-      if (p.obstacles && p.obstacles.length > 0) {
-        p.obstacles.forEach((obs) => {
-          const obsX = (obs.x / 600) * canvasW;
-          const obsY = groundY - (obs.height ? (obs.height * 0.7) : 32);
+      // 2. Obstáculos (animados con interpolación fluida)
+      const obstacles = (vis.obstacles && vis.obstacles.length > 0) ? vis.obstacles : (p.obstacles || []);
+      if (obstacles && obstacles.length > 0) {
+        obstacles.forEach((obs) => {
+          if (!p.crashed) {
+            obs.x -= speed * (dt / 16.6);
+          }
 
-          if (obsX > -60 && obsX < canvasW + 60) {
+          const obsX = obs.x;
+          if (obsX > -120 && obsX < canvasW + 120) {
             if (obs.type === 'CACTUS_SMALL') {
-              const size = obs.size || 1;
-              const sx = 228;
-              ctx.drawImage(sprite, sx, 2, 17 * size, 35, obsX, obsY, 17 * size, 35);
+              const size = Math.min(3, Math.max(1, obs.size || 1));
+              const w = 17 * size;
+              const sx = 228 + (17 * size) * (0.5 * (size - 1));
+              ctx.drawImage(sprite, sx, 2, w, 35, obsX, obs.y || 105, w, 35);
             } else if (obs.type === 'CACTUS_LARGE') {
-              const size = obs.size || 1;
-              const sx = 332;
-              ctx.drawImage(sprite, sx, 2, 25 * size, 50, obsX, obsY, 25 * size, 50);
+              const size = Math.min(3, Math.max(1, obs.size || 1));
+              const w = 25 * size;
+              const sx = 332 + (25 * size) * (0.5 * (size - 1));
+              ctx.drawImage(sprite, sx, 2, w, 50, obsX, obs.y || 90, w, 50);
             } else if (obs.type === 'PTERODACTYL') {
-              ctx.drawImage(sprite, 134, 2, 46, 40, obsX, obsY, 46, 40);
+              const sx = (vis.pteroFrame === 0) ? 134 : 180;
+              ctx.drawImage(sprite, sx, 2, 46, 40, obsX, Math.min(100, Math.max(45, obs.y || 75)), 46, 40);
             }
           }
         });
       }
 
-      // 3. Física de salto
-      if (p.action === 'jumping' && !p.crashed) {
-        if (vis.jumpY === 0) vis.jumpVel = -11;
-        vis.jumpY += vis.jumpVel;
-        vis.jumpVel += 0.55;
-        if (vis.jumpY >= 0) {
-          vis.jumpY = 0;
-          vis.jumpVel = 0;
+      // Animación de pterodáctilo
+      vis.pteroTimer = (vis.pteroTimer || 0) + dt;
+      if (vis.pteroTimer > 150) {
+        vis.pteroTimer = 0;
+        vis.pteroFrame = (vis.pteroFrame === 0) ? 1 : 0;
+      }
+
+      // 3. Posición Y del Dino (Salto seguro y acotado)
+      if (p.crashed) {
+        vis.dinoY = dinoBaseY;
+        vis.jumpY = 0;
+        vis.jumpVel = 0;
+      } else if (p.action === 'jumping') {
+        if (vis.targetDinoY !== undefined && vis.targetDinoY < dinoBaseY) {
+          const clampedTarget = Math.max(40, Math.min(dinoBaseY, vis.targetDinoY));
+          vis.dinoY += (clampedTarget - vis.dinoY) * 0.4;
+        } else {
+          if (vis.jumpY === 0) vis.jumpVel = -6.5;
+          vis.jumpY += vis.jumpVel;
+          vis.jumpVel += 0.42;
+          if (vis.jumpY >= 0) {
+            vis.jumpY = 0;
+            vis.jumpVel = 0;
+          }
+          vis.dinoY = dinoBaseY + vis.jumpY;
         }
       } else {
-        if (vis.jumpY < 0) {
-          vis.jumpY += 3;
-          if (vis.jumpY > 0) vis.jumpY = 0;
-        }
+        vis.jumpY = 0;
+        vis.jumpVel = 0;
+        vis.dinoY += (dinoBaseY - vis.dinoY) * 0.4;
+        if (Math.abs(vis.dinoY - dinoBaseY) < 1) vis.dinoY = dinoBaseY;
       }
+      vis.dinoY = Math.max(40, Math.min(dinoBaseY, vis.dinoY));
 
       // 4. Animación de patas
-      vis.legTimer += dt;
-      if (vis.legTimer > 90) {
-        vis.legTimer = 0;
-        vis.legFrame = (vis.legFrame === 0) ? 1 : 0;
+      if (!p.crashed) {
+        vis.legTimer += dt;
+        if (vis.legTimer > 80) {
+          vis.legTimer = 0;
+          vis.legFrame = (vis.legFrame === 0) ? 1 : 0;
+        }
       }
 
-      // 5. Dibujar Dino
-      const dinoX = 50;
-      const dinoGroundY = dinoBaseY + vis.jumpY;
+      // 5. Dibujar Dino según estado
+      const currentDinoY = Math.round(vis.dinoY);
 
       if (p.crashed) {
-        ctx.drawImage(sprite, 332, 2, 25, 50, dinoX + 28, 90, 25, 50);
-        ctx.drawImage(sprite, 1024, 0, 44, 47, dinoX, dinoBaseY, 44, 47);
-      } else if (p.action === 'jumping') {
-        ctx.drawImage(sprite, 848, 0, 44, 47, dinoX, dinoGroundY, 44, 47);
+        // Dino chocado (ojos en X con frame 1068)
+        ctx.drawImage(sprite, 1068, 2, 44, 47, dinoX, dinoBaseY, 44, 47);
+      } else if (p.action === 'jumping' || currentDinoY < (dinoBaseY - 3)) {
+        // Dino saltando
+        ctx.drawImage(sprite, 848, 2, 44, 47, dinoX, currentDinoY, 44, 47);
       } else if (p.action === 'ducking') {
+        // Dino agachado
         const duckSx = (vis.legFrame === 0) ? 1112 : 1171;
-        ctx.drawImage(sprite, duckSx, 17, 59, 30, dinoX, dinoBaseY + 17, 59, 30);
+        ctx.drawImage(sprite, duckSx, 19, 59, 30, dinoX, dinoBaseY + 17, 59, 30);
       } else {
+        // Dino corriendo
         const runSx = (vis.legFrame === 0) ? 936 : 980;
-        ctx.drawImage(sprite, runSx, 0, 44, 47, dinoX, dinoGroundY, 44, 47);
+        ctx.drawImage(sprite, runSx, 2, 44, 47, dinoX, dinoBaseY, 44, 47);
       }
     });
   }
 
   requestAnimationFrame(animateAdminVisualizers);
+
+  socket.on('game:reset_to_lobby', () => {
+    playerVisualizers.clear();
+    playersMonitoringGrid.innerHTML = '';
+    previousRanks.clear();
+    showView('lobby');
+    btnStartGame.disabled = false;
+  });
 
   // 8. FINALIZAR PARTIDA MANUALMENTE
   btnEndGame.addEventListener('click', () => {

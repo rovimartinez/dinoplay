@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const os = require('os');
 const path = require('path');
+const Database = require('./lib/database');
 
 const app = express();
 const server = http.createServer(app);
@@ -59,8 +60,44 @@ function checkIpRateLimit(ip, action, limit, windowMs) {
   return true;
 }
 
-// Servir archivos estáticos desde /public
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Endpoints de Base de Datos en Tiempo Real
+app.get('/api/db/status', (req, res) => {
+  res.json({
+    ok: true,
+    total_matches: Database.getAllMatches().length,
+    total_results: Database.getAllResults().length,
+    total_players: Database.getAllPlayers().length
+  });
+});
+
+app.get('/api/db/live', (req, res) => {
+  const pin = req.query.pin;
+  if (!pin) return res.status(400).json({ ok: false, error: 'PIN is required' });
+  res.json({ ok: true, data: Database.getLiveState(pin) });
+});
+
+app.get('/api/db/matches', (req, res) => {
+  res.json({ ok: true, matches: Database.getAllMatches() });
+});
+
+app.get('/api/db/history', (req, res) => {
+  res.json({ ok: true, results: Database.getAllResults() });
+});
+
+app.get('/api/db/export/csv', (req, res) => {
+  const csv = Database.exportCSV();
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="torneo_dino_resultados.csv"');
+  res.send(csv);
+});
+
+app.get('/api/db/export/json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="torneo_dino_bd.json"');
+  res.json(Database.exportJSON());
+});
 
 // Rutas amigables
 app.get('/admin', (req, res) => {
@@ -151,6 +188,8 @@ function getLeaderboard(room) {
       crashed_at: player.crashed_at || null,
       survival_ms: player.survival_ms || 0,
       obstacles: player.obstacles || [],
+      dinoY: player.dinoY !== undefined ? player.dinoY : 93,
+      speed: player.speed !== undefined ? player.speed : 6,
       rank: newRank,
       rankChange: rankChange
     };
@@ -258,6 +297,15 @@ io.on('connection', (socket) => {
     currentPin = pin;
     socket.join(pin);
 
+    // Guardar sala en Base de Datos
+    Database.saveMatch({
+      pin,
+      eventName: room.eventName,
+      matchName: room.matchName,
+      max_players: room.maxPlayers,
+      status: 'lobby'
+    });
+
     const ips = getLocalIpAddresses();
     socket.emit('admin:room_created', {
       pin,
@@ -324,6 +372,9 @@ io.on('connection', (socket) => {
       p.survival_ms = 0;
       p.prevRank = null;
       p.lastUpdateAt = 0;
+      p.obstacles = [];
+      p.dinoY = 93;
+      p.speed = 6;
     });
 
     console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Evento: ${room.eventName} | Partida: ${room.matchName} | Semilla: ${raceSeed}`);
@@ -350,6 +401,17 @@ io.on('connection', (socket) => {
         room.status = 'playing';
         room.started_at = Date.now();
         room.raceConfig.started_at = room.started_at;
+
+        // Actualizar inicio en Base de Datos
+        Database.saveMatch({
+          pin: safePin,
+          eventName: room.eventName,
+          matchName: room.matchName,
+          race_seed: raceSeed,
+          started_at: room.started_at,
+          status: 'playing'
+        });
+
         io.to(safePin).emit('game:start', {
           race_seed: raceSeed,
           speed: 6,
@@ -384,6 +446,9 @@ io.on('connection', (socket) => {
     if (!room.matchHistory) room.matchHistory = [];
     room.matchHistory.unshift(resultSummary);
 
+    // Guardar resultados en Base de Datos
+    Database.saveMatchResult(resultSummary);
+
     io.to(pin).emit('game:ended', resultSummary);
     console.log(`[PARTIDA FINALIZADA] Sala: ${pin} | Ganador: ${resultSummary.winner}`);
   });
@@ -405,6 +470,9 @@ io.on('connection', (socket) => {
       p.survival_ms = 0;
       p.prevRank = null;
       p.lastUpdateAt = 0;
+      p.obstacles = [];
+      p.dinoY = 93;
+      p.speed = 6;
     });
 
     io.to(pin).emit('game:reset_to_lobby', {
@@ -530,6 +598,15 @@ io.on('connection', (socket) => {
     currentPin = safePin;
     socket.join(safePin);
 
+    // Guardar jugador en Base de Datos en tiempo real
+    Database.savePlayerJoin({
+      id: socket.id,
+      name: cleanName,
+      color: validColor,
+      avatar: validAvatar,
+      pin: safePin
+    });
+
     socket.emit('player:join_success', {
       pin: safePin,
       sessionToken,
@@ -604,16 +681,17 @@ io.on('connection', (socket) => {
     console.log(`[JUGADOR RECONECTADO] ${existingPlayer.name} a sala ${safePin} (Status: ${room.status})`);
   });
 
-  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles }) => {
+  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles, dinoY, speed }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
     if (!room || !room.players[socket.id]) return;
 
     const player = room.players[socket.id];
     const now = Date.now();
+    const isCrashed = !!crashed || action === 'crashed';
 
-    // 1. Rate limiting por socket (máximo 40 updates/seg / mínimo 25ms de intervalo)
-    if (player.lastUpdateAt && (now - player.lastUpdateAt) < 25) {
+    // 1. Rate limiting por socket (NUNCA descartar paquetes de choque)
+    if (player.lastUpdateAt && (now - player.lastUpdateAt) < 25 && !isCrashed) {
       return;
     }
     player.lastUpdateAt = now;
@@ -624,7 +702,6 @@ io.on('connection', (socket) => {
 
     if (room.status === 'playing' && room.started_at) {
       const elapsedSeconds = Math.max(0.1, (now - room.started_at) / 1000);
-      // Velocidad máxima: 13 px/frame * 60 fps = 780 px/s. Con margen de latencia y aceleración:
       const maxPossibleDistance = Math.ceil(elapsedSeconds * 13 * 60 * 1.5) + 300;
       const maxPossibleScore = Math.ceil(maxPossibleDistance * 0.025 * 1.5) + 100;
 
@@ -653,16 +730,45 @@ io.on('connection', (socket) => {
     player.action = cleanAction(action, player.action);
 
     // 3. Manejo de choque y tiempo de supervivencia
-    const isCrashed = !!crashed;
     if (!player.crashed && isCrashed) {
       player.crashed = true;
+      player.action = 'crashed';
+      player.speed = 0;
       player.crashed_at = now;
       player.survival_ms = Math.max(0, now - (room.started_at || now));
+
+      // Guardar choque en Base de Datos
+      Database.savePlayerCrash(safePin, socket.id, {
+        score: player.score,
+        distance: player.distance,
+        survival_ms: player.survival_ms
+      });
+
+      // Sincronizar inmediatamente al admin y sala ante choque
+      const liveLeaderboard = getLeaderboard(room);
+      io.to(safePin).emit('leaderboard:sync', {
+        leaderboard: liveLeaderboard,
+        totalPlayers: liveLeaderboard.length,
+        activeCount: liveLeaderboard.filter(p => !p.crashed).length,
+        crashedCount: liveLeaderboard.filter(p => p.crashed).length,
+        status: room.status
+      });
     } else if (!player.crashed) {
       player.survival_ms = Math.max(0, now - (room.started_at || now));
+
+      // Guardar puntaje en vivo en Base de Datos en tiempo real
+      Database.updateLiveScore(safePin, socket.id, {
+        score: player.score,
+        distance: player.distance,
+        action: player.action,
+        crashed: false,
+        survival_ms: player.survival_ms
+      });
     }
 
     player.obstacles = cleanObstacles(obstacles);
+    player.dinoY = clampNumber(dinoY, 0, 160, 93);
+    player.speed = isCrashed ? 0 : clampNumber(speed, 0, 20, 6);
 
     // Si todos los jugadores han chocado en partida activa, autocompletar la partida
     if (room.status === 'playing') {
@@ -685,6 +791,10 @@ io.on('connection', (socket) => {
         };
         if (!room.matchHistory) room.matchHistory = [];
         room.matchHistory.unshift(resultSummary);
+
+        // Guardar resultado final en Base de Datos
+        Database.saveMatchResult(resultSummary);
+
         io.to(safePin).emit('game:ended', resultSummary);
       }
     }

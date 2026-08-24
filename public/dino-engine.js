@@ -70,6 +70,12 @@
 
         this.config = Object.assign({}, Runner.config, opt_config || {});
 
+        if (opt_config && opt_config.dinoColor) {
+            this.customDinoColor = hexToRgb(opt_config.dinoColor);
+        } else if (this.config.dinoColor) {
+            this.customDinoColor = hexToRgb(this.config.dinoColor);
+        }
+
         this.seed = this.config.seed || null;
         this.rng = this.seed ? createPRNG(this.seed) : null;
         this.random = function () {
@@ -649,7 +655,9 @@
                         distance: Math.ceil(this.distanceRan),
                         action: currentAction,
                         crashed: this.crashed,
-                        obstacles: currentObstacles
+                        obstacles: currentObstacles,
+                        dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
+                        speed: this.currentSpeed
                     });
                 }
                 this.clearCanvas();
@@ -687,13 +695,17 @@
                     }
                 } else {
                     this.gameOver();
-            if (this.onCrash) {
-                this.onCrash({
-                    score: Math.ceil(this.distanceRan * 0.025),
-                    distance: Math.ceil(this.distanceRan),
-                    obstacles: currentObstacles
-                });
-            }
+                    if (this.onCrash) {
+                        this.onCrash({
+                            score: Math.ceil(this.distanceRan * 0.025),
+                            distance: Math.ceil(this.distanceRan),
+                            action: 'crashed',
+                            crashed: true,
+                            obstacles: currentObstacles,
+                            dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
+                            speed: 0
+                        });
+                    }
                 }
 
                 var playAchievementSound = this.distanceMeter.update(deltaTime,
@@ -820,7 +832,7 @@
 
                 if (this.crashed && e.type == Runner.events.TOUCHSTART &&
                     e.currentTarget == this.containerEl) {
-                    this.restart();
+                    if (!this.onCrash) this.restart();
                 }
             }
 
@@ -853,13 +865,15 @@
                 this.tRex.speedDrop = false;
                 this.tRex.setDuck(false);
             } else if (this.crashed) {
-                // Check that enough time has elapsed before allowing jump key to restart.
-                var deltaTime = getTimeStamp() - this.time;
+                if (!this.onCrash) {
+                    // Check that enough time has elapsed before allowing jump key to restart.
+                    var deltaTime = getTimeStamp() - this.time;
 
-                if (Runner.keycodes.RESTART[keyCode] || this.isLeftClickOnCanvas(e) ||
-                    (deltaTime >= this.config.GAMEOVER_CLEAR_TIME &&
-                        Runner.keycodes.JUMP[keyCode])) {
-                    this.restart();
+                    if (Runner.keycodes.RESTART[keyCode] || this.isLeftClickOnCanvas(e) ||
+                        (deltaTime >= this.config.GAMEOVER_CLEAR_TIME &&
+                            Runner.keycodes.JUMP[keyCode])) {
+                        this.restart();
+                    }
                 }
             } else if (this.paused && isjumpKey) {
                 // Reset the jump state
@@ -906,9 +920,25 @@
 
             this.stop();
             this.crashed = true;
+            this.currentSpeed = 0;
             this.distanceMeter.acheivement = false;
 
             this.tRex.update(100, Trex.status.CRASHED);
+
+            if (this.onCrash) {
+                this.stopListening();
+                try {
+                    this.onCrash({
+                        score: Math.ceil(this.distanceRan * 0.025),
+                        distance: Math.ceil(this.distanceRan),
+                        action: 'crashed',
+                        crashed: true,
+                        obstacles: [],
+                        dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
+                        speed: 0
+                    });
+                } catch(e) {}
+            }
 
             // Game over panel.
             if (!this.gameOverPanel) {

@@ -90,6 +90,33 @@ body {
   gap: 16px;
 }
 
+.db-status-badge {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: pulseGreenDot 1.5s infinite alternate;
+}
+
+@keyframes pulseGreenDot {
+  from { opacity: 0.4; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.25); }
+}
+
 .url-badge {
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.3);
@@ -542,9 +569,15 @@ body {
 }
 
 .player-monitor-card.crashed {
-  border-color: rgba(239, 68, 68, 0.4);
-  background: rgba(35, 15, 20, 0.85);
-  opacity: 0.85;
+  border-color: #ef4444 !important;
+  background: linear-gradient(135deg, rgba(127, 29, 29, 0.96) 0%, rgba(69, 10, 10, 0.98) 100%) !important;
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.75) !important;
+  animation: pulseCrashedCard 1.8s infinite alternate;
+}
+
+@keyframes pulseCrashedCard {
+  from { box-shadow: 0 0 18px rgba(239, 68, 68, 0.5); }
+  to { box-shadow: 0 0 40px rgba(239, 68, 68, 0.95); }
 }
 
 @keyframes flashGreen {
@@ -632,10 +665,11 @@ body {
   font-family: monospace;
 }
 
-/* ESCENARIO DEL DINO EN TIEMPO REAL */
+/* ESCENARIO DEL DINO EN TIEMPO REAL (PROPORCIÓN EXACTA 4:1) */
 .card-dino-viewport {
   width: 100%;
-  height: 140px;
+  aspect-ratio: 4 / 1;
+  max-height: 180px;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
@@ -647,23 +681,135 @@ body {
   justify-content: center;
 }
 
-.count-1 .card-dino-viewport {
-  height: 220px;
-}
-
-.count-3 .card-dino-viewport {
-  height: 150px;
-}
-
-.count-large .card-dino-viewport {
-  height: 90px;
-}
-
 .card-dino-canvas {
   width: 100%;
   height: 100%;
   display: block;
   image-rendering: pixelated;
+}
+
+/* Cuando el jugador choca: ocultar completamente el juego del Dino y poner panel rojo */
+.player-monitor-card.crashed .card-dino-viewport {
+  background: linear-gradient(135deg, #991b1b 0%, #450a0a 100%) !important;
+  border: 2px solid #ef4444;
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(239, 68, 68, 0.6);
+}
+
+.player-monitor-card.crashed .card-dino-canvas {
+  display: none !important;
+}
+
+/* OVERLAY DE ELIMINACIÓN ESTILO JUEGOS DEL CALAMAR (SQUID GAME) */
+.eliminated-overlay {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  overflow: hidden;
+}
+
+.player-monitor-card.crashed .eliminated-overlay {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+.elim-stamp-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  padding: 6px 16px;
+  width: 90%;
+  animation: stampImpact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes stampImpact {
+  0% {
+    transform: scale(2.4) rotate(-8deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(0.92) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.elim-giant-x {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 6.8rem;
+  font-weight: 900;
+  color: #ff1744;
+  text-shadow: 0 0 35px rgba(255, 23, 68, 0.95), 0 0 70px rgba(255, 23, 68, 0.7);
+  pointer-events: none;
+  opacity: 0.88;
+  z-index: 2;
+  line-height: 1;
+  user-select: none;
+}
+
+.elim-player-name {
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.4);
+  z-index: 3;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.elim-badge-text {
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #ffffff;
+  background: #dc2626;
+  border: 1.5px solid #ff4d4d;
+  padding: 3px 14px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  z-index: 3;
+  position: relative;
+  text-transform: uppercase;
+  animation: pulseElim 1.4s infinite alternate;
+}
+
+@keyframes pulseElim {
+  from { box-shadow: 0 0 10px rgba(255, 23, 68, 0.5); transform: scale(0.97); }
+  to { box-shadow: 0 0 24px rgba(255, 23, 68, 0.95); transform: scale(1.03); }
+}
+
+.elim-sub-stats {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-top: 5px;
+  position: relative;
+  z-index: 3;
+}
+
+.elim-sub-stats .elim-score-val {
+  color: #4ade80;
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 900;
 }
 
 /* MINI PISTA DE CARRERA POR JUGADOR */
