@@ -6,8 +6,19 @@
   <title>Dino Runner - Panel Anfitrión / Proyector</title>
   <link rel="stylesheet" href="admin.css">
   <script src="/socket.io/socket.io.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"><\/script>');
+    }
+  </script>
 </head>
 <body>
+
+  <!-- BANNER DE ESTADO DE CONEXIÓN -->
+  <div id="admin-connection-banner" class="admin-connection-banner" style="display: none;">
+    <span class="banner-pulse"></span>
+    <span id="admin-connection-banner-text">⚠️ Sin conexión con el servidor. Ejecuta <code>INICIAR_JUEGO.bat</code> e ingresa a <a href="http://localhost:3000/admin" style="color: #6ee7b7; font-weight: bold; text-decoration: underline;">http://localhost:3000/admin</a></span>
+  </div>
 
   <!-- HEADER GLOBAL DEL ANFITRIÓN -->
   <header class="admin-header">

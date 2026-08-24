@@ -1268,6 +1268,51 @@ body {
 }
 
 /* FORMATO DE IMPRESIÓN LIMPIO */
+/* BANNER DE CONEXIÓN CON EL SERVIDOR */
+.admin-connection-banner {
+  background: linear-gradient(90deg, #991b1b, #dc2626);
+  color: #ffffff;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  animation: slideDownBanner 0.3s ease;
+}
+
+.admin-connection-banner code {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #fef08a;
+  font-size: 0.9rem;
+}
+
+.banner-pulse {
+  width: 10px;
+  height: 10px;
+  background-color: #fef08a;
+  border-radius: 50%;
+  animation: pulseDot 1s infinite alternate;
+}
+
+@keyframes slideDownBanner {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulseDot {
+  from { opacity: 0.4; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
 @media print {
   body {
     background: #ffffff !important;

@@ -237,12 +237,34 @@
   const adminAuthForm = document.getElementById('admin-auth-form');
   const inputAdminKey = document.getElementById('input-admin-key');
   const adminAuthError = document.getElementById('admin-auth-error');
+  const adminConnectionBanner = document.getElementById('admin-connection-banner');
+  const adminConnectionBannerText = document.getElementById('admin-connection-banner-text');
+
+  function showConnectionAlert(message) {
+    if (adminConnectionBanner) {
+      if (message && adminConnectionBannerText) adminConnectionBannerText.innerHTML = message;
+      adminConnectionBanner.style.display = 'flex';
+    }
+  }
+
+  function hideConnectionAlert() {
+    if (adminConnectionBanner) {
+      adminConnectionBanner.style.display = 'none';
+    }
+  }
 
   // Obtener clave de anfitrión
   const urlParams = new URLSearchParams(window.location.search);
-  let currentAdminKey = urlParams.get('key') || sessionStorage.getItem(STORAGE_KEY_ADMIN) || 'dino2026';
+  let currentAdminKey = urlParams.get('key') || sessionStorage.getItem(STORAGE_KEY_ADMIN) || '';
 
   function requestAdminRoomCreation() {
+    if (!currentAdminKey) {
+      if (adminAuthModal) {
+        adminAuthModal.style.display = 'flex';
+        if (inputAdminKey) inputAdminKey.focus();
+      }
+      return;
+    }
     socket.emit('admin:create_room', {
       adminKey: currentAdminKey,
       eventName: inputEventName ? inputEventName.value : 'Torneo Dino',
@@ -251,13 +273,50 @@
     });
   }
 
-  // 1. CREAR SALA AL CARGAR
-  requestAdminRoomCreation();
+  // Manejo de eventos de conexión del socket
+  socket.on('connect', () => {
+    hideConnectionAlert();
+    if (currentAdminKey) {
+      requestAdminRoomCreation();
+    } else {
+      if (adminAuthModal) {
+        adminAuthModal.style.display = 'flex';
+        if (inputAdminKey) inputAdminKey.focus();
+      }
+    }
+  });
+
+  socket.on('connect_error', () => {
+    showConnectionAlert('⚠️ No se pudo conectar con el servidor de juego. Ejecuta <code>INICIAR_JUEGO.bat</code> y accede a <a href="http://localhost:3000/admin" style="color:#6ee7b7; font-weight:bold; text-decoration:underline;">http://localhost:3000/admin</a>');
+  });
+
+  socket.on('disconnect', () => {
+    showConnectionAlert('⚠️ Conexión perdida con el servidor de juego. Intentando reconectar...');
+  });
+
+  // 1. SOLICITAR CLAVE O CREAR SALA AL CARGAR
+  if (currentAdminKey) {
+    requestAdminRoomCreation();
+  } else {
+    if (adminAuthModal) {
+      adminAuthModal.style.display = 'flex';
+      if (inputAdminKey) inputAdminKey.focus();
+    }
+  }
 
   socket.on('admin:auth_error', (data) => {
-    adminAuthModal.style.display = 'flex';
-    adminAuthError.textContent = data.message || 'Clave de anfitrión requerida.';
-    adminAuthError.style.display = 'block';
+    if (adminAuthModal) {
+      adminAuthModal.style.display = 'flex';
+      if (adminAuthError) {
+        adminAuthError.textContent = data.message || 'Clave de anfitrión incorrecta.';
+        adminAuthError.style.display = 'block';
+      }
+      if (inputAdminKey) {
+        inputAdminKey.value = '';
+        inputAdminKey.focus();
+      }
+    }
+    sessionStorage.removeItem(STORAGE_KEY_ADMIN);
   });
 
   if (adminAuthForm) {
@@ -266,9 +325,7 @@
       const enteredKey = inputAdminKey.value.trim();
       if (!enteredKey) return;
       currentAdminKey = enteredKey;
-      sessionStorage.setItem(STORAGE_KEY_ADMIN, enteredKey);
-      adminAuthError.style.display = 'none';
-      adminAuthModal.style.display = 'none';
+      if (adminAuthError) adminAuthError.style.display = 'none';
       requestAdminRoomCreation();
     });
   }

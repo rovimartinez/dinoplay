@@ -6,6 +6,11 @@
   <title>Dino Runner - Jugador</title>
   <link rel="stylesheet" href="player.css">
   <script src="/socket.io/socket.io.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"><\/script>');
+    }
+  </script>
   <script src="dino-engine.js"></script>
 </head>
 <body>
