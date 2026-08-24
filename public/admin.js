@@ -263,6 +263,7 @@
 
   // Obtener clave de anfitrión
   let currentAdminKey = urlParams.get('key') || sessionStorage.getItem(STORAGE_KEY_ADMIN) || '';
+  const STORAGE_KEY_ADMIN_PIN = 'dino_admin_room_pin';
 
   function requestAdminRoomCreation() {
     if (!currentAdminKey) {
@@ -272,8 +273,10 @@
       }
       return;
     }
+    const savedPin = sessionStorage.getItem(STORAGE_KEY_ADMIN_PIN) || '';
     socket.emit('admin:create_room', {
       adminKey: currentAdminKey,
+      existingPin: currentPin || savedPin || '',
       eventName: inputEventName ? inputEventName.value : 'Torneo Dino',
       matchName: inputMatchName ? inputMatchName.value : 'Ronda 1',
       maxPlayers: selectMaxPlayers ? parseInt(selectMaxPlayers.value, 10) : 30
@@ -324,6 +327,7 @@
       }
     }
     sessionStorage.removeItem(STORAGE_KEY_ADMIN);
+    sessionStorage.removeItem(STORAGE_KEY_ADMIN_PIN);
   });
 
   if (adminAuthForm) {
@@ -332,6 +336,7 @@
       const enteredKey = inputAdminKey.value.trim();
       if (!enteredKey) return;
       currentAdminKey = enteredKey;
+      sessionStorage.setItem(STORAGE_KEY_ADMIN, enteredKey);
       if (adminAuthError) adminAuthError.style.display = 'none';
       requestAdminRoomCreation();
     });
@@ -340,6 +345,9 @@
   socket.on('admin:room_created', (data) => {
     adminAuthModal.style.display = 'none';
     currentPin = data.pin;
+    sessionStorage.setItem(STORAGE_KEY_ADMIN, currentAdminKey);
+    sessionStorage.setItem(STORAGE_KEY_ADMIN_PIN, data.pin);
+
     headerPin.textContent = data.pin;
     lobbyBigPin.textContent = data.pin;
 
@@ -352,6 +360,7 @@
     headerMatchBadge.style.display = 'inline-flex';
     maxPlayersLabel.textContent = data.maxPlayers > 0 ? `(Límite: ${data.maxPlayers})` : '';
 
+    const protocol = window.location.protocol;
     const host = window.location.hostname;
     const port = window.location.port ? `:${window.location.port}` : '';
     let displayIp = host;
@@ -360,7 +369,7 @@
       displayIp = data.localIps[0];
     }
 
-    const joinUrl = `http://${displayIp}${port}/player?pin=${data.pin}`;
+    const joinUrl = `${protocol}//${displayIp}${port}/player?pin=${data.pin}`;
     hostUrlText.textContent = joinUrl;
     lobbyJoinUrl.textContent = joinUrl;
   });
@@ -916,6 +925,7 @@
   });
 
   btnNewRoom.addEventListener('click', () => {
+    sessionStorage.removeItem(STORAGE_KEY_ADMIN_PIN);
     window.location.reload();
   });
 

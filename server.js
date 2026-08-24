@@ -203,8 +203,8 @@ function cleanPlayerName(name) {
 }
 
 function cleanRoomPin(pin) {
-  if (typeof pin !== 'string') return '';
-  return pin.trim().slice(0, 10);
+  if (pin === undefined || pin === null) return '';
+  return String(pin).trim().slice(0, 10);
 }
 
 function cleanColor(color) {
@@ -278,21 +278,36 @@ io.on('connection', (socket) => {
       }
     }
 
-    const pin = generateRoomPin();
-    const room = {
-      pin,
-      hostId: socket.id,
-      adminAuthenticated: true,
-      status: 'lobby',
-      createdAt: Date.now(),
-      eventName: (data && data.eventName) || 'Torneo Dino',
-      matchName: (data && data.matchName) || 'Ronda 1',
-      maxPlayers: (data && data.maxPlayers) || 30,
-      matchHistory: [],
-      players: {}
-    };
+    const existingPin = data && data.existingPin ? cleanRoomPin(data.existingPin) : '';
+    let room = existingPin ? rooms.get(existingPin) : null;
+    let pin = existingPin;
 
-    rooms.set(pin, room);
+    if (room) {
+      if (room.hostDisconnectTimer) {
+        clearTimeout(room.hostDisconnectTimer);
+        room.hostDisconnectTimer = null;
+      }
+      room.hostId = socket.id;
+      if (data && data.eventName) room.eventName = data.eventName;
+      if (data && data.matchName) room.matchName = data.matchName;
+      if (data && data.maxPlayers !== undefined) room.maxPlayers = data.maxPlayers;
+    } else {
+      pin = generateRoomPin();
+      room = {
+        pin,
+        hostId: socket.id,
+        adminAuthenticated: true,
+        status: 'lobby',
+        createdAt: Date.now(),
+        eventName: (data && data.eventName) || 'Torneo Dino',
+        matchName: (data && data.matchName) || 'Ronda 1',
+        maxPlayers: (data && data.maxPlayers !== undefined) ? Number(data.maxPlayers) : 30,
+        matchHistory: [],
+        players: {}
+      };
+      rooms.set(pin, room);
+    }
+
     currentRole = 'admin';
     currentPin = pin;
     socket.join(pin);
@@ -303,7 +318,7 @@ io.on('connection', (socket) => {
       eventName: room.eventName,
       matchName: room.matchName,
       max_players: room.maxPlayers,
-      status: 'lobby'
+      status: room.status || 'lobby'
     });
 
     const ips = getLocalIpAddresses();
@@ -313,10 +328,12 @@ io.on('connection', (socket) => {
       port: PORT,
       eventName: room.eventName,
       matchName: room.matchName,
-      maxPlayers: room.maxPlayers
+      maxPlayers: room.maxPlayers,
+      status: room.status,
+      players: Object.values(room.players)
     });
 
-    console.log(`[SALA CREADA AUTORIZADA] PIN: ${pin} | Host: ${socket.id}`);
+    console.log(`[SALA CREADA/RECONECTADA AUTORIZADA] PIN: ${pin} | Host: ${socket.id}`);
   });
 
   socket.on('admin:update_config', ({ pin, eventName, matchName, maxPlayers }) => {
@@ -808,10 +825,15 @@ io.on('connection', (socket) => {
     if (currentPin && rooms.has(currentPin)) {
       const room = rooms.get(currentPin);
       if (currentRole === 'admin' && room.hostId === socket.id) {
-        // El anfitrión se desconectó
-        io.to(currentPin).emit('room:closed', { message: 'El anfitrión ha cerrado la sala.' });
-        rooms.delete(currentPin);
-        console.log(`[SALA CERRADA] PIN ${currentPin} porque el admin se desconectó.`);
+        // Ventana de gracia para permitir reconexión del anfitrión (ej. recarga de página o microcorte)
+        console.log(`[HOST DESCONECTADO TEMPORALMENTE] Sala ${currentPin}. Esperando posible reconexión (60s)...`);
+        room.hostDisconnectTimer = setTimeout(() => {
+          if (rooms.has(currentPin) && rooms.get(currentPin).hostId === socket.id) {
+            io.to(currentPin).emit('room:closed', { message: 'El anfitrión ha cerrado la sala.' });
+            rooms.delete(currentPin);
+            console.log(`[SALA CERRADA] PIN ${currentPin} porque el anfitrión no se reconectó.`);
+          }
+        }, 60000);
       } else if (currentRole === 'player') {
         const player = room.players[socket.id];
         if (player) {

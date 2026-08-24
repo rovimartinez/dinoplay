@@ -122,6 +122,11 @@
         this.images = {};
         this.imagesLoaded = 0;
 
+        this.onStateUpdate = (opt_config && opt_config.onStateUpdate) || null;
+        this.onCrash = (opt_config && opt_config.onCrash) || null;
+        this.onEngineReady = (opt_config && opt_config.onEngineReady) || null;
+        this.fallbackTimer = null;
+
         if (this.isDisabled()) {
             this.setupDisabledRunner();
         } else {
@@ -601,16 +606,6 @@
             }
             if (this.containerEl) this.containerEl.style.webkitAnimation = '';
             this.playCount++;
-
-            // Handle tabbing off the page. Pause the current game.
-            document.addEventListener(Runner.events.VISIBILITY,
-                this.onVisibilityChange.bind(this));
-
-            window.addEventListener(Runner.events.BLUR,
-                this.onVisibilityChange.bind(this));
-
-            window.addEventListener(Runner.events.FOCUS,
-                this.onVisibilityChange.bind(this));
         },
 
         clearCanvas: function () {
@@ -894,12 +889,29 @@
         },
 
         /**
-         * RequestAnimationFrame wrapper.
+         * RequestAnimationFrame wrapper with fallback timer for background tabs / multi-instance sync.
          */
         scheduleNextUpdate: function () {
             if (!this.updatePending) {
                 this.updatePending = true;
-                this.raqId = requestAnimationFrame(this.update.bind(this));
+                var self = this;
+                this.raqId = requestAnimationFrame(function () {
+                    if (self.fallbackTimer) {
+                        clearTimeout(self.fallbackTimer);
+                        self.fallbackTimer = null;
+                    }
+                    if (self.updatePending) {
+                        self.update();
+                    }
+                });
+                // Fallback timer for background tabs or when RAF is throttled by the browser
+                if (this.fallbackTimer) clearTimeout(this.fallbackTimer);
+                this.fallbackTimer = setTimeout(function () {
+                    self.fallbackTimer = null;
+                    if (self.updatePending) {
+                        self.update();
+                    }
+                }, 33);
             }
         },
 
@@ -908,7 +920,7 @@
          * @return {boolean}
          */
         isRunning: function () {
-            return !!this.raqId;
+            return !!this.raqId || !!this.fallbackTimer;
         },
 
         /**
@@ -962,8 +974,15 @@
         stop: function () {
             this.playing = false;
             this.paused = true;
-            cancelAnimationFrame(this.raqId);
-            this.raqId = 0;
+            this.updatePending = false;
+            if (this.fallbackTimer) {
+                clearTimeout(this.fallbackTimer);
+                this.fallbackTimer = null;
+            }
+            if (this.raqId) {
+                cancelAnimationFrame(this.raqId);
+                this.raqId = 0;
+            }
         },
 
         play: function () {
@@ -977,7 +996,7 @@
         },
 
         restart: function () {
-            if (!this.raqId) {
+            if (!this.raqId && !this.fallbackTimer) {
                 this.playCount++;
                 this.runningTime = 0;
                 this.playing = true;
@@ -1016,7 +1035,7 @@
             // height minus the game container height.
             const translateY = Math.ceil(Math.max(0, (windowHeight - scaledCanvasHeight -
                                                       Runner.config.ARCADE_MODE_INITIAL_TOP_POSITION) *
-                                                  Runner.config.ARCADE_MODE_TOP_POSITION_PERCENT)) *
+                                                   Runner.config.ARCADE_MODE_TOP_POSITION_PERCENT)) *
                   window.devicePixelRatio;
 
             const cssScale = scale;
@@ -1025,16 +1044,10 @@
         },
         
         /**
-         * Pause the game if the tab is not in focus.
+         * Visibility / focus handler: In multiplayer tournament, do NOT pause on blur.
          */
         onVisibilityChange: function (e) {
-            if (document.hidden || document.webkitHidden || e.type == 'blur' ||
-                document.visibilityState != 'visible') {
-                this.stop();
-            } else if (!this.crashed) {
-                this.tRex.reset();
-                this.play();
-            }
+            // Multiplayer races continue running in background without stopping.
         },
 
         /**

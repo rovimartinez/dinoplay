@@ -310,18 +310,24 @@
     const container = document.getElementById('dino-game-container');
     container.innerHTML = '';
 
-    const startRunning = () => {
-      if (dinoGame && dinoGame.canvas) {
-        dinoGame.startGame();
-        dinoGame.update();
+    if (dinoGame) {
+      try { dinoGame.stop(); } catch(e) {}
+      dinoGame = null;
+    }
+
+    const startRunning = (runner) => {
+      const active = runner || dinoGame;
+      if (active && active.canvas) {
+        active.startGame();
+        active.update();
       }
     };
 
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
       seed: seed || null,
-      onEngineReady: () => {
-        startRunning();
+      onEngineReady: function () {
+        startRunning(this);
       },
       onStateUpdate: (state) => {
         const validScore = Number.isFinite(state.score) ? state.score : 0;
@@ -374,7 +380,7 @@
     });
 
     window.dinoGame = dinoGame;
-    startRunning();
+    startRunning(dinoGame);
   }
 
   // Sincronización de posición / ranking individual

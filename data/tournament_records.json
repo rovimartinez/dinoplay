@@ -2,6 +2,30 @@
   "events": [],
   "matches": [
     {
+      "id": "mt7w2fw5",
+      "pin": "8888",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-08-24T23:50:22.709Z"
+    },
+    {
+      "id": "mt7w2fvv",
+      "pin": "2688",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-08-24T23:50:22.699Z"
+    },
+    {
       "id": "mt7cd1ig",
       "pin": "1552",
       "eventName": "Torneo Dino",
@@ -177,6 +201,22 @@
     }
   ],
   "players": [
+    {
+      "id": "WUcGBjZXqnt595vpAAAF",
+      "name": "DinoMorado",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8888",
+      "joined_at": "2026-08-24T23:50:27.458Z"
+    },
+    {
+      "id": "IhGxrEt82AxkN8LYAAAD",
+      "name": "DinoAmarillo",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "8888",
+      "joined_at": "2026-08-24T23:50:25.781Z"
+    },
     {
       "id": "LeOruHthn6Iq2YvAAAAF",
       "name": "Martin",
@@ -719,6 +759,34 @@
         "survival_ms": 4566,
         "updated_at": "2026-08-24T03:04:25.146Z",
         "crashed_at": "2026-08-24T03:04:25.146Z"
+      }
+    },
+    "8888": {
+      "IhGxrEt82AxkN8LYAAAD": {
+        "playerId": "IhGxrEt82AxkN8LYAAAD",
+        "playerName": "DinoAmarillo",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-08-24T23:50:25.781Z"
+      },
+      "WUcGBjZXqnt595vpAAAF": {
+        "playerId": "WUcGBjZXqnt595vpAAAF",
+        "playerName": "DinoMorado",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-08-24T23:50:27.458Z"
       }
     }
   },
@@ -1590,5 +1658,5 @@
       ]
     }
   ],
-  "last_updated": "2026-08-24T14:38:57.770Z"
+  "last_updated": "2026-08-24T23:50:27.558Z"
 }
