@@ -623,70 +623,65 @@
   setupTouchButton(practiceTouchJump, triggerGameJump, null);
   setupTouchButton(practiceTouchDuck, triggerGameDuckStart, triggerGameDuckEnd);
 
-  // Manejador global de teclado en Window para garantizar que Espaciadora, Flechas y ASDW/WASD siempre funcionen
+  const isJumpKey = (e) => {
+    if (!e) return false;
+    const keyCode = e.keyCode || e.which || 0;
+    const code = e.code || '';
+    const key = (e.key || '').toLowerCase();
+    return (
+      keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 || keyCode === 104 ||
+      code === 'Space' || code === 'ArrowUp' || code === 'KeyW' || code === 'KeyD' || code === 'KeyK' ||
+      code === 'Numpad8' || code === 'NumpadUp' || code === 'Up' ||
+      key === ' ' || key === 'space' || key === 'spacebar' ||
+      key === 'arrowup' || key === 'up' || key === 'arrow_up' ||
+      key === 'w' || key === 'd' || key === 'k'
+    );
+  };
+
+  const isDuckKey = (e) => {
+    if (!e) return false;
+    const keyCode = e.keyCode || e.which || 0;
+    const code = e.code || '';
+    const key = (e.key || '').toLowerCase();
+    return (
+      keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 || keyCode === 98 ||
+      code === 'ArrowDown' || code === 'KeyS' || code === 'KeyA' || code === 'KeyJ' ||
+      code === 'Numpad2' || code === 'NumpadDown' || code === 'Down' ||
+      key === 'arrowdown' || key === 'down' || key === 'arrow_down' ||
+      key === 's' || key === 'a' || key === 'j'
+    );
+  };
+
+  // Manejador global de teclado en Window (con fase de captura para interceptar Flechas y S/W/A/D antes de cualquier scroll)
   window.addEventListener('keydown', (e) => {
-    // Si el foco está en un input o textarea y estamos en la pantalla de login/unión, dejar que escriba
+    // Si el foco está en un input o textarea y estamos en la pantalla de ingreso de nombre/PIN, permitir escribir
     if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
-      if (screens.game.classList.contains('active') || screens.countdown.classList.contains('active')) {
+      if (screens.game.classList.contains('active') || screens.countdown.classList.contains('active') || screens.lobby.classList.contains('active')) {
         document.activeElement.blur();
       } else {
         return;
       }
     }
 
-    const code = e.code || '';
-    const key = (e.key || '').toLowerCase();
-    const keyCode = e.keyCode || e.which;
-
-    const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
-                      code === 'Space' || key === ' ' || key === 'spacebar' ||
-                      code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
-                      code === 'KeyW' || key === 'w' ||
-                      code === 'KeyD' || key === 'd' ||
-                      code === 'KeyK' || key === 'k';
-
-    const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
-                      code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
-                      code === 'KeyS' || key === 's' ||
-                      code === 'KeyA' || key === 'a' ||
-                      code === 'KeyJ' || key === 'j';
-
-    if (isJumpKey) {
+    if (isJumpKey(e)) {
       e.preventDefault();
       triggerGameJump();
-    } else if (isDuckKey) {
+    } else if (isDuckKey(e)) {
       e.preventDefault();
       triggerGameDuckStart();
     }
-  }, { passive: false });
+  }, { capture: true, passive: false });
 
   window.addEventListener('keyup', (e) => {
-    const code = e.code || '';
-    const key = (e.key || '').toLowerCase();
-    const keyCode = e.keyCode || e.which;
-
-    const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
-                      code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
-                      code === 'KeyS' || key === 's' ||
-                      code === 'KeyA' || key === 'a' ||
-                      code === 'KeyJ' || key === 'j';
-
-    const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
-                      code === 'Space' || key === ' ' || key === 'spacebar' ||
-                      code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
-                      code === 'KeyW' || key === 'w' ||
-                      code === 'KeyD' || key === 'd' ||
-                      code === 'KeyK' || key === 'k';
-
-    if (isDuckKey) {
+    if (isDuckKey(e)) {
       triggerGameDuckEnd();
-    } else if (isJumpKey) {
+    } else if (isJumpKey(e)) {
       const activeGame = dinoGame || miniPracticeGame;
       if (activeGame && activeGame.tRex) {
         activeGame.tRex.endJump();
       }
     }
-  });
+  }, { capture: true, passive: false });
 
   // Liberar agachado al perder el foco de la ventana
   window.addEventListener('blur', () => {

@@ -285,9 +285,42 @@
      * @enum {Object}
      */
     Runner.keycodes = {
-        JUMP: { '38': 1, '32': 1, '87': 1, '75': 1, '68': 1 },  // Up, spacebar, W, K, D
-        DUCK: { '40': 1, '83': 1, '74': 1, '65': 1 },          // Down, S, J, A
-        RESTART: { '13': 1, '32': 1, '87': 1 }                   // Enter, Space, W
+        JUMP: { '38': 1, '32': 1, '87': 1, '75': 1, '68': 1, '104': 1 },  // Up, spacebar, W, K, D, Numpad 8
+        DUCK: { '40': 1, '83': 1, '74': 1, '65': 1, '98': 1 },          // Down, S, J, A, Numpad 2
+        RESTART: { '13': 1, '32': 1, '87': 1 }                           // Enter, Space, W
+    };
+
+    Runner.isJumpKey = function (e) {
+        if (!e) return false;
+        var keyCode = e.keyCode || e.which || 0;
+        var code = e.code || '';
+        var key = (e.key || '').toLowerCase();
+
+        return (
+            keyCode === 38 || keyCode === 32 || keyCode === 87 || keyCode === 68 || keyCode === 75 || keyCode === 104 ||
+            code === 'Space' || code === 'ArrowUp' || code === 'KeyW' || code === 'KeyD' || code === 'KeyK' ||
+            code === 'Numpad8' || code === 'NumpadUp' || code === 'Up' ||
+            key === ' ' || key === 'space' || key === 'spacebar' ||
+            key === 'arrowup' || key === 'up' || key === 'arrow_up' ||
+            key === 'w' || key === 'd' || key === 'k' ||
+            (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode])
+        );
+    };
+
+    Runner.isDuckKey = function (e) {
+        if (!e) return false;
+        var keyCode = e.keyCode || e.which || 0;
+        var code = e.code || '';
+        var key = (e.key || '').toLowerCase();
+
+        return (
+            keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 || keyCode === 98 ||
+            code === 'ArrowDown' || code === 'KeyS' || code === 'KeyA' || code === 'KeyJ' ||
+            code === 'Numpad2' || code === 'NumpadDown' || code === 'Down' ||
+            key === 'arrowdown' || key === 'down' || key === 'arrow_down' ||
+            key === 's' || key === 'a' || key === 'j' ||
+            (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode])
+        );
     };
 
 
@@ -859,22 +892,8 @@
          * @param {Event} e
          */
         onKeyDown: function (e) {
-            var keyCode = e.keyCode || e.which;
-            var code = e.code || '';
-            var key = (e.key || '').toLowerCase();
-
-            var isJump = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) ||
-                         code === 'Space' || key === ' ' || key === 'spacebar' ||
-                         code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
-                         code === 'KeyW' || key === 'w' ||
-                         code === 'KeyD' || key === 'd' ||
-                         code === 'KeyK' || key === 'k';
-
-            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) ||
-                         code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
-                         code === 'KeyS' || key === 's' ||
-                         code === 'KeyA' || key === 'a' ||
-                         code === 'KeyJ' || key === 'j';
+            var isJump = Runner.isJumpKey(e);
+            var isDuck = Runner.isDuckKey(e);
 
             if (isJump || isDuck) {
                 e.preventDefault();
@@ -902,7 +921,7 @@
             if (this.playing && !this.crashed && isDuck) {
                 if (this.tRex.jumping) {
                     this.tRex.setSpeedDrop();
-                } else if (!this.tRex.jumping && !this.tRex.ducking) {
+                } else {
                     this.tRex.setDuck(true);
                 }
             }
@@ -913,24 +932,12 @@
          * @param {Event} e
          */
         onKeyUp: function (e) {
-            var keyCode = e.keyCode || e.which;
-            var code = e.code || '';
-            var key = (e.key || '').toLowerCase();
-
-            var isjumpKey = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) ||
-                            code === 'Space' || key === ' ' || key === 'spacebar' ||
-                            code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
-                            code === 'KeyW' || key === 'w' ||
-                            code === 'KeyD' || key === 'd' ||
-                            code === 'KeyK' || key === 'k' ||
+            var keyCode = e.keyCode || e.which || 0;
+            var isjumpKey = Runner.isJumpKey(e) ||
                             e.type == Runner.events.TOUCHEND ||
                             e.type == Runner.events.MOUSEDOWN;
 
-            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) ||
-                         code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
-                         code === 'KeyS' || key === 's' ||
-                         code === 'KeyA' || key === 'a' ||
-                         code === 'KeyJ' || key === 'j';
+            var isDuck = Runner.isDuckKey(e);
 
             if (this.isRunning() && isjumpKey) {
                 this.tRex.endJump();
