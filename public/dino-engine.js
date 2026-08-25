@@ -666,6 +666,7 @@
                         distance: Math.ceil(this.distanceRan),
                         action: currentAction,
                         crashed: this.crashed,
+                        lives: (this.lives !== undefined) ? this.lives : (this.maxLives || 1),
                         obstacles: currentObstacles,
                         dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
                         speed: this.currentSpeed

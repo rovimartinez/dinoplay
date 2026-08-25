@@ -696,7 +696,7 @@ io.on('connection', (socket) => {
     console.log(`[JUGADOR RECONECTADO] ${existingPlayer.name} a sala ${safePin} (Status: ${room.status})`);
   });
 
-  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles, dinoY, speed }) => {
+  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles, dinoY, speed, lives }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
     if (!room || !room.players[socket.id]) return;

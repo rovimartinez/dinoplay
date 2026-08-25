@@ -622,10 +622,10 @@
       }
       previousRanks.set(player.id, player.rank);
 
-      // Actualizar badge de vidas
+      // Actualizar badge de vidas (solo en modo 3 vidas)
       const livesBadge = card.querySelector('.player-lives-badge');
       if (livesBadge) {
-        if (data.gameMode === 'three_lives' || (player.lives !== undefined && player.lives <= 3)) {
+        if (data.gameMode === 'three_lives') {
           const l = (player.lives !== undefined) ? player.lives : (player.crashed ? 0 : 3);
           livesBadge.style.display = 'inline-flex';
           if (l >= 3) livesBadge.textContent = '❤️❤️❤️';
@@ -639,13 +639,8 @@
 
       if (player.crashed) {
         card.classList.add('crashed');
-        if (!vis.crashedAt) vis.crashedAt = Date.now();
-        if (Date.now() - vis.crashedAt >= 3000) {
-          card.classList.add('card-hidden-eliminated');
-        }
       } else {
         card.classList.remove('crashed', 'card-hidden-eliminated');
-        vis.crashedAt = null;
       }
     });
   });
@@ -661,9 +656,6 @@
     if (!views.game.classList.contains('active')) return;
 
     playerVisualizers.forEach((vis, playerId) => {
-      if (vis.crashedAt && (now - vis.crashedAt >= 3000 || Date.now() - vis.crashedAt >= 3000)) {
-        if (vis.cardEl) vis.cardEl.classList.add('card-hidden-eliminated');
-      }
       const ctx = vis.ctx;
       const p = vis.playerState || currentPlayers.find((x) => x.id === playerId);
       if (!p) return;
