@@ -93,6 +93,14 @@
         screens[key].classList.remove('active');
       }
     });
+
+    // Desenfocar inputs/botones y asegurar foco en la ventana al entrar al lobby o juego
+    if (name === 'lobby' || name === 'countdown' || name === 'game') {
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+      try { window.focus(); } catch (e) {}
+    }
   }
 
   // Prellenar datos desde localStorage
@@ -615,18 +623,33 @@
   setupTouchButton(practiceTouchJump, triggerGameJump, null);
   setupTouchButton(practiceTouchDuck, triggerGameDuckStart, triggerGameDuckEnd);
 
-  // Manejador global de teclado en Window para garantizar que Espaciadora, Flechas y W/S siempre funcionen
+  // Manejador global de teclado en Window para garantizar que Espaciadora, Flechas y ASDW/WASD siempre funcionen
   window.addEventListener('keydown', (e) => {
-    // Si el foco está en un input de texto, dejar que escriba
-    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+    // Si el foco está en un input o textarea y estamos en la pantalla de login/unión, dejar que escriba
+    if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+      if (screens.game.classList.contains('active') || screens.countdown.classList.contains('active')) {
+        document.activeElement.blur();
+      } else {
+        return;
+      }
+    }
 
-    const isJumpKey = e.code === 'Space' || e.key === ' ' || e.keyCode === 32 ||
-                      e.code === 'ArrowUp' || e.key === 'ArrowUp' || e.keyCode === 38 ||
-                      e.code === 'KeyW' || e.key === 'w' || e.key === 'W';
+    const code = e.code || '';
+    const key = (e.key || '').toLowerCase();
+    const keyCode = e.keyCode || e.which;
 
-    const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
-                      e.code === 'KeyS' || e.key === 's' || e.key === 'S' ||
-                      e.code === 'KeyJ' || e.key === 'j' || e.key === 'J';
+    const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
+                      code === 'Space' || key === ' ' || key === 'spacebar' ||
+                      code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                      code === 'KeyW' || key === 'w' ||
+                      code === 'KeyD' || key === 'd' ||
+                      code === 'KeyK' || key === 'k';
+
+    const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
+                      code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                      code === 'KeyS' || key === 's' ||
+                      code === 'KeyA' || key === 'a' ||
+                      code === 'KeyJ' || key === 'j';
 
     if (isJumpKey) {
       e.preventDefault();
@@ -638,12 +661,36 @@
   }, { passive: false });
 
   window.addEventListener('keyup', (e) => {
-    const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
-                      e.code === 'KeyS' || e.key === 's' || e.key === 'S' ||
-                      e.code === 'KeyJ' || e.key === 'j' || e.key === 'J';
+    const code = e.code || '';
+    const key = (e.key || '').toLowerCase();
+    const keyCode = e.keyCode || e.which;
+
+    const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
+                      code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                      code === 'KeyS' || key === 's' ||
+                      code === 'KeyA' || key === 'a' ||
+                      code === 'KeyJ' || key === 'j';
+
+    const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
+                      code === 'Space' || key === ' ' || key === 'spacebar' ||
+                      code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                      code === 'KeyW' || key === 'w' ||
+                      code === 'KeyD' || key === 'd' ||
+                      code === 'KeyK' || key === 'k';
+
     if (isDuckKey) {
       triggerGameDuckEnd();
+    } else if (isJumpKey) {
+      const activeGame = dinoGame || miniPracticeGame;
+      if (activeGame && activeGame.tRex) {
+        activeGame.tRex.endJump();
+      }
     }
+  });
+
+  // Liberar agachado al perder el foco de la ventana
+  window.addEventListener('blur', () => {
+    triggerGameDuckEnd();
   });
 
   // Desenfocar cualquier botón pulsado para que el foco no capture la barra espaciadora

@@ -477,12 +477,25 @@
     });
   });
 
+  function getOptimalGridColumns(count) {
+    if (count <= 1) return 1;
+    if (count === 2) return 2;
+    if (count === 3) return 3;
+    if (count === 4) return 2; // 2x2
+    if (count === 5 || count === 6) return 3; // 5 -> 3+2, 6 -> 3+3
+    if (count === 7 || count === 8) return 4; // 7 -> 4+3, 8 -> 4+4 (parejo 4 arriba, 3 abajo)
+    if (count === 9 || count === 10) return 5; // 9 -> 5+4, 10 -> 5+5
+    if (count === 11 || count === 12) return 6; // 11 -> 6+5, 12 -> 6+6
+    if (count <= 15) return 5; // 13-15 -> 3 filas de 5
+    if (count <= 18) return 6; // 16-18 -> 3 filas de 6
+    if (count <= 24) return 6; // 4 filas de 6
+    return 7;
+  }
+
   function updateGridClass(count) {
-    playersMonitoringGrid.className = 'players-grid';
-    if (count <= 2) playersMonitoringGrid.classList.add(`count-${count || 1}`);
-    else if (count <= 4) playersMonitoringGrid.classList.add(`count-${count}`);
-    else if (count <= 12) playersMonitoringGrid.classList.add('count-medium');
-    else playersMonitoringGrid.classList.add('count-large');
+    const cols = getOptimalGridColumns(count);
+    playersMonitoringGrid.style.setProperty('--grid-cols', cols);
+    playersMonitoringGrid.className = `players-grid count-${count} cols-${cols}`;
   }
 
   function createPlayerVisualizerCard(player) {

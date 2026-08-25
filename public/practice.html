@@ -325,6 +325,86 @@
         touchDuck.addEventListener('mouseup', endDuck);
         touchDuck.addEventListener('mouseleave', endDuck);
       }
+
+      // Manejo global de teclado en práctica (ASDW, Flechas, Espacio)
+      window.addEventListener('keydown', (e) => {
+        const code = e.code || '';
+        const key = (e.key || '').toLowerCase();
+        const keyCode = e.keyCode || e.which;
+
+        const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
+                          code === 'Space' || key === ' ' || key === 'spacebar' ||
+                          code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                          code === 'KeyW' || key === 'w' ||
+                          code === 'KeyD' || key === 'd' ||
+                          code === 'KeyK' || key === 'k';
+
+        const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
+                          code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                          code === 'KeyS' || key === 's' ||
+                          code === 'KeyA' || key === 'a' ||
+                          code === 'KeyJ' || key === 'j';
+
+        if (isJumpKey) {
+          e.preventDefault();
+          if (dinoGame) {
+            if (dinoGame.crashed) {
+              dinoGame.restart();
+            } else if (dinoGame.playing && !dinoGame.tRex.jumping && !dinoGame.tRex.ducking) {
+              dinoGame.playSound(dinoGame.soundFx.BUTTON_PRESS);
+              dinoGame.tRex.startJump(dinoGame.currentSpeed);
+            }
+          }
+        } else if (isDuckKey) {
+          e.preventDefault();
+          if (dinoGame && dinoGame.playing && !dinoGame.crashed) {
+            if (dinoGame.tRex.jumping) {
+              dinoGame.tRex.setSpeedDrop();
+            } else {
+              dinoGame.tRex.setDuck(true);
+            }
+          }
+        }
+      }, { passive: false });
+
+      window.addEventListener('keyup', (e) => {
+        const code = e.code || '';
+        const key = (e.key || '').toLowerCase();
+        const keyCode = e.keyCode || e.which;
+
+        const isDuckKey = keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 ||
+                          code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                          code === 'KeyS' || key === 's' ||
+                          code === 'KeyA' || key === 'a' ||
+                          code === 'KeyJ' || key === 'j';
+
+        const isJumpKey = keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 ||
+                          code === 'Space' || key === ' ' || key === 'spacebar' ||
+                          code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                          code === 'KeyW' || key === 'w' ||
+                          code === 'KeyD' || key === 'd' ||
+                          code === 'KeyK' || key === 'k';
+
+        if (isDuckKey) {
+          if (dinoGame && dinoGame.playing) {
+            dinoGame.tRex.speedDrop = false;
+            dinoGame.tRex.setDuck(false);
+          }
+        } else if (isJumpKey) {
+          if (dinoGame && dinoGame.tRex) {
+            dinoGame.tRex.endJump();
+          }
+        }
+      });
+
+      window.addEventListener('blur', () => {
+        if (dinoGame && dinoGame.playing && dinoGame.tRex) {
+          dinoGame.tRex.speedDrop = false;
+          dinoGame.tRex.setDuck(false);
+        }
+      });
+
+      try { window.focus(); } catch (e) {}
     })();
   </script>
 </body>

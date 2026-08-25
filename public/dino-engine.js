@@ -285,9 +285,9 @@
      * @enum {Object}
      */
     Runner.keycodes = {
-        JUMP: { '38': 1, '32': 1, '87': 1, '75': 1 },  // Up, spacebar, W, K
-        DUCK: { '40': 1, '83': 1, '74': 1 },  // Down, S, J
-        RESTART: { '13': 1, '32': 1 }  // Enter, Space
+        JUMP: { '38': 1, '32': 1, '87': 1, '75': 1, '68': 1 },  // Up, spacebar, W, K, D
+        DUCK: { '40': 1, '83': 1, '74': 1, '65': 1 },          // Down, S, J, A
+        RESTART: { '13': 1, '32': 1, '87': 1 }                   // Enter, Space, W
     };
 
 
@@ -860,8 +860,21 @@
          */
         onKeyDown: function (e) {
             var keyCode = e.keyCode || e.which;
-            var isJump = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) || e.code === 'Space' || e.code === 'ArrowUp' || e.key === ' ' || e.key === 'ArrowUp';
-            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) || e.code === 'ArrowDown' || e.key === 'ArrowDown';
+            var code = e.code || '';
+            var key = (e.key || '').toLowerCase();
+
+            var isJump = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) ||
+                         code === 'Space' || key === ' ' || key === 'spacebar' ||
+                         code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                         code === 'KeyW' || key === 'w' ||
+                         code === 'KeyD' || key === 'd' ||
+                         code === 'KeyK' || key === 'k';
+
+            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) ||
+                         code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                         code === 'KeyS' || key === 's' ||
+                         code === 'KeyA' || key === 'a' ||
+                         code === 'KeyJ' || key === 'j';
 
             if (isJump || isDuck) {
                 e.preventDefault();
@@ -901,11 +914,23 @@
          */
         onKeyUp: function (e) {
             var keyCode = e.keyCode || e.which;
-            var isjumpKey = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) || e.code === 'Space' || e.code === 'ArrowUp' ||
-                e.type == Runner.events.TOUCHEND ||
-                e.type == Runner.events.MOUSEDOWN;
+            var code = e.code || '';
+            var key = (e.key || '').toLowerCase();
 
-            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) || e.code === 'ArrowDown';
+            var isjumpKey = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) ||
+                            code === 'Space' || key === ' ' || key === 'spacebar' ||
+                            code === 'ArrowUp' || key === 'arrowup' || key === 'up' ||
+                            code === 'KeyW' || key === 'w' ||
+                            code === 'KeyD' || key === 'd' ||
+                            code === 'KeyK' || key === 'k' ||
+                            e.type == Runner.events.TOUCHEND ||
+                            e.type == Runner.events.MOUSEDOWN;
+
+            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) ||
+                         code === 'ArrowDown' || key === 'arrowdown' || key === 'down' ||
+                         code === 'KeyS' || key === 's' ||
+                         code === 'KeyA' || key === 'a' ||
+                         code === 'KeyJ' || key === 'j';
 
             if (this.isRunning() && isjumpKey) {
                 this.tRex.endJump();
@@ -917,9 +942,8 @@
                     // Check that enough time has elapsed before allowing jump key to restart.
                     var deltaTime = getTimeStamp() - this.time;
 
-                    if (Runner.keycodes.RESTART[keyCode] || this.isLeftClickOnCanvas(e) ||
-                        (deltaTime >= this.config.GAMEOVER_CLEAR_TIME &&
-                            Runner.keycodes.JUMP[keyCode])) {
+                    if (Runner.keycodes.RESTART[keyCode] || isjumpKey || this.isLeftClickOnCanvas(e) ||
+                        (deltaTime >= this.config.GAMEOVER_CLEAR_TIME && isjumpKey)) {
                         this.restart();
                     }
                 }
@@ -2156,12 +2180,16 @@
          * @param {boolean} isDucking.
          */
         setDuck: function (isDucking) {
-            if (isDucking && this.status != Trex.status.DUCKING) {
-                this.update(0, Trex.status.DUCKING);
-                this.ducking = true;
-            } else if (this.status == Trex.status.DUCKING) {
-                this.update(0, Trex.status.RUNNING);
-                this.ducking = false;
+            if (isDucking) {
+                if (this.status != Trex.status.DUCKING && this.status != Trex.status.CRASHED) {
+                    this.update(0, Trex.status.DUCKING);
+                    this.ducking = true;
+                }
+            } else {
+                if (this.status == Trex.status.DUCKING) {
+                    this.update(0, Trex.status.RUNNING);
+                    this.ducking = false;
+                }
             }
         },
 

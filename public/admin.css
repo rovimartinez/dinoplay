@@ -519,27 +519,53 @@ body {
 
 .players-grid {
   display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 4), minmax(0, 1fr));
   gap: 16px;
   width: 100%;
   flex: 1;
+  align-content: start;
 }
 
-/* REGLAS RESPONSIVAS DE GRID SEGÚN CANTIDAD DE JUGADORES */
-.players-grid.count-1, .players-grid.count-2 {
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+/* REGLAS RESPONSIVAS Y BALANCEADAS SEGÚN CANTIDAD DE JUGADORES */
+.players-grid.count-1 {
+  grid-template-columns: minmax(320px, 600px);
+  justify-content: center;
 }
 
-.players-grid.count-3, .players-grid.count-4 {
-  grid-template-columns: repeat(2, 1fr);
+.players-grid.count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.players-grid.count-medium { /* 5 a 12 jugadores */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+.players-grid.count-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.players-grid.count-large { /* 13 a 30+ jugadores */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
+.players-grid.count-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1300px) {
+  .players-grid {
+    grid-template-columns: repeat(min(var(--grid-cols, 4), 4), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .players-grid {
+    grid-template-columns: repeat(min(var(--grid-cols, 3), 3), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .players-grid {
+    grid-template-columns: repeat(min(var(--grid-cols, 2), 2), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* TARJETA INDIVIDUAL DE JUGADOR EN EL GRID */
