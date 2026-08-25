@@ -914,7 +914,7 @@ setInterval(() => {
 }, 100);
 
 // Iniciar servidor
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   const ips = getLocalIpAddresses();
   console.log(`=================================================`);
   console.log(`🦖 DINO RUNNER MULTIJUGADOR INICIADO`);
