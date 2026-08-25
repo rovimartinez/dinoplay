@@ -50,6 +50,8 @@
   const countdownNum = document.getElementById('countdown-num');
 
   const hudRank = document.getElementById('hud-rank');
+  const hudLivesBox = document.getElementById('hud-lives-box');
+  const hudLives = document.getElementById('hud-lives');
   const hudLeader = document.getElementById('hud-leader');
   const hudScore = document.getElementById('hud-score');
   const rankToast = document.getElementById('rank-toast');
@@ -75,6 +77,8 @@
   let lastScore = 0;
   let toastTimeout = null;
   let lastRaceSeed = null;
+  let currentGameMode = 'sudden_death';
+  let currentMaxLives = 1;
 
   // Cambiar pantalla activa
   function showScreen(name) {
@@ -299,11 +303,15 @@
     showScreen('countdown');
     countdownNum.textContent = data.countdown;
     lastRaceSeed = data.race_seed;
+    currentGameMode = data.gameMode || 'sudden_death';
+    currentMaxLives = data.maxLives || (currentGameMode === 'three_lives' ? 3 : 1);
   });
 
   // Inicio de partida
   socket.on('game:start', (data) => {
     stopMiniPractice();
+    if (data && data.gameMode) currentGameMode = data.gameMode;
+    if (data && data.maxLives) currentMaxLives = data.maxLives;
     startLiveGame(data && data.race_seed ? data.race_seed : lastRaceSeed);
   });
 
@@ -326,9 +334,20 @@
       }
     };
 
+    // Configurar visualización de vidas
+    if (hudLivesBox && hudLives) {
+      if (currentGameMode === 'three_lives' || currentMaxLives === 3) {
+        hudLivesBox.style.display = 'flex';
+        hudLives.textContent = '❤️❤️❤️';
+      } else {
+        hudLivesBox.style.display = 'none';
+      }
+    }
+
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
       seed: seed || null,
+      maxLives: currentMaxLives,
       onEngineReady: function () {
         startRunning(this);
       },
@@ -337,12 +356,20 @@
         lastScore = validScore;
         hudScore.textContent = String(validScore).padStart(5, '0');
 
+        if (hudLives && state.lives !== undefined && (currentGameMode === 'three_lives' || currentMaxLives === 3)) {
+          if (state.lives >= 3) hudLives.textContent = '❤️❤️❤️';
+          else if (state.lives === 2) hudLives.textContent = '❤️❤️🤍';
+          else if (state.lives === 1) hudLives.textContent = '❤️🤍🤍';
+          else hudLives.textContent = '💀';
+        }
+
         socket.emit('player:update_state', {
           pin: currentPin,
           score: validScore,
           distance: Number.isFinite(state.distance) ? state.distance : 0,
           action: state.action,
           crashed: state.crashed,
+          lives: (state.lives !== undefined) ? state.lives : (state.crashed ? 0 : currentMaxLives),
           obstacles: state.obstacles || [],
           dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
           speed: Number.isFinite(state.speed) ? state.speed : 6
@@ -540,28 +567,39 @@
     }
   };
 
-  if (touchJump) {
-    touchJump.addEventListener('touchstart', (e) => { e.preventDefault(); triggerGameJump(); }, { passive: false });
-    touchJump.addEventListener('mousedown', (e) => { e.preventDefault(); triggerGameJump(); });
-  }
+  // Manejador global de teclado en Window para garantizar que Espaciadora, Flechas y W/S siempre funcionen
+  window.addEventListener('keydown', (e) => {
+    // Si el foco está en un input de texto, dejar que escriba
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
 
-  if (touchDuck) {
-    touchDuck.addEventListener('touchstart', (e) => { e.preventDefault(); triggerGameDuckStart(); }, { passive: false });
-    touchDuck.addEventListener('touchend', (e) => { e.preventDefault(); triggerGameDuckEnd(); }, { passive: false });
-    touchDuck.addEventListener('mousedown', (e) => { e.preventDefault(); triggerGameDuckStart(); });
-    touchDuck.addEventListener('mouseup', (e) => { e.preventDefault(); triggerGameDuckEnd(); });
-    touchDuck.addEventListener('mouseleave', (e) => { e.preventDefault(); triggerGameDuckEnd(); });
-  }
+    const isJumpKey = e.code === 'Space' || e.key === ' ' || e.keyCode === 32 ||
+                      e.code === 'ArrowUp' || e.key === 'ArrowUp' || e.keyCode === 38 ||
+                      e.key === 'w' || e.key === 'W';
 
-  // Tocar en el área del juego también salta
-  if (gameViewportWrapper) {
-    gameViewportWrapper.addEventListener('touchstart', (e) => {
-      if (e.target.closest('button') || e.target.closest('a')) return;
+    const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
+                      e.key === 's' || e.key === 'S';
+
+    if (isJumpKey) {
+      e.preventDefault();
       triggerGameJump();
-    }, { passive: true });
-    gameViewportWrapper.addEventListener('mousedown', (e) => {
-      if (e.target.closest('button') || e.target.closest('a')) return;
-      triggerGameJump();
-    });
-  }
+    } else if (isDuckKey) {
+      e.preventDefault();
+      triggerGameDuckStart();
+    }
+  }, { passive: false });
+
+  window.addEventListener('keyup', (e) => {
+    const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
+                      e.key === 's' || e.key === 'S';
+    if (isDuckKey) {
+      triggerGameDuckEnd();
+    }
+  });
+
+  // Desenfocar cualquier botón pulsado para que el foco no capture la barra espaciadora
+  document.addEventListener('click', (e) => {
+    if (e.target && typeof e.target.blur === 'function' && e.target.tagName === 'BUTTON') {
+      e.target.blur();
+    }
+  });
 })();

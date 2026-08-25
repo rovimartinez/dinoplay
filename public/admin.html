@@ -39,6 +39,7 @@
       <div id="connection-url-badge" class="url-badge">
         🌐 Únete en: <strong id="host-url-text">http://localhost:3000/player</strong>
       </div>
+      <button id="btn-open-brackets" class="btn-nav btn-brackets" title="Abrir Cuadro de Eliminatorias y Diplomas">🏆 Eliminatorias & Diplomas</button>
       <button id="btn-open-spectator" class="btn-nav" title="Abrir pantalla para espectadores">👁️ Espectador</button>
       <button id="btn-open-history" class="btn-nav" title="Ver historial de partidas">📜 Historial</button>
       <button id="btn-sound-toggle" class="btn-icon" title="Sonido">🔊</button>
@@ -56,6 +57,13 @@
       <div class="setup-group">
         <label for="input-match-name">🏁 Nombre de Partida:</label>
         <input type="text" id="input-match-name" class="setup-input" placeholder="Ej: Cuarto Grado / Semifinal" maxlength="40">
+      </div>
+      <div class="setup-group">
+        <label for="select-game-mode">🎮 Modo de Juego:</label>
+        <select id="select-game-mode" class="setup-select">
+          <option value="sudden_death" selected>💀 Muerte Súbita (1 vida)</option>
+          <option value="three_lives">❤️ 3 Vidas (Modo Torneo)</option>
+        </select>
       </div>
       <div class="setup-group">
         <label for="select-max-players">👥 Límite Jugadores:</label>
@@ -252,7 +260,13 @@
         <button id="btn-close-history" class="btn-close-modal">✕</button>
       </div>
       <div class="modal-body">
-        <div id="history-empty" class="history-empty-msg">No hay partidas registradas en esta sesión todavía.</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; flex-wrap: wrap;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Todas las partidas guardadas en el servidor:</span>
+          <a href="/api/db/export/csv" download="historial_completo_dinoplay.csv" class="btn-export" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            📥 Descargar Todo el Historial (CSV / Excel)
+          </a>
+        </div>
+        <div id="history-empty" class="history-empty-msg">No hay partidas registradas en la Base de Datos todavía.</div>
         <div id="history-list" class="history-list"></div>
       </div>
     </div>

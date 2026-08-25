@@ -140,6 +140,10 @@
         this.onStateUpdate = (opt_config && opt_config.onStateUpdate) || null;
         this.onCrash = (opt_config && opt_config.onCrash) || null;
         this.onEngineReady = (opt_config && opt_config.onEngineReady) || null;
+        this.maxLives = (opt_config && opt_config.maxLives) || (this.config.maxLives) || 1;
+        this.lives = this.maxLives;
+        this.invulnerable = false;
+        this.invulnerableTimer = 0;
         this.fallbackTimer = null;
 
         if (this.isDisabled()) {
@@ -606,6 +610,9 @@
             this.playing = true;
             this.activated = true;
             this.crashed = false;
+            this.lives = this.maxLives;
+            this.invulnerable = false;
+            this.invulnerableTimer = 0;
             if (this.tRex) {
                 this.tRex.playingIntro = false;
                 this.tRex.status = Trex.status.RUNNING;
@@ -687,28 +694,68 @@
                         this.inverted);
                 }
 
+                // Countdown de invulnerabilidad tras perder vida
+                if (this.invulnerable) {
+                    this.invulnerableTimer -= deltaTime;
+                    if (this.invulnerableTimer <= 0) {
+                        this.invulnerable = false;
+                        this.invulnerableTimer = 0;
+                    }
+                }
+
                 // Check for collisions.
                 var collision = hasObstacles && this.horizon.obstacles.length > 0 &&
+                    !this.invulnerable &&
                     checkForCollision(this.horizon.obstacles[0], this.tRex);
 
-                if (!collision) {
+                if (collision) {
+                    if (this.lives > 1) {
+                        this.lives--;
+                        this.invulnerable = true;
+                        this.invulnerableTimer = 1500; // 1.5 segundos de invulnerabilidad
+                        this.playSound(this.soundFx.HIT);
+                        if (vibrate) vibrate(120);
+
+                        // Eliminar el obstáculo impactado para no repetir colisión
+                        if (this.horizon.obstacles.length > 0) {
+                            this.horizon.removeFirstObstacle();
+                        }
+
+                        if (this.onStateUpdate) {
+                            this.onStateUpdate({
+                                score: Math.ceil(this.distanceRan * 0.025),
+                                distance: Math.ceil(this.distanceRan),
+                                action: 'hit',
+                                crashed: false,
+                                lives: this.lives,
+                                obstacles: currentObstacles,
+                                dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
+                                speed: this.currentSpeed
+                            });
+                        }
+                    } else {
+                        this.lives = 0;
+                        this.gameOver();
+                        if (this.onCrash) {
+                            this.onCrash({
+                                score: Math.ceil(this.distanceRan * 0.025),
+                                distance: Math.ceil(this.distanceRan),
+                                action: 'crashed',
+                                crashed: true,
+                                lives: 0,
+                                obstacles: currentObstacles,
+                                dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
+                                speed: 0
+                            });
+                        }
+                    }
+                }
+
+                if (!this.crashed) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
 
                     if (this.currentSpeed < this.config.MAX_SPEED) {
                         this.currentSpeed += this.config.ACCELERATION;
-                    }
-                } else {
-                    this.gameOver();
-                    if (this.onCrash) {
-                        this.onCrash({
-                            score: Math.ceil(this.distanceRan * 0.025),
-                            distance: Math.ceil(this.distanceRan),
-                            action: 'crashed',
-                            crashed: true,
-                            obstacles: currentObstacles,
-                            dinoY: Math.round(this.tRex ? this.tRex.yPos : 93),
-                            speed: 0
-                        });
                     }
                 }
 
@@ -811,23 +858,21 @@
          * @param {Event} e
          */
         onKeyDown: function (e) {
-            // Prevent native page scrolling whilst tapping on mobile.
-            if (IS_MOBILE && this.playing) {
+            var keyCode = e.keyCode || e.which;
+            var isJump = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) || e.code === 'Space' || e.code === 'ArrowUp' || e.key === ' ' || e.key === 'ArrowUp';
+            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) || e.code === 'ArrowDown' || e.key === 'ArrowDown';
+
+            if (isJump || isDuck) {
                 e.preventDefault();
             }
 
             if (e.target != this.detailsButton) {
-                if (!this.crashed && (Runner.keycodes.JUMP[e.keyCode] ||
-                    e.type == Runner.events.TOUCHSTART)) {
+                if (!this.crashed && (isJump || e.type == Runner.events.TOUCHSTART)) {
                     if (!this.playing) {
                         this.loadSounds();
                         this.playing = true;
                         this.update();
-                        if (window.errorPageController) {
-                            errorPageController.trackEasterEgg();
-                        }
                     }
-                    //  Play sound effect and jump on starting the game for the first time.
                     if (!this.tRex.jumping && !this.tRex.ducking) {
                         this.playSound(this.soundFx.BUTTON_PRESS);
                         this.tRex.startJump(this.currentSpeed);
@@ -840,32 +885,30 @@
                 }
             }
 
-            if (this.playing && !this.crashed && Runner.keycodes.DUCK[e.keyCode]) {
-                e.preventDefault();
+            if (this.playing && !this.crashed && isDuck) {
                 if (this.tRex.jumping) {
-                    // Speed drop, activated only when jump key is not pressed.
                     this.tRex.setSpeedDrop();
                 } else if (!this.tRex.jumping && !this.tRex.ducking) {
-                    // Duck.
                     this.tRex.setDuck(true);
                 }
             }
         },
-
 
         /**
          * Process key up.
          * @param {Event} e
          */
         onKeyUp: function (e) {
-            var keyCode = String(e.keyCode);
-            var isjumpKey = Runner.keycodes.JUMP[keyCode] ||
+            var keyCode = e.keyCode || e.which;
+            var isjumpKey = (Runner.keycodes.JUMP && Runner.keycodes.JUMP[keyCode]) || e.code === 'Space' || e.code === 'ArrowUp' ||
                 e.type == Runner.events.TOUCHEND ||
                 e.type == Runner.events.MOUSEDOWN;
 
+            var isDuck = (Runner.keycodes.DUCK && Runner.keycodes.DUCK[keyCode]) || e.code === 'ArrowDown';
+
             if (this.isRunning() && isjumpKey) {
                 this.tRex.endJump();
-            } else if (Runner.keycodes.DUCK[keyCode]) {
+            } else if (isDuck) {
                 this.tRex.speedDrop = false;
                 this.tRex.setDuck(false);
             } else if (this.crashed) {
@@ -1968,6 +2011,13 @@
          * @param {number} y
          */
         draw: function (x, y) {
+            // Parpadeo visual durante invulnerabilidad tras perder vida
+            if (Runner.instance_ && Runner.instance_.invulnerable) {
+                if (Math.floor(Runner.instance_.invulnerableTimer / 100) % 2 === 0) {
+                    return;
+                }
+            }
+
             var sourceX = x;
             var sourceY = y;
             var sourceWidth = this.ducking && this.status != Trex.status.CRASHED ?

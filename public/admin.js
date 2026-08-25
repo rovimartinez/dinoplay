@@ -31,8 +31,10 @@
 
   const inputEventName = document.getElementById('input-event-name');
   const inputMatchName = document.getElementById('input-match-name');
+  const selectGameMode = document.getElementById('select-game-mode');
   const selectMaxPlayers = document.getElementById('select-max-players');
   const maxPlayersLabel = document.getElementById('max-players-label');
+  const btnOpenBrackets = document.getElementById('btn-open-brackets');
 
   const lobbyBigPin = document.getElementById('lobby-big-pin');
   const lobbyJoinUrl = document.getElementById('lobby-join-url');
@@ -420,18 +422,26 @@
   });
 
   // 3. INICIAR PARTIDA
+  if (btnOpenBrackets) {
+    btnOpenBrackets.addEventListener('click', () => {
+      window.open('/eliminatorias.html', '_blank');
+    });
+  }
+
   btnStartGame.addEventListener('click', () => {
     if (currentPlayers.length < 1) return;
     btnStartGame.disabled = true;
     const eventName = inputEventName.value.trim() || 'Torneo Dino';
     const matchName = inputMatchName.value.trim() || 'Ronda 1';
     const maxPlayers = parseInt(selectMaxPlayers.value, 10) || 0;
+    const gameMode = selectGameMode ? selectGameMode.value : 'sudden_death';
 
     socket.emit('admin:start_game', {
       pin: currentPin,
       eventName,
       matchName,
-      maxPlayers
+      maxPlayers,
+      gameMode
     });
   });
 
@@ -486,6 +496,7 @@
           <span class="card-player-name" style="font-weight: 800; font-size: 1.05rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(player.name)}</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+          <span class="player-lives-badge" style="display: none;">❤️❤️❤️</span>
           <span class="player-rank-badge">#--</span>
           <span class="player-action-tag running">🏃 Corriendo</span>
         </div>
@@ -602,10 +613,30 @@
       }
       previousRanks.set(player.id, player.rank);
 
+      // Actualizar badge de vidas
+      const livesBadge = card.querySelector('.player-lives-badge');
+      if (livesBadge) {
+        if (data.gameMode === 'three_lives' || (player.lives !== undefined && player.lives <= 3)) {
+          const l = (player.lives !== undefined) ? player.lives : (player.crashed ? 0 : 3);
+          livesBadge.style.display = 'inline-flex';
+          if (l >= 3) livesBadge.textContent = '❤️❤️❤️';
+          else if (l === 2) livesBadge.textContent = '❤️❤️🤍';
+          else if (l === 1) livesBadge.textContent = '❤️🤍🤍';
+          else livesBadge.textContent = '💀';
+        } else {
+          livesBadge.style.display = 'none';
+        }
+      }
+
       if (player.crashed) {
         card.classList.add('crashed');
+        if (!vis.crashedAt) vis.crashedAt = Date.now();
+        if (Date.now() - vis.crashedAt >= 3000) {
+          card.classList.add('card-hidden-eliminated');
+        }
       } else {
-        card.classList.remove('crashed');
+        card.classList.remove('crashed', 'card-hidden-eliminated');
+        vis.crashedAt = null;
       }
     });
   });
@@ -621,6 +652,9 @@
     if (!views.game.classList.contains('active')) return;
 
     playerVisualizers.forEach((vis, playerId) => {
+      if (vis.crashedAt && (now - vis.crashedAt >= 3000 || Date.now() - vis.crashedAt >= 3000)) {
+        if (vis.cardEl) vis.cardEl.classList.add('card-hidden-eliminated');
+      }
       const ctx = vis.ctx;
       const p = vis.playerState || currentPlayers.find((x) => x.id === playerId);
       if (!p) return;
@@ -858,40 +892,57 @@
   btnExportJson.addEventListener('click', () => exportJSON());
   btnPrintResults.addEventListener('click', () => window.print());
 
-  // 11. MODAL DE HISTORIAL DE PARTIDAS
-  function renderHistoryList() {
-    if (sessionHistory.length === 0) {
+  // 11. MODAL DE HISTORIAL DE PARTIDAS (Carga en vivo desde la Base de Datos)
+  async function renderHistoryList() {
+    try {
+      historyEmpty.textContent = 'Cargando historial desde la Base de Datos...';
       historyEmpty.style.display = 'block';
       historyList.innerHTML = '';
-      return;
-    }
 
-    historyEmpty.style.display = 'none';
-    historyList.innerHTML = '';
+      const res = await fetch('/api/db/results');
+      const data = await res.json();
+      const results = (data && data.results && data.results.length > 0) ? data.results : sessionHistory;
 
-    sessionHistory.forEach((item, idx) => {
-      const div = document.createElement('div');
-      div.className = 'history-item';
-      const timeStr = new Date(item.date).toLocaleTimeString();
-      div.innerHTML = `
-        <div class="history-item-info">
-          <strong>${escapeHtml(item.matchName || 'Carrera')} (${escapeHtml(item.eventName || 'Torneo')})</strong>
-          <div class="history-item-meta">
-            PIN: ${item.pin || '--'} • Hora: ${timeStr} • Jugadores: ${item.totalPlayers || 0}
+      if (!results || results.length === 0) {
+        historyEmpty.textContent = 'No hay partidas registradas en la Base de Datos todavía.';
+        historyEmpty.style.display = 'block';
+        return;
+      }
+
+      historyEmpty.style.display = 'none';
+      historyList.innerHTML = '';
+
+      results.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        const dateObj = new Date(item.date);
+        const timeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+        div.innerHTML = `
+          <div class="history-item-info">
+            <strong>${escapeHtml(item.matchName || 'Carrera')} (${escapeHtml(item.eventName || 'Torneo')})</strong>
+            <div class="history-item-meta">
+              PIN: ${item.pin || '--'} • Fecha: ${timeStr} • Jugadores: ${item.totalPlayers || 0}
+            </div>
+            <div class="history-item-winner">
+              👑 Ganador: ${escapeHtml(item.winner)} (${item.winnerScore} pts)
+            </div>
           </div>
-          <div class="history-item-winner">
-            👑 Ganador: ${escapeHtml(item.winner)} (${item.winnerScore} pts)
-          </div>
-        </div>
-        <button class="btn-export btn-hist-dl" data-idx="${idx}">📥 CSV</button>
-      `;
+          <button class="btn-export btn-hist-dl" data-idx="${idx}">📥 CSV</button>
+        `;
 
-      div.querySelector('.btn-hist-dl').addEventListener('click', () => {
-        exportCSV(sessionHistory[idx]);
+        div.querySelector('.btn-hist-dl').addEventListener('click', () => {
+          exportCSV(results[idx]);
+        });
+
+        historyList.appendChild(div);
       });
-
-      historyList.appendChild(div);
-    });
+    } catch (err) {
+      console.error('Error al cargar historial:', err);
+      if (sessionHistory.length === 0) {
+        historyEmpty.textContent = 'No hay partidas registradas todavía.';
+        historyEmpty.style.display = 'block';
+      }
+    }
   }
 
   btnOpenHistory.addEventListener('click', () => {

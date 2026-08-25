@@ -79,11 +79,15 @@ app.get('/api/db/live', (req, res) => {
 });
 
 app.get('/api/db/matches', (req, res) => {
-  res.json({ ok: true, matches: Database.getAllMatches() });
+  res.json({ ok: true, success: true, matches: Database.getAllMatches() });
+});
+
+app.get('/api/db/results', (req, res) => {
+  res.json({ ok: true, success: true, results: Database.getAllResults() });
 });
 
 app.get('/api/db/history', (req, res) => {
-  res.json({ ok: true, results: Database.getAllResults() });
+  res.json({ ok: true, success: true, results: Database.getAllResults() });
 });
 
 app.get('/api/db/export/csv', (req, res) => {
@@ -106,6 +110,14 @@ app.get('/admin', (req, res) => {
 
 app.get('/player', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'player.html'));
+});
+
+app.get('/spectator', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'spectator.html'));
+});
+
+app.get('/eliminatorias', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'eliminatorias.html'));
 });
 
 app.get('/practice', (req, res) => {
@@ -190,6 +202,7 @@ function getLeaderboard(room) {
       obstacles: player.obstacles || [],
       dinoY: player.dinoY !== undefined ? player.dinoY : 93,
       speed: player.speed !== undefined ? player.speed : 6,
+      lives: player.lives !== undefined ? player.lives : (player.crashed ? 0 : (room.gameMode === 'three_lives' ? 3 : 1)),
       rank: newRank,
       rankChange: rankChange
     };
@@ -352,10 +365,11 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('admin:start_game', ({ pin, eventName, matchName, maxPlayers }) => {
+  socket.on('admin:start_game', ({ pin, eventName, matchName, maxPlayers, gameMode }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
     if (!room || room.hostId !== socket.id) return;
+
     if (room.status !== 'lobby') {
       socket.emit('admin:start_error', { message: 'La sala ya fue iniciada o finalizada.' });
       return;
@@ -365,7 +379,14 @@ io.on('connection', (socket) => {
     if (matchName) room.matchName = String(matchName).trim().slice(0, 50);
     if (maxPlayers !== undefined) room.maxPlayers = Math.max(0, parseInt(maxPlayers, 10) || 0);
 
+    room.gameMode = (gameMode === 'three_lives') ? 'three_lives' : 'sudden_death';
+    room.maxLives = (room.gameMode === 'three_lives') ? 3 : 1;
     room.status = 'starting';
+    if (room.finishingTimer) {
+      clearTimeout(room.finishingTimer);
+      room.finishingTimer = null;
+    }
+
     const raceSeed = Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36);
     room.race_seed = raceSeed;
     room.raceConfig = {
@@ -374,15 +395,18 @@ io.on('connection', (socket) => {
       initial_speed: 6,
       acceleration: 0.001,
       max_speed: 13,
+      gameMode: room.gameMode,
+      maxLives: room.maxLives,
       eventName: room.eventName,
       matchName: room.matchName
     };
     room.suspiciousEvents = [];
 
-    // Reiniciar puntuaciones para todos los jugadores de la sala
+    // Reiniciar puntuaciones y vidas para todos los jugadores de la sala
     Object.values(room.players).forEach(p => {
       p.score = 0;
       p.distance = 0;
+      p.lives = room.maxLives;
       p.action = 'running';
       p.crashed = false;
       p.crashed_at = null;
@@ -394,12 +418,14 @@ io.on('connection', (socket) => {
       p.speed = 6;
     });
 
-    console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Evento: ${room.eventName} | Partida: ${room.matchName} | Semilla: ${raceSeed}`);
+    console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Modo: ${room.gameMode} | Evento: ${room.eventName} | Partida: ${room.matchName} | Semilla: ${raceSeed}`);
 
     let countdown = 3;
     io.to(safePin).emit('game:countdown', {
       countdown,
       race_seed: raceSeed,
+      gameMode: room.gameMode,
+      maxLives: room.maxLives,
       eventName: room.eventName,
       matchName: room.matchName
     });
@@ -410,6 +436,8 @@ io.on('connection', (socket) => {
         io.to(safePin).emit('game:countdown', {
           countdown,
           race_seed: raceSeed,
+          gameMode: room.gameMode,
+          maxLives: room.maxLives,
           eventName: room.eventName,
           matchName: room.matchName
         });
@@ -425,6 +453,8 @@ io.on('connection', (socket) => {
           eventName: room.eventName,
           matchName: room.matchName,
           race_seed: raceSeed,
+          gameMode: room.gameMode,
+          maxLives: room.maxLives,
           started_at: room.started_at,
           status: 'playing'
         });
@@ -433,6 +463,8 @@ io.on('connection', (socket) => {
           race_seed: raceSeed,
           speed: 6,
           acceleration: 0.001,
+          gameMode: room.gameMode,
+          maxLives: room.maxLives,
           eventName: room.eventName,
           matchName: room.matchName
         });
@@ -783,36 +815,45 @@ io.on('connection', (socket) => {
       });
     }
 
+    // Actualizar vidas del jugador
+    if (lives !== undefined) {
+      player.lives = clampNumber(lives, 0, 3, player.lives || 1);
+    }
+
     player.obstacles = cleanObstacles(obstacles);
     player.dinoY = clampNumber(dinoY, 0, 160, 93);
     player.speed = isCrashed ? 0 : clampNumber(speed, 0, 20, 6);
 
-    // Si todos los jugadores han chocado en partida activa, autocompletar la partida
+    // Si todos los jugadores han chocado en partida activa, autocompletar la partida con retardo dramático de 3 segundos
     if (room.status === 'playing') {
       const allPlayers = Object.values(room.players);
       const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
-      if (allCrashed) {
-        room.status = 'finished';
-        const leaderboard = getLeaderboard(room);
-        const resultSummary = {
-          id: Date.now().toString(36),
-          pin: room.pin,
-          eventName: room.eventName || 'Torneo',
-          matchName: room.matchName || 'Carrera',
-          date: new Date().toISOString(),
-          winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
-          winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
-          totalPlayers: leaderboard.length,
-          podium: leaderboard.slice(0, 3),
-          leaderboard: leaderboard
-        };
-        if (!room.matchHistory) room.matchHistory = [];
-        room.matchHistory.unshift(resultSummary);
+      if (allCrashed && !room.finishingTimer) {
+        room.finishingTimer = setTimeout(() => {
+          room.finishingTimer = null;
+          if (room.status !== 'playing') return;
+          room.status = 'finished';
+          const leaderboard = getLeaderboard(room);
+          const resultSummary = {
+            id: Date.now().toString(36),
+            pin: room.pin,
+            eventName: room.eventName || 'Torneo',
+            matchName: room.matchName || 'Carrera',
+            date: new Date().toISOString(),
+            winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
+            winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
+            totalPlayers: leaderboard.length,
+            podium: leaderboard.slice(0, 3),
+            leaderboard: leaderboard
+          };
+          if (!room.matchHistory) room.matchHistory = [];
+          room.matchHistory.unshift(resultSummary);
 
-        // Guardar resultado final en Base de Datos
-        Database.saveMatchResult(resultSummary);
+          // Guardar resultado final en Base de Datos
+          Database.saveMatchResult(resultSummary);
 
-        io.to(safePin).emit('game:ended', resultSummary);
+          io.to(safePin).emit('game:ended', resultSummary);
+        }, 3000); // 3 segundos exactos antes de mostrar el podio
       }
     }
   });
@@ -882,6 +923,7 @@ setInterval(() => {
         totalPlayers,
         activeCount,
         crashedCount,
+        gameMode: room.gameMode || 'sudden_death',
         status: room.status
       });
 

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Fest Tech Milagrosa 1.0 - Cuadro Interactivo Canvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      background-color: #080c16;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .font-tech {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .glow-cyan {
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+    }
+    .glow-gold {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
+    }
+    /* Visual container for canvas */
+    #canvas-container {
+      position: relative;
+      width: 100%;
+      height: 680px;
+      background: radial-gradient(circle at center, #0f172a 0%, #080c16 100%);
+      border-radius: 16px;
+      border: 1px solid #1e293b;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: default;
+    }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    .btn-gradient {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      transition: all 0.2s ease;
+    }
+    .btn-gradient:hover {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      transform: translateY(-1px);
+    }
+
+    /* Print Styles for Diplomas */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      body * {
+        visibility: hidden;
+      }
+      #diploma-modal, #diploma-modal * {
+        visibility: visible;
+      }
+      #diploma-modal {
+        position: fixed;
+        inset: 0;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-exact {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-7xl mx-auto w-full space-y-4">
+    
+    <!-- HEADER BRANDING -->
+    <header class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-2xl font-tech glow-cyan">
+          🦖
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-full font-tech uppercase tracking-wider">
+              Área de Tecnología e Informática
+            </span>
+            <span class="text-xs text-slate-400 font-medium">Instituto La Milagrosa</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-white font-tech tracking-wide">
+            DINO FEST TECH MILAGROSA 1.0
+          </h1>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 flex-wrap justify-center">
+        <button id="btn-sound" onclick="toggleAudio()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+          <span id="sound-icon">🔊</span> Sonido: <span id="sound-status" class="text-emerald-400">ON</span>
+        </button>
+        <button onclick="autoSimulateCurrentCategory()" class="px-3 py-2 bg-indigo-600/80 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg border border-indigo-400/30 flex items-center gap-1.5 transition shadow-lg">
+          ⚡ Simular Ganadores
+        </button>
+        <button onclick="resetCurrentCategory()" class="px-3 py-2 bg-slate-800 hover:bg-rose-900/40 hover:text-rose-300 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+          🔄 Reiniciar Categoria
+        </button>
+      </div>
+    </header>
+
+    <!-- CATEGORY NAV TABS -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/50 p-2 rounded-xl border border-slate-800/80">
+      <div class="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+        <button id="tab-junior" onclick="switchCategory('junior')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold font-tech transition-all flex items-center gap-2 bg-cyan-500 text-slate-950 shadow-md">
+          <span>👶</span> JUNIOR TECH <span class="text-xs font-normal opacity-80">(3°A - 5°B)</span>
+        </button>
+        <button id="tab-master" onclick="switchCategory('master')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold font-tech transition-all flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white">
+          <span>⚡</span> MÁSTER TECH <span class="text-xs font-normal opacity-80">(6°A - 8°A)</span>
+        </button>
+        <button id="tab-senior" onclick="switchCategory('senior')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold font-tech transition-all flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white">
+          <span>🔥</span> SENIOR TECH <span class="text-xs font-normal opacity-80">(9°A - 11°A)</span>
+        </button>
+      </div>
+
+      <!-- Instruction / Hint -->
+      <div id="instruction-hint" class="text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2 animate-pulse">
+        <span>👉</span> <span>Haz clic en un estudiante para declararlo <b>Campeón de Salón</b>.</span>
+      </div>
+    </div>
+
+    <!-- CANVAS DISPLAY AREA -->
+    <div id="canvas-container" class="shadow-2xl">
+      <canvas id="tournamentCanvas"></canvas>
+      
+      <!-- Interactive Tooltip Overlay -->
+      <div id="canvas-tooltip" class="pointer-events-none absolute hidden bg-slate-950/90 text-white text-xs px-3 py-1.5 rounded-lg border border-slate-700 shadow-xl font-tech z-10 backdrop-blur-md">
+      </div>
+    </div>
+
+    <!-- PODIUM CELEBRATION MODAL / PANEL -->
+    <div id="podium-banner" class="hidden bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 border border-amber-500/40 rounded-2xl p-4 md:p-6 text-center space-y-4 animate-fade-in shadow-2xl">
+      <div class="inline-block px-3 py-1 bg-amber-500/20 border border-amber-400/40 rounded-full text-amber-300 font-tech font-bold text-xs uppercase tracking-widest">
+        🏆 PODIO INSTITUCIONAL OFICIAL
+      </div>
+      <h2 id="podium-category-title" class="text-2xl md:text-3xl font-extrabold text-white font-tech">
+        ¡GANADORES CATEGORÍA JUNIOR TECH!
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-2">
+        <!-- Plata (2°) -->
+        <div class="bg-slate-900/90 border border-slate-400/40 p-4 rounded-xl flex flex-col items-center justify-center order-2 sm:order-1 transform sm:translate-y-2">
+          <span class="text-3xl mb-1">🥈</span>
+          <span class="text-xs text-slate-400 font-bold uppercase">2° Lugar - Medalla Plata</span>
+          <span id="podium-silver-name" class="font-bold font-tech text-slate-200 text-lg">---</span>
+          <span id="podium-silver-grade" class="text-xs text-slate-400">---</span>
+          <button onclick="viewDiplomaFromPodium('silver')" class="mt-3 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-600 transition flex items-center gap-1 shadow-md">
+            📜 Ver Diploma
+          </button>
+        </div>
+        <!-- Oro (1°) -->
+        <div class="bg-slate-900/90 border-2 border-amber-400/80 p-5 rounded-xl flex flex-col items-center justify-center order-1 sm:order-2 glow-gold transform sm:-translate-y-2">
+          <span class="text-4xl mb-1">🥇</span>
+          <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">1° Lugar - Medalla Dino de Oro</span>
+          <span id="podium-gold-name" class="font-extrabold font-tech text-amber-300 text-xl">---</span>
+          <span id="podium-gold-grade" class="text-xs text-amber-200/80">---</span>
+          <button onclick="viewDiplomaFromPodium('gold')" class="mt-3 px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-lg transition flex items-center gap-1">
+            📜 Ver Diploma de Oro
+          </button>
+        </div>
+        <!-- Bronce (3°) -->
+        <div class="bg-slate-900/90 border border-amber-800/50 p-4 rounded-xl flex flex-col items-center justify-center order-3 sm:order-3 transform sm:translate-y-4">
+          <span class="text-3xl mb-1">🥉</span>
+          <span class="text-xs text-amber-700 font-bold uppercase">3° Lugar - Medalla Bronce</span>
+          <span id="podium-bronze-name" class="font-bold font-tech text-amber-500 text-lg">---</span>
+          <span id="podium-bronze-grade" class="text-xs text-slate-400">---</span>
+          <button onclick="viewDiplomaFromPodium('bronze')" class="mt-3 px-3 py-1.5 bg-slate-800 hover:bg-amber-950/40 text-amber-400 text-xs font-bold rounded-lg border border-amber-800/50 transition flex items-center gap-1 shadow-md">
+            📜 Ver Diploma
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIPLOMA / CERTIFICATE MODAL -->
+    <div id="diploma-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 md:p-6 overflow-y-auto">
+      <div class="relative w-full max-w-3xl bg-[#fffdf9] border-4 border-[#1e2b58] rounded-2xl shadow-2xl overflow-hidden p-3 md:p-5 text-center text-slate-900 my-auto print-exact" style="box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);">
+        
+        <!-- Certificate Inner Decorative Border Frame -->
+        <div class="border-2 border-[#f3af00] p-4 md:p-7 rounded-xl relative bg-gradient-to-b from-[#ffffff] via-[#fffdfa] to-[#fffaf0] shadow-inner overflow-hidden">
+          
+          <!-- Secondary Fine Line Frame -->
+          <div class="absolute inset-1.5 border border-[#1e2b58]/20 rounded-lg pointer-events-none"></div>
+
+          <!-- INSTITUTIONAL WATERMARK LOGO BACKGROUND -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.09] z-0">
+            <img src="https://institutolamilagrosa.com/storage/settings/6T92PvEgUj7a0aMk9G3qkfUBLvHnVWtEp0V9rWPN.png" alt="Marca de Agua Instituto La Milagrosa" class="w-80 md:w-96 h-auto object-contain">
+          </div>
+
+          <!-- Corner Ornaments (Gold & Navy Elegance) -->
+          <div class="absolute top-2 left-3 text-[#1e2b58] text-sm font-serif pointer-events-none">❖ <span class="text-[#f3af00]">❖</span></div>
+          <div class="absolute top-2 right-3 text-[#1e2b58] text-sm font-serif pointer-events-none"><span class="text-[#f3af00]">❖</span> ❖</div>
+          <div class="absolute bottom-2 left-3 text-[#1e2b58] text-sm font-serif pointer-events-none">❖ <span class="text-[#f3af00]">❖</span></div>
+          <div class="absolute bottom-2 right-3 text-[#1e2b58] text-sm font-serif pointer-events-none"><span class="text-[#f3af00]">❖</span> ❖</div>
+
+          <!-- Content Wrapper -->
+          <div class="relative z-10">
+
+            <!-- Certificate Header: Official School Logo & Clean Light Dino Badge -->
+            <div class="flex items-center justify-between border-b-2 border-[#f3af00]/40 pb-3 mb-3 gap-2">
+              <!-- Official School Logo -->
+              <div class="flex items-center gap-2 text-left">
+                <img src="https://institutolamilagrosa.com/storage/settings/6T92PvEgUj7a0aMk9G3qkfUBLvHnVWtEp0V9rWPN.png" alt="Logo Instituto La Milagrosa" class="h-14 md:h-16 w-auto object-contain">
+              </div>
+
+              <!-- Institution Name & Subtitle -->
+              <div class="text-center flex-1">
+                <h3 class="text-base md:text-xl font-black tracking-wider text-[#1e2b58] uppercase font-tech leading-none">INSTITUTO LA MILAGROSA</h3>
+                <p class="text-[11px] md:text-xs text-[#b45309] font-extrabold uppercase tracking-widest mt-1">SANTA MARTA • LA PRESENTACIÓN</p>
+                <p class="text-[9px] md:text-[10px] text-slate-600 font-semibold italic mt-0.5">Piedad • Sencillez • Trabajo — Área de Tecnología e Informática</p>
+              </div>
+
+              <!-- Dino Fest Event Badge (LIGHT THEME - NO DARK BACKGROUND) -->
+              <div class="flex flex-col items-center justify-center bg-amber-50/90 border-2 border-[#f3af00] px-3 py-1.5 rounded-2xl shadow-sm">
+                <span class="text-2xl leading-none">🦖</span>
+                <span class="text-[9px] font-black font-tech tracking-wider text-[#1e2b58] mt-0.5">DINO FEST</span>
+                <span class="text-[8px] text-[#b45309] font-extrabold uppercase">TECH 1.0</span>
+              </div>
+            </div>
+
+            <!-- Main Title Banner -->
+            <div class="my-1.5">
+              <span class="px-4 py-0.5 bg-amber-500/10 border border-[#f3af00]/50 rounded-full text-[10px] font-extrabold text-[#1e2b58] uppercase tracking-widest">
+                Reconociendo la Excelencia Digital Institucional
+              </span>
+              <h2 id="diploma-main-title" class="text-2xl md:text-3xl font-black text-[#1e2b58] font-tech tracking-wide my-1.5 uppercase drop-shadow-xs">
+                DIPLOMA DE CAMPEÓN DE ORO
+              </h2>
+            </div>
+
+            <p class="text-xs md:text-sm text-slate-700 font-medium italic mb-1">
+              El Comité Directivo y el Área de Tecnología e Informática otorgan con gran orgullo el presente reconocimiento a:
+            </p>
+
+            <!-- Recipient Name Container -->
+            <div class="my-2.5 border-b-2 border-[#f3af00] inline-block px-8 py-1 bg-gradient-to-r from-transparent via-amber-500/15 to-transparent relative">
+              <span class="text-[#f3af00] text-xs absolute left-2 top-1.5">◆</span>
+              <h1 id="diploma-student-name" class="text-2xl md:text-3xl font-black text-[#1e2b58] font-tech tracking-wide px-2">
+                NOMBRE DEL ESTUDIANTE
+              </h1>
+              <span class="text-[#f3af00] text-xs absolute right-2 top-1.5">◆</span>
+            </div>
+
+            <!-- Award Description -->
+            <p id="diploma-description" class="text-xs md:text-sm text-slate-800 leading-relaxed max-w-2xl mx-auto my-2.5 font-medium">
+              Por consagrarse con el <b id="diploma-place-text" class="text-[#b45309] font-black">1° LUGAR - MEDALLA DINO DE ORO</b> en la categoría <b id="diploma-category-text" class="text-[#1e2b58] font-extrabold">JUNIOR TECH</b> durante el <i>I Torneo Institucional Dino Fest Tech Milagrosa 1.0</i>, destacándose por su disciplina, reflejos visomotores y juego limpio.
+            </p>
+
+            <!-- Metadata Banner (Grado, Evento, Fecha) -->
+            <div class="flex flex-wrap justify-around items-center text-xs text-[#1e2b58] font-bold my-3 bg-amber-500/10 py-2 px-4 rounded-xl border border-[#f3af00]/50 gap-2">
+              <div class="flex items-center gap-1">
+                <span class="text-slate-600 font-semibold">GRADO:</span>
+                <span id="diploma-grade-code" class="text-[#1e2b58] font-black text-sm">5°A</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-base leading-none">🏅</span>
+                <span class="text-[#1e2b58] font-extrabold font-tech">MILAGROSA TECH 2026</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="text-slate-600 font-semibold">FECHA:</span>
+                <span id="diploma-date" class="text-[#1e2b58] font-bold">23 de agosto de 2026</span>
+              </div>
+            </div>
+
+            <!-- Bottom Section: Signatures & Golden Institutional Stamp Seal -->
+            <div class="relative pt-4 mt-4 border-t border-slate-300">
+              
+              <div class="grid grid-cols-2 gap-8 max-w-lg mx-auto">
+                <!-- Signature 1 -->
+                <div class="text-center">
+                  <div class="font-serif italic text-base text-[#1e2b58] font-black mb-0.5 tracking-wide">Lic. Tecnología & Sistemas</div>
+                  <div class="border-t-2 border-[#1e2b58]/50 text-[10px] text-slate-700 uppercase font-bold pt-1">Docente de Tecnología e Informática</div>
+                </div>
+                <!-- Signature 2 -->
+                <div class="text-center">
+                  <div class="font-serif italic text-base text-[#1e2b58] font-black mb-0.5 tracking-wide">Comité Directivo</div>
+                  <div class="border-t-2 border-[#1e2b58]/50 text-[10px] text-slate-700 uppercase font-bold pt-1">Instituto La Milagrosa</div>
+                </div>
+              </div>
+
+              <!-- Official Gold Rosette Badge / Stamp Emblem (Bottom Center-Right) -->
+              <div class="hidden sm:flex absolute right-2 -top-2 flex-col items-center justify-center pointer-events-none">
+                <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#f3af00] via-[#fbbf24] to-[#b45309] p-0.5 shadow-md flex items-center justify-center">
+                  <div class="w-full h-full rounded-full border border-white/80 bg-white/95 flex flex-col items-center justify-center text-center p-1">
+                    <span class="text-xs leading-none">📜</span>
+                    <span class="text-[7px] font-black text-[#1e2b58] font-tech leading-tight mt-0.5 uppercase">SELLO OFICIAL</span>
+                    <span class="text-[6px] text-[#b45309] font-bold">2026</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Verification ID Badge -->
+              <div class="mt-3 text-[9px] text-slate-500 font-mono flex items-center justify-between px-2">
+                <span>VERIFICACIÓN INSTITUCIONAL: REG-DF-2026-OK</span>
+                <span>SANTA MARTA, COLOMBIA</span>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Action Buttons (Print / Close) -->
+        <div class="mt-3 flex items-center justify-center gap-3 no-print">
+          <button onclick="printDiploma()" class="px-6 py-2.5 bg-[#1e2b58] hover:bg-[#283973] text-white font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-2 border border-[#f3af00]">
+            🖨️ Imprimir / Guardar PDF
+          </button>
+          <button onclick="closeDiplomaModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition">
+            ✖ Cerrar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* =========================================================================
+       AUDIO SYNTHESIZER ENGINE (Web Audio API)
+       ========================================================================= */
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('sound-status').innerText = audioEnabled ? 'ON' : 'OFF';
+      document.getElementById('sound-status').className = audioEnabled ? 'text-emerald-400' : 'text-slate-500';
+      document.getElementById('sound-icon').innerText = audioEnabled ? '🔊' : '🔇';
+    }
+
+    function playSound(type) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+
+        if (type === 'select') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'advance') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.linearRampToValueAtTime(600, now + 0.1);
+          osc.frequency.linearRampToValueAtTime(900, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'win') {
+          // Play fanfare chord progression
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'square';
+            o.frequency.setValueAtTime(freq, now + i * 0.08);
+            g.gain.setValueAtTime(0.1, now + i * 0.08);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.start(now + i * 0.08);
+            o.stop(now + i * 0.08 + 0.35);
+          });
+        }
+      } catch (e) {
+        console.log("Audio play error", e);
+      }
+    }
+
+    /* =========================================================================
+       TOURNAMENT STATE DATA STRUCTURE
+       ========================================================================= */
+    const tournamentData = {
+      junior: {
+        name: 'Junior Tech (3° a 5°)',
+        grades: [
+          { code: '3°A', name: 'Grado 3°A', candidates: ['Mateo V.', 'Sofia R.', 'Lucas M.'], winner: null },
+          { code: '3°B', name: 'Grado 3°B', candidates: ['Valentina K.', 'Daniel P.', 'Mariana C.'], winner: null },
+          { code: '4°A', name: 'Grado 4°A', candidates: ['Samuel T.', 'Isabella G.', 'Emanuel S.'], winner: null },
+          { code: '5°A', name: 'Grado 5°A', candidates: ['Nicolas H.', 'Camila F.', 'Alejandro Z.'], winner: null },
+          { code: '5°B', name: 'Grado 5°B', candidates: ['Luciana B.', 'Joaquin D.', 'Salome A.'], winner: null }
+        ],
+        finalists: [], // Filled when grade champions selected
+        podium: { gold: null, silver: null, bronze: null }
+      },
+      master: {
+        name: 'Máster Tech (6° a 8°)',
+        grades: [
+          { code: '6°A', name: 'Grado 6°A', candidates: ['Esteban R.', 'Sara M.', 'Jeronimo L.'], winner: null },
+          { code: '7°A', name: 'Grado 7°A', candidates: ['Gabriel C.', 'Valery Q.', 'Tomas H.'], winner: null },
+          { code: '8°A', name: 'Grado 8°A', candidates: ['Martin N.', 'Manuela V.', 'Sebastian O.'], winner: null }
+        ],
+        finalists: [],
+        podium: { gold: null, silver: null, bronze: null }
+      },
+      senior: {
+        name: 'Senior Tech (9° a 11°)',
+        grades: [
+          { code: '9°A', name: 'Grado 9°A', candidates: ['Juan Diego P.', 'Laura B.', 'Andres C.'], winner: null },
+          { code: '10°A', name: 'Grado 10°A', candidates: ['Carlos E.', 'Mariana V.', 'Santiago G.'], winner: null },
+          { code: '11°A', name: 'Grado 11°A', candidates: ['Felipe M.', 'Natalia S.', 'Kevin R.'], winner: null }
+        ],
+        finalists: [],
+        podium: { gold: null, silver: null, bronze: null }
+      }
+    };
+
+    let activeCategoryKey = 'junior';
+    let particles = [];
+    let interactiveNodes = []; // Registered clickable bounding boxes
+    let hoverNode = null;
+
+    /* =========================================================================
+       CANVAS ENGINE SETUP & RENDERING
+       ========================================================================= */
+    const canvas = document.getElementById('tournamentCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('canvas-container');
+    const tooltip = document.getElementById('canvas-tooltip');
+
+    function resizeCanvas() {
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    function drawGrid(w, h) {
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 0.5;
+      const step = 40;
+      for (let x = 0; x < w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+    }
+
+    // Mathematical evaluation of Cubic Bezier Point for accurate line following
+    function getCubicBezierPoint(t, p0, p1, p2, p3) {
+      const u = 1 - t;
+      const tt = t * t;
+      const uu = u * u;
+      const uuu = uu * u;
+      const ttt = tt * t;
+
+      let x = uuu * p0.x;
+      x += 3 * uu * t * p1.x;
+      x += 3 * u * tt * p2.x;
+      x += ttt * p3.x;
+
+      let y = uuu * p0.y;
+      y += 3 * uu * t * p1.y;
+      y += 3 * u * tt * p2.y;
+      y += ttt * p3.y;
+
+      return { x, y };
+    }
+
+    function spawnEnergyParticle(x1, y1, x2, y2, color = '#38bdf8') {
+      const cp1x = x1 + (x2 - x1) * 0.5;
+      const cp2x = x1 + (x2 - x1) * 0.5;
+      particles.push({
+        p0: { x: x1, y: y1 },
+        p1: { x: cp1x, y: y1 },
+        p2: { x: cp2x, y: y2 },
+        p3: { x: x2, y: y2 },
+        progress: 0,
+        speed: 0.015 + Math.random() * 0.01,
+        size: 3.5 + Math.random() * 2.5,
+        color: color
+      });
+    }
+
+    function spawnConfetti(centerX, centerY) {
+      const colors = ['#f59e0b', '#38bdf8', '#10b981', '#ec4899', '#8b5cf6'];
+      for (let i = 0; i < 70; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 8;
+        particles.push({
+          x: centerX,
+          y: centerY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          gravity: 0.15,
+          life: 1,
+          decay: 0.01 + Math.random() * 0.02,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          isConfetti: true,
+          size: 4 + Math.random() * 4
+        });
+      }
+    }
+
+    function updateAndDrawParticles(w, h) {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+
+        if (p.isConfetti) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.life -= p.decay;
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          if (p.life <= 0) particles.splice(i, 1);
+        } else {
+          // Path energy pulse strictly following the Bezier curve
+          p.progress += p.speed;
+          if (p.progress > 1) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          const pt = getCubicBezierPoint(p.progress, p.p0, p.p1, p.p2, p.p3);
+
+          ctx.save();
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 12;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    function renderBracket() {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      drawGrid(w, h);
+      interactiveNodes = [];
+
+      const category = tournamentData[activeCategoryKey];
+      const grades = category.grades;
+      const numGrades = grades.length;
+
+      // Column positions
+      const col1X = w * 0.05; // Fase 2: Duelos de Salón
+      const col2X = w * 0.42; // Fase 3: Gran Final
+      const col3X = w * 0.78; // Podio Final
+
+      const cardWidth = Math.min(220, w * 0.28);
+      const cardHeight = Math.min(105, (h - 80) / numGrades - 10);
+
+      // Render Stage Titles Header
+      drawStageHeaders(w, col1X, col2X, col3X, cardWidth);
+
+      // Store Stage 2 (Gran Final) Target Positions
+      const finalBoxWidth = cardWidth + 20;
+      const finalBoxHeight = Math.min(260, h * 0.55);
+      const finalBoxX = col2X;
+      const finalBoxY = (h - finalBoxHeight) / 2 + 15;
+
+      // Draw Phase 2 Grade Cards (Left Column)
+      const totalCol1Height = numGrades * cardHeight + (numGrades - 1) * 15;
+      const startY1 = (h - totalCol1Height) / 2 + 20;
+
+      grades.forEach((gradeObj, idx) => {
+        const cardX = col1X;
+        const cardY = startY1 + idx * (cardHeight + 15);
+
+        // Draw connecting curve to Gran Final
+        const startPoint = { x: cardX + cardWidth, y: cardY + cardHeight / 2 };
+        const endPoint = { x: finalBoxX, y: finalBoxY + (finalBoxHeight / (numGrades + 1)) * (idx + 1) };
+        const isActive = gradeObj.winner !== null;
+        
+        drawConnectorCurve(startPoint.x, startPoint.y, endPoint.x, endPoint.y, isActive);
+
+        // Ambient flowing pulses on active lines
+        if (isActive && Math.random() < 0.03) {
+          spawnEnergyParticle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, '#38bdf8');
+        }
+
+        // Draw Grade Card Box
+        drawGradeCard(cardX, cardY, cardWidth, cardHeight, gradeObj, idx);
+      });
+
+      // Draw Phase 3: Gran Final Box (Middle Column)
+      drawGranFinalBox(finalBoxX, finalBoxY, finalBoxWidth, finalBoxHeight, category, col3X);
+
+      // Draw Podium Box (Right Column)
+      const podiumWidth = cardWidth + 10;
+      const podiumHeight = Math.min(240, h * 0.5);
+      const podiumX = col3X;
+      const podiumY = (h - podiumHeight) / 2 + 15;
+      drawPodiumBox(podiumX, podiumY, podiumWidth, podiumHeight, category);
+
+      // Update energy particles
+      updateAndDrawParticles(w, h);
+    }
+
+    function drawStageHeaders(w, col1X, col2X, col3X, cardWidth) {
+      ctx.font = '700 12px "Chakra Petch", sans-serif';
+      
+      // Header 1
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('FASE 2: DUELOS DE SALÓN', col1X, 35);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '400 11px Inter, sans-serif';
+      ctx.fillText('Terna de Finalistas (Auditorio)', col1X, 50);
+
+      // Header 2
+      ctx.font = '700 12px "Chakra Petch", sans-serif';
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('FASE 3: GRAN FINAL', col2X, 35);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '400 11px Inter, sans-serif';
+      ctx.fillText('Campeones de Salón en Tarima', col2X, 50);
+
+      // Header 3
+      ctx.font = '700 12px "Chakra Petch", sans-serif';
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('PODIO INSTITUCIONAL', col3X, 35);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '400 11px Inter, sans-serif';
+      ctx.fillText('Cuadro de Honor', col3X, 50);
+    }
+
+    function drawConnectorCurve(x1, y1, x2, y2, isActive) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      const cp1x = x1 + (x2 - x1) * 0.5;
+      const cp2x = x1 + (x2 - x1) * 0.5;
+      ctx.bezierCurveTo(cp1x, y1, cp2x, y2, x2, y2);
+      
+      if (isActive) {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawGradeCard(x, y, w, h, gradeObj, gradeIdx) {
+      ctx.save();
+      
+      // Background Box
+      const isComplete = gradeObj.winner !== null;
+      ctx.fillStyle = isComplete ? '#0f172a' : '#0f172a';
+      ctx.strokeStyle = isComplete ? '#0284c7' : '#1e293b';
+      ctx.lineWidth = isComplete ? 2 : 1;
+      
+      roundRect(ctx, x, y, w, h, 10, true, true);
+
+      // Grade Tag Header
+      ctx.fillStyle = isComplete ? '#0284c7' : '#1e293b';
+      roundRect(ctx, x, y, w, 22, { tl: 10, tr: 10, bl: 0, br: 0 }, true, false);
+      
+      ctx.fillStyle = isComplete ? '#ffffff' : '#94a3b8';
+      ctx.font = '700 11px "Chakra Petch", sans-serif';
+      ctx.fillText(`🏆 SALÓN ${gradeObj.code}`, x + 10, y + 15);
+
+      if (isComplete) {
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '600 10px Inter';
+        ctx.fillText('✓ CAMPEÓN LISTO', x + w - 95, y + 15);
+      }
+
+      // Candidates List
+      const itemH = (h - 26) / 3;
+      gradeObj.candidates.forEach((cand, cIdx) => {
+        const itemY = y + 26 + cIdx * itemH;
+        const isWinner = gradeObj.winner === cand;
+
+        // Hover detection bounding box
+        const nodeBox = {
+          type: 'grade_candidate',
+          categoryKey: activeCategoryKey,
+          gradeIdx: gradeIdx,
+          candidateName: cand,
+          x: x + 4,
+          y: itemY,
+          w: w - 8,
+          h: itemH - 2
+        };
+        interactiveNodes.push(nodeBox);
+
+        const isHovered = hoverNode && hoverNode.type === 'grade_candidate' && 
+                          hoverNode.gradeIdx === gradeIdx && hoverNode.candidateName === cand;
+
+        // Item background
+        if (isWinner) {
+          ctx.fillStyle = '#1e3a8a';
+          roundRect(ctx, x + 4, itemY, w - 8, itemH - 2, 4, true, false);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        } else if (isHovered && !isComplete) {
+          ctx.fillStyle = '#1e293b';
+          roundRect(ctx, x + 4, itemY, w - 8, itemH - 2, 4, true, false);
+        }
+
+        // Text
+        ctx.font = isWinner ? '700 11px Inter, sans-serif' : '400 11px Inter, sans-serif';
+        ctx.fillStyle = isWinner ? '#38bdf8' : (isHovered ? '#f8fafc' : '#cbd5e1');
+        
+        const crown = isWinner ? '👑 ' : `${cIdx + 1}. `;
+        ctx.fillText(`${crown}${cand}`, x + 10, itemY + itemH * 0.65);
+      });
+
+      ctx.restore();
+    }
+
+    function drawGranFinalBox(x, y, w, h, category, col3X) {
+      ctx.save();
+
+      const finalists = category.finalists;
+      const maxFinalists = category.grades.length;
+
+      // Outer Box
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = finalists.length === maxFinalists ? '#f59e0b' : '#334155';
+      ctx.lineWidth = finalists.length === maxFinalists ? 2 : 1;
+      roundRect(ctx, x, y, w, h, 12, true, true);
+
+      // Header Banner
+      ctx.fillStyle = '#1e293b';
+      roundRect(ctx, x, y, w, 28, { tl: 12, tr: 12, bl: 0, br: 0 }, true, false);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = '700 12px "Chakra Petch", sans-serif';
+      ctx.fillText(`TARIMA AUDITORIO (${finalists.length}/${maxFinalists} CAMPEONES)`, x + 12, y + 18);
+
+      // Finalists Slot List
+      const slotH = (h - 38) / maxFinalists;
+      
+      for (let i = 0; i < maxFinalists; i++) {
+        const slotY = y + 32 + i * slotH;
+        const finalist = finalists[i];
+
+        if (finalist) {
+          // Connect to podium if ranked
+          const podiumPos = getPodiumRank(category, finalist.name);
+          const isPodiumRanked = podiumPos !== null;
+
+          const startPt = { x: x + w, y: slotY + slotH / 2 };
+          const endPt = { x: col3X, y: y + h / 2 };
+          drawConnectorCurve(startPt.x, startPt.y, endPt.x, endPt.y, isPodiumRanked);
+
+          if (isPodiumRanked && Math.random() < 0.03) {
+            const particleColor = podiumPos === 'gold' ? '#f59e0b' : '#38bdf8';
+            spawnEnergyParticle(startPt.x, startPt.y, endPt.x, endPt.y, particleColor);
+          }
+
+          // Clickable Finalist Bounding Box
+          const finalistBox = {
+            type: 'finalist_click',
+            categoryKey: activeCategoryKey,
+            finalist: finalist,
+            x: x + 6,
+            y: slotY,
+            w: w - 12,
+            h: slotH - 4
+          };
+          interactiveNodes.push(finalistBox);
+
+          const isHovered = hoverNode && hoverNode.type === 'finalist_click' && 
+                            hoverNode.finalist.name === finalist.name;
+
+          // Slot Background
+          if (isPodiumRanked) {
+            ctx.fillStyle = podiumPos === 'gold' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(148, 163, 184, 0.15)';
+            ctx.strokeStyle = podiumPos === 'gold' ? '#f59e0b' : '#94a3b8';
+          } else if (isHovered) {
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#38bdf8';
+          } else {
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#334155';
+          }
+
+          roundRect(ctx, x + 6, slotY, w - 12, slotH - 4, 6, true, true);
+
+          // Text details
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = '700 11px Inter, sans-serif';
+          ctx.fillText(`🏃 ${finalist.name}`, x + 14, slotY + slotH * 0.45);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '400 10px Inter, sans-serif';
+          ctx.fillText(`Campeón ${finalist.gradeCode}`, x + 14, slotY + slotH * 0.78);
+
+          // Medal Tag if awarded
+          if (isPodiumRanked) {
+            const medalEmoji = podiumPos === 'gold' ? '🥇 ORO' : (podiumPos === 'silver' ? '🥈 PLATA' : '🥉 BRONCE');
+            ctx.fillStyle = podiumPos === 'gold' ? '#f59e0b' : '#cbd5e1';
+            ctx.font = '800 10px "Chakra Petch", sans-serif';
+            ctx.fillText(medalEmoji, x + w - 75, slotY + slotH * 0.55);
+          } else {
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '600 10px Inter';
+            ctx.fillText('¡Haz clic para premiar!', x + w - 120, slotY + slotH * 0.55);
+          }
+
+        } else {
+          // Empty slot placeholder
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+          ctx.strokeStyle = '#1e293b';
+          roundRect(ctx, x + 6, slotY, w - 12, slotH - 4, 6, true, true);
+
+          ctx.fillStyle = '#475569';
+          ctx.font = '400 11px Inter, sans-serif';
+          ctx.fillText(`Esperando Campeón (${category.grades[i].code})...`, x + 14, slotY + slotH * 0.55);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawPodiumBox(x, y, w, h, category) {
+      ctx.save();
+
+      const podium = category.podium;
+
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = podium.gold ? '#f59e0b' : '#334155';
+      ctx.lineWidth = podium.gold ? 2 : 1;
+      roundRect(ctx, x, y, w, h, 12, true, true);
+
+      // Header
+      ctx.fillStyle = '#1e293b';
+      roundRect(ctx, x, y, w, 28, { tl: 12, tr: 12, bl: 0, br: 0 }, true, false);
+      ctx.fillStyle = '#10b981';
+      ctx.font = '700 12px "Chakra Petch", sans-serif';
+      ctx.fillText('PODIO INSTITUCIONAL', x + 12, y + 18);
+
+      // Podium Places
+      const ranks = [
+        { key: 'gold', label: '1° LUGAR (ORO)', emoji: '🥇', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+        { key: 'silver', label: '2° LUGAR (PLATA)', emoji: '🥈', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)' },
+        { key: 'bronze', label: '3° LUGAR (BRONCE)', emoji: '🥉', color: '#b45309', bg: 'rgba(180, 83, 9, 0.1)' }
+      ];
+
+      const slotH = (h - 38) / 3;
+
+      ranks.forEach((rk, idx) => {
+        const slotY = y + 32 + idx * slotH;
+        const winner = podium[rk.key];
+
+        ctx.fillStyle = winner ? rk.bg : '#1e293b';
+        ctx.strokeStyle = winner ? rk.color : '#334155';
+        roundRect(ctx, x + 6, slotY, w - 12, slotH - 4, 6, true, true);
+
+        ctx.fillStyle = rk.color;
+        ctx.font = '700 10px "Chakra Petch", sans-serif';
+        ctx.fillText(`${rk.emoji} ${rk.label}`, x + 12, slotY + 16);
+
+        if (winner) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '700 12px Inter, sans-serif';
+          ctx.fillText(winner.name, x + 12, slotY + 34);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '400 10px Inter, sans-serif';
+          ctx.fillText(`Grado ${winner.gradeCode}`, x + 12, slotY + 46);
+        } else {
+          ctx.fillStyle = '#475569';
+          ctx.font = '400 11px Inter, sans-serif';
+          ctx.fillText('Por definir...', x + 12, slotY + 36);
+        }
+      });
+
+      ctx.restore();
+    }
+
+    function getPodiumRank(category, studentName) {
+      if (category.podium.gold && category.podium.gold.name === studentName) return 'gold';
+      if (category.podium.silver && category.podium.silver.name === studentName) return 'silver';
+      if (category.podium.bronze && category.podium.bronze.name === studentName) return 'bronze';
+      return null;
+    }
+
+    // Helper function for rounded rectangles
+    function roundRect(ctx, x, y, width, height, radius = 5, fill = true, stroke = false) {
+      if (typeof radius === 'number') {
+        radius = { tl: radius, tr: radius, br: radius, bl: radius };
+      }
+      ctx.beginPath();
+      ctx.moveTo(x + radius.tl, y);
+      ctx.lineTo(x + width - radius.tr, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+      ctx.lineTo(x + width, y + height - radius.br);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+      ctx.lineTo(x + radius.bl, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+      ctx.lineTo(x, y + radius.tl);
+      ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    /* =========================================================================
+       INTERACTION & EVENT HANDLERS
+       ========================================================================= */
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      hoverNode = null;
+      for (const node of interactiveNodes) {
+        if (mouseX >= node.x && mouseX <= node.x + node.w &&
+            mouseY >= node.y && mouseY <= node.y + node.h) {
+          hoverNode = node;
+          break;
+        }
+      }
+
+      if (hoverNode) {
+        canvas.style.cursor = 'pointer';
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${e.clientX - rect.left + 15}px`;
+        tooltip.style.top = `${e.clientY - rect.top + 15}px`;
+
+        if (hoverNode.type === 'grade_candidate') {
+          tooltip.innerHTML = `🏆 Clic para proclamar <b>${hoverNode.candidateName}</b> como Campeón de ${tournamentData[activeCategoryKey].grades[hoverNode.gradeIdx].code}`;
+        } else if (hoverNode.type === 'finalist_click') {
+          tooltip.innerHTML = `🥇 Clic para asignar medalla a <b>${hoverNode.finalist.name}</b> en la Gran Final`;
+        }
+      } else {
+        canvas.style.cursor = 'default';
+        tooltip.style.display = 'none';
+      }
+    });
+
+    canvas.addEventListener('click', (e) => {
+      if (!hoverNode) return;
+
+      if (hoverNode.type === 'grade_candidate') {
+        selectGradeWinner(hoverNode.gradeIdx, hoverNode.candidateName);
+      } else if (hoverNode.type === 'finalist_click') {
+        rankFinalist(hoverNode.finalist);
+      }
+    });
+
+    function selectGradeWinner(gradeIdx, candidateName) {
+      const category = tournamentData[activeCategoryKey];
+      const gradeObj = category.grades[gradeIdx];
+
+      gradeObj.winner = candidateName;
+
+      // Add to finalists array if not present
+      const existingIdx = category.finalists.findIndex(f => f.gradeCode === gradeObj.code);
+      const finalistData = { name: candidateName, gradeCode: gradeObj.code };
+
+      if (existingIdx >= 0) {
+        category.finalists[existingIdx] = finalistData;
+      } else {
+        category.finalists.push(finalistData);
+      }
+
+      // Audio & Particle FX
+      playSound('advance');
+
+      // Calculate exact Bezier endpoints for energy particles wave
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      const numGrades = category.grades.length;
+
+      const col1X = w * 0.05;
+      const col2X = w * 0.42;
+      const cardWidth = Math.min(220, w * 0.28);
+      const cardHeight = Math.min(105, (h - 80) / numGrades - 10);
+      const totalCol1Height = numGrades * cardHeight + (numGrades - 1) * 15;
+      const startY1 = (h - totalCol1Height) / 2 + 20;
+
+      const cardX = col1X;
+      const cardY = startY1 + gradeIdx * (cardHeight + 15);
+      const startX = cardX + cardWidth;
+      const startY = cardY + cardHeight / 2;
+
+      const finalBoxHeight = Math.min(260, h * 0.55);
+      const finalBoxY = (h - finalBoxHeight) / 2 + 15;
+      const endX = col2X;
+      const endY = finalBoxY + (finalBoxHeight / (numGrades + 1)) * (gradeIdx + 1);
+
+      // Launch a continuous wave of energy particles along the curve
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          spawnEnergyParticle(startX, startY, endX, endY, '#38bdf8');
+        }, i * 80);
+      }
+
+      updateInstructionHint();
+      checkPodiumStatus();
+    }
+
+    function rankFinalist(finalist) {
+      const category = tournamentData[activeCategoryKey];
+      const podium = category.podium;
+      let assignedRank = null;
+
+      // Assign sequentially: Gold -> Silver -> Bronze
+      if (!podium.gold) {
+        podium.gold = finalist;
+        assignedRank = 'gold';
+        playSound('select');
+      } else if (!podium.silver && podium.gold.name !== finalist.name) {
+        podium.silver = finalist;
+        assignedRank = 'silver';
+        playSound('select');
+      } else if (!podium.bronze && podium.gold.name !== finalist.name && podium.silver.name !== finalist.name) {
+        podium.bronze = finalist;
+        assignedRank = 'bronze';
+        playSound('win');
+        spawnConfetti(container.clientWidth * 0.8, container.clientHeight * 0.5);
+      }
+
+      if (assignedRank) {
+        const finalistIdx = category.finalists.findIndex(f => f.name === finalist.name);
+        if (finalistIdx >= 0) {
+          const w = container.clientWidth;
+          const h = container.clientHeight;
+          const maxFinalists = category.grades.length;
+
+          const col2X = w * 0.42;
+          const col3X = w * 0.78;
+          const cardWidth = Math.min(220, w * 0.28);
+          const finalBoxWidth = cardWidth + 20;
+          const finalBoxHeight = Math.min(260, h * 0.55);
+          const finalBoxY = (h - finalBoxHeight) / 2 + 15;
+          const slotH = (finalBoxHeight - 38) / maxFinalists;
+          const slotY = finalBoxY + 32 + finalistIdx * slotH;
+
+          const startX = col2X + finalBoxWidth;
+          const startY = slotY + slotH / 2;
+          const endX = col3X;
+          const endY = (h - Math.min(240, h * 0.5)) / 2 + 15 + Math.min(240, h * 0.5) / 2;
+
+          const particleColor = assignedRank === 'gold' ? '#f59e0b' : '#38bdf8';
+          for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+              spawnEnergyParticle(startX, startY, endX, endY, particleColor);
+            }, i * 80);
+          }
+        }
+      }
+
+      updateInstructionHint();
+      checkPodiumStatus();
+    }
+
+    function updateInstructionHint() {
+      const category = tournamentData[activeCategoryKey];
+      const hint = document.getElementById('instruction-hint');
+
+      const allGradesDone = category.grades.every(g => g.winner !== null);
+      const podiumDone = category.podium.gold && category.podium.silver && category.podium.bronze;
+
+      if (podiumDone) {
+        hint.innerHTML = `<span>🎉</span> <span>¡Categoría completada! Revisa el <b>Podio Institucional</b>.</span>`;
+        hint.className = "text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2";
+      } else if (allGradesDone) {
+        hint.innerHTML = `<span>🏆</span> <span>Haz clic en los Campeones en la <b>Gran Final</b> para asignar Oro, Plata y Bronce.</span>`;
+        hint.className = "text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2 animate-pulse";
+      } else {
+        hint.innerHTML = `<span>👉</span> <span>Haz clic en un estudiante para declararlo <b>Campeón de Salón</b>.</span>`;
+        hint.className = "text-xs font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2";
+      }
+    }
+
+    function checkPodiumStatus() {
+      const category = tournamentData[activeCategoryKey];
+      const podium = category.podium;
+      const banner = document.getElementById('podium-banner');
+
+      if (podium.gold && podium.silver && podium.bronze) {
+        document.getElementById('podium-category-title').innerText = `¡GANADORES CATEGORÍA ${category.name.toUpperCase()}!`;
+        
+        document.getElementById('podium-gold-name').innerText = podium.gold.name;
+        document.getElementById('podium-gold-grade').innerText = `Campeón ${podium.gold.gradeCode}`;
+
+        document.getElementById('podium-silver-name').innerText = podium.silver.name;
+        document.getElementById('podium-silver-grade').innerText = `Campeón ${podium.silver.gradeCode}`;
+
+        document.getElementById('podium-bronze-name').innerText = podium.bronze.name;
+        document.getElementById('podium-bronze-grade').innerText = `Campeón ${podium.bronze.gradeCode}`;
+
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function switchCategory(key) {
+      activeCategoryKey = key;
+
+      // Update Tab UI Styles
+      ['junior', 'master', 'senior'].forEach(k => {
+        const btn = document.getElementById(`tab-${k}`);
+        if (k === key) {
+          btn.className = "category-tab px-4 py-2 rounded-lg text-sm font-bold font-tech transition-all flex items-center gap-2 bg-cyan-500 text-slate-950 shadow-md glow-cyan";
+        } else {
+          btn.className = "category-tab px-4 py-2 rounded-lg text-sm font-bold font-tech transition-all flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white";
+        }
+      });
+
+      updateInstructionHint();
+      checkPodiumStatus();
+      playSound('select');
+    }
+
+    function resetCurrentCategory() {
+      const category = tournamentData[activeCategoryKey];
+      category.grades.forEach(g => g.winner = null);
+      category.finalists = [];
+      category.podium = { gold: null, silver: null, bronze: null };
+
+      updateInstructionHint();
+      checkPodiumStatus();
+      playSound('select');
+    }
+
+    function autoSimulateCurrentCategory() {
+      resetCurrentCategory();
+      const category = tournamentData[activeCategoryKey];
+
+      // Randomly pick grade champions
+      category.grades.forEach((g, idx) => {
+        const randomCand = g.candidates[Math.floor(Math.random() * g.candidates.length)];
+        selectGradeWinner(idx, randomCand);
+      });
+
+      // Randomly award podium
+      const shuffled = [...category.finalists].sort(() => 0.5 - Math.random());
+      if (shuffled[0]) rankFinalist(shuffled[0]);
+      if (shuffled[1]) rankFinalist(shuffled[1]);
+      if (shuffled[2]) rankFinalist(shuffled[2]);
+    }
+
+    function viewDiplomaFromPodium(placeKey) {
+      const category = tournamentData[activeCategoryKey];
+      const winner = category.podium[placeKey];
+      if (!winner) return;
+
+      const placeTitles = {
+        gold: { title: 'DIPLOMA DE CAMPEÓN DE ORO', rankText: '1° LUGAR - MEDALLA DINO DE ORO' },
+        silver: { title: 'DIPLOMA DE HONOR DE PLATA', rankText: '2° LUGAR - MEDALLA DE PLATA' },
+        bronze: { title: 'DIPLOMA DE RECONOCIMIENTO', rankText: '3° LUGAR - MEDALLA DE BRONCE' }
+      };
+
+      const info = placeTitles[placeKey];
+      openDiplomaModal(winner.name, winner.gradeCode, info.rankText, category.name, info.title);
+    }
+
+    function openDiplomaModal(studentName, gradeCode, rankText, categoryName, title) {
+      document.getElementById('diploma-student-name').innerText = studentName;
+      document.getElementById('diploma-grade-code').innerText = gradeCode;
+      document.getElementById('diploma-place-text').innerText = rankText;
+      document.getElementById('diploma-category-text').innerText = categoryName;
+      document.getElementById('diploma-main-title').innerText = title || 'DIPLOMA DE EXCELENCIA';
+      
+      const today = new Date();
+      document.getElementById('diploma-date').innerText = today.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      const modal = document.getElementById('diploma-modal');
+      modal.classList.remove('hidden');
+      playSound('win');
+    }
+
+    function closeDiplomaModal() {
+      document.getElementById('diploma-modal').classList.add('hidden');
+    }
+
+    function printDiploma() {
+      window.print();
+    }
+
+    function animate() {
+      renderBracket();
+      requestAnimationFrame(animate);
+    }
+
+    window.onload = function() {
+      resizeCanvas();
+      updateInstructionHint();
+      animate();
+    };
+  </script>
+</body>
+</html>
