@@ -14,20 +14,12 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   : ['https://juegodino.pages.dev', 'http://localhost:3000', 'http://127.0.0.1:3000'];
 
 const io = new Server(server, {
-  maxHttpBufferSize: 65536, // 64 KB max payload size
+  maxHttpBufferSize: 65536,
+  pingInterval: 10000,
+  pingTimeout: 25000,
+  transports: ['websocket', 'polling'],
   cors: {
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (
-        origin.includes('localhost') ||
-        origin.includes('127.0.0.1') ||
-        origin.endsWith('.pages.dev') ||
-        ALLOWED_ORIGINS.some(allowed => allowed === '*' || allowed === origin)
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, true);
-    },
+    origin: '*',
     methods: ['GET', 'POST']
   }
 });
@@ -39,26 +31,6 @@ const ALLOWED_ACTIONS = new Set(['running', 'jumping', 'ducking', 'crashed']);
 const ALLOWED_OBSTACLE_TYPES = new Set(['CACTUS_SMALL', 'CACTUS_LARGE', 'PTERODACTYL']);
 const MAX_OBSTACLES_PER_UPDATE = 8;
 const MAX_PLAYER_NAME_LENGTH = 16;
-
-// Rate limiting por IP
-const ipRateLimitStore = new Map();
-
-function checkIpRateLimit(ip, action, limit, windowMs) {
-  if (!ip) return true;
-  const key = `${ip}:${action}`;
-  const now = Date.now();
-  let entry = ipRateLimitStore.get(key);
-  if (!entry || now > entry.resetAt) {
-    entry = { count: 1, resetAt: now + windowMs };
-    ipRateLimitStore.set(key, entry);
-    return true;
-  }
-  entry.count++;
-  if (entry.count > limit) {
-    return false;
-  }
-  return true;
-}
 
 app.use(express.static(path.join(__dirname, 'public')));
 

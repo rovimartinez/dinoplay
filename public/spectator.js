@@ -8,7 +8,9 @@
   }
 
   const socket = (typeof io !== 'undefined')
-    ? (customBackendUrl ? io(customBackendUrl) : io())
+    ? (customBackendUrl
+        ? io(customBackendUrl, { transports: ['websocket', 'polling'], reconnection: true, reconnectionAttempts: Infinity, reconnectionDelay: 1000 })
+        : io({ transports: ['websocket', 'polling'], reconnection: true, reconnectionAttempts: Infinity, reconnectionDelay: 1000 }))
     : null;
 
   // Elementos DOM
