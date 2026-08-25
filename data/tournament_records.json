@@ -792,6 +792,106 @@
   },
   "results": [
     {
+      "id": "test-match-1787663585636",
+      "pin": "7777",
+      "eventName": "Torneo Dino Milagrosa",
+      "matchName": "Eliminatoria Junior",
+      "date": "2026-08-25T13:13:05.636Z",
+      "winner": "Rex Campeon",
+      "winnerScore": 450,
+      "totalPlayers": 3,
+      "podium": [
+        {
+          "id": "p1",
+          "name": "Rex Campeon",
+          "score": 450,
+          "rank": 1
+        },
+        {
+          "id": "p2",
+          "name": "VelociRunner",
+          "score": 320,
+          "rank": 2
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "p1",
+          "name": "Rex Campeon",
+          "score": 450,
+          "rank": 1,
+          "crashed": false,
+          "lives": 3
+        },
+        {
+          "id": "p2",
+          "name": "VelociRunner",
+          "score": 320,
+          "rank": 2,
+          "crashed": true,
+          "lives": 0
+        },
+        {
+          "id": "p3",
+          "name": "TriceraTop",
+          "score": 180,
+          "rank": 3,
+          "crashed": true,
+          "lives": 0
+        }
+      ]
+    },
+    {
+      "id": "test-match-1787632767216",
+      "pin": "7777",
+      "eventName": "Torneo Dino Milagrosa",
+      "matchName": "Eliminatoria Junior",
+      "date": "2026-08-25T04:39:27.217Z",
+      "winner": "Rex Campeon",
+      "winnerScore": 450,
+      "totalPlayers": 3,
+      "podium": [
+        {
+          "id": "p1",
+          "name": "Rex Campeon",
+          "score": 450,
+          "rank": 1
+        },
+        {
+          "id": "p2",
+          "name": "VelociRunner",
+          "score": 320,
+          "rank": 2
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "p1",
+          "name": "Rex Campeon",
+          "score": 450,
+          "rank": 1,
+          "crashed": false,
+          "lives": 3
+        },
+        {
+          "id": "p2",
+          "name": "VelociRunner",
+          "score": 320,
+          "rank": 2,
+          "crashed": true,
+          "lives": 0
+        },
+        {
+          "id": "p3",
+          "name": "TriceraTop",
+          "score": 180,
+          "rank": 3,
+          "crashed": true,
+          "lives": 0
+        }
+      ]
+    },
+    {
       "id": "test-match-1787621600359",
       "pin": "7777",
       "eventName": "Torneo Dino Milagrosa",
@@ -1920,5 +2020,5 @@
       ]
     }
   ],
-  "last_updated": "2026-08-25T01:33:20.359Z"
+  "last_updated": "2026-08-25T13:13:05.636Z"
 }

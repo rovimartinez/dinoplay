@@ -94,11 +94,21 @@
       <div class="lobby-practice-box">
         <div class="practice-box-header">
           <span>🎯 Calentar dedos mientras esperas</span>
-          <button id="btn-toggle-practice" class="btn-practice-toggle">▶ Probar Salto</button>
+          <button id="btn-toggle-practice" class="btn-practice-toggle">▶ Practicar Salto y Agache</button>
         </div>
         <div id="lobby-practice-viewport" class="lobby-practice-viewport" style="display: none;">
           <div id="lobby-mini-canvas-container"></div>
-          <p class="practice-tip">Toca la pantalla o presiona [Espacio] para saltar.</p>
+          <div class="touch-controls-bar" style="margin-top: 8px;">
+            <button type="button" id="practice-touch-duck" class="touch-btn duck-btn">
+              <span class="icon">🔻</span>
+              <span class="txt">AGACHARSE (↓ / S)</span>
+            </button>
+            <button type="button" id="practice-touch-jump" class="touch-btn jump-btn">
+              <span class="icon">🔺</span>
+              <span class="txt">SALTAR (ESPACIO / ↑ / W)</span>
+            </button>
+          </div>
+          <p class="practice-tip">💡 Teclado: <strong>[Espacio] / [↑] / [W]</strong> para saltar | <strong>[↓] / [S]</strong> para agacharte</p>
         </div>
       </div>
     </div>
@@ -149,11 +159,11 @@
     <div class="touch-controls-bar">
       <button type="button" id="touch-duck" class="touch-btn duck-btn">
         <span class="icon">🔻</span>
-        <span class="txt">AGACHARSE (↓)</span>
+        <span class="txt">AGACHARSE (↓ / S)</span>
       </button>
       <button type="button" id="touch-jump" class="touch-btn jump-btn">
         <span class="icon">🔺</span>
-        <span class="txt">SALTAR (ESPACIO)</span>
+        <span class="txt">SALTAR (ESPACIO / ↑ / W)</span>
       </button>
     </div>
   </div>

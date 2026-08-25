@@ -68,6 +68,8 @@
 
   const touchDuck = document.getElementById('touch-duck');
   const touchJump = document.getElementById('touch-jump');
+  const practiceTouchDuck = document.getElementById('practice-touch-duck');
+  const practiceTouchJump = document.getElementById('practice-touch-jump');
 
   // Estado local del jugador
   let selectedColor = '#2E7D32';
@@ -269,7 +271,7 @@
       } else {
         stopMiniPractice();
         lobbyPracticeViewport.style.display = 'none';
-        btnTogglePractice.textContent = '▶ Probar Salto';
+        btnTogglePractice.textContent = '▶ Practicar Salto y Agache';
       }
     });
   }
@@ -284,8 +286,20 @@
           miniPracticeGame.startGame();
           miniPracticeGame.update();
         }
+      },
+      onCrash: () => {
+        // En modo práctica del lobby, si choca, reiniciar automáticamente después de 1 segundo
+        setTimeout(() => {
+          if (miniPracticeGame && miniPracticeGame.crashed && screens.lobby.classList.contains('active')) {
+            miniPracticeGame.restart();
+          }
+        }, 1000);
       }
     });
+    if (miniPracticeGame && miniPracticeGame.canvas) {
+      miniPracticeGame.startGame();
+      miniPracticeGame.update();
+    }
   }
 
   function stopMiniPractice() {
@@ -538,12 +552,15 @@
     }
   });
 
-  // Controles táctiles virtuales para móviles
-  // Controles táctiles virtuales y toque directo en pantalla para móviles y PC
+  // Controles táctiles virtuales y teclado para móviles y PC
   const triggerGameJump = () => {
     const activeGame = dinoGame || miniPracticeGame;
-    if (activeGame && activeGame.playing && !activeGame.crashed) {
-      if (!activeGame.tRex.jumping && !activeGame.tRex.ducking) {
+    if (activeGame) {
+      if (activeGame.crashed) {
+        if (activeGame === miniPracticeGame) {
+          activeGame.restart();
+        }
+      } else if (activeGame.playing && !activeGame.tRex.jumping && !activeGame.tRex.ducking) {
         activeGame.playSound(activeGame.soundFx.BUTTON_PRESS);
         activeGame.tRex.startJump(activeGame.currentSpeed);
       }
@@ -569,6 +586,35 @@
     }
   };
 
+  function setupTouchButton(btn, onStart, onEnd) {
+    if (!btn) return;
+
+    const handleStart = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (onStart) onStart();
+    };
+
+    const handleEnd = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (onEnd) onEnd();
+    };
+
+    btn.addEventListener('touchstart', handleStart, { passive: false });
+    btn.addEventListener('touchend', handleEnd, { passive: false });
+    btn.addEventListener('touchcancel', handleEnd, { passive: false });
+
+    btn.addEventListener('mousedown', handleStart);
+    btn.addEventListener('mouseup', handleEnd);
+    btn.addEventListener('mouseleave', handleEnd);
+  }
+
+  setupTouchButton(touchJump, triggerGameJump, null);
+  setupTouchButton(touchDuck, triggerGameDuckStart, triggerGameDuckEnd);
+  setupTouchButton(practiceTouchJump, triggerGameJump, null);
+  setupTouchButton(practiceTouchDuck, triggerGameDuckStart, triggerGameDuckEnd);
+
   // Manejador global de teclado en Window para garantizar que Espaciadora, Flechas y W/S siempre funcionen
   window.addEventListener('keydown', (e) => {
     // Si el foco está en un input de texto, dejar que escriba
@@ -576,10 +622,11 @@
 
     const isJumpKey = e.code === 'Space' || e.key === ' ' || e.keyCode === 32 ||
                       e.code === 'ArrowUp' || e.key === 'ArrowUp' || e.keyCode === 38 ||
-                      e.key === 'w' || e.key === 'W';
+                      e.code === 'KeyW' || e.key === 'w' || e.key === 'W';
 
     const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
-                      e.key === 's' || e.key === 'S';
+                      e.code === 'KeyS' || e.key === 's' || e.key === 'S' ||
+                      e.code === 'KeyJ' || e.key === 'j' || e.key === 'J';
 
     if (isJumpKey) {
       e.preventDefault();
@@ -592,7 +639,8 @@
 
   window.addEventListener('keyup', (e) => {
     const isDuckKey = e.code === 'ArrowDown' || e.key === 'ArrowDown' || e.keyCode === 40 ||
-                      e.key === 's' || e.key === 'S';
+                      e.code === 'KeyS' || e.key === 's' || e.key === 'S' ||
+                      e.code === 'KeyJ' || e.key === 'j' || e.key === 'J';
     if (isDuckKey) {
       triggerGameDuckEnd();
     }

@@ -71,6 +71,7 @@
   // Estado del Admin
   let currentPin = '';
   let currentPlayers = [];
+  const playerVisualizers = new Map();
   let previousRanks = new Map();
   let confettiActive = false;
   let soundEnabled = true;
@@ -362,6 +363,22 @@
     const joinUrl = `${protocol}//${displayIp}${port}/player?pin=${data.pin}`;
     hostUrlText.textContent = joinUrl;
     lobbyJoinUrl.textContent = joinUrl;
+
+    if (data.status === 'playing') {
+      showView('game');
+      if (data.players && data.players.length > 0) {
+        currentPlayers = data.players;
+        currentPlayers.forEach((player) => {
+          createPlayerVisualizerCard(player);
+        });
+      }
+    } else if (data.status === 'finished') {
+      showView('podium');
+    } else if (data.status === 'starting') {
+      showView('countdown');
+    } else {
+      showView('lobby');
+    }
   });
 
   socket.on('room:config_updated', (data) => {
@@ -537,6 +554,10 @@
 
   // 6. SINCRONIZACIÓN DE ESTADOS EN TIEMPO REAL
   socket.on('leaderboard:sync', (data) => {
+    if (data.status === 'playing' && !views.game.classList.contains('active') && !views.podium.classList.contains('active')) {
+      showView('game');
+    }
+
     const leaderboard = data.leaderboard || [];
     currentPlayers = leaderboard;
     statActiveCount.textContent = data.activeCount || 0;
