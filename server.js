@@ -246,12 +246,6 @@ io.on('connection', (socket) => {
   // ==========================================
 
   socket.on('admin:create_room', (data) => {
-    const clientIp = socket.handshake.address || '';
-    if (!checkIpRateLimit(clientIp, 'create_room', 10, 60000)) {
-      socket.emit('admin:auth_error', { message: 'Demasiadas salas creadas recientemente. Espera un momento.' });
-      return;
-    }
-
     const adminKey = data && data.adminKey ? String(data.adminKey).trim() : '';
     if (ADMIN_SECRET && ADMIN_SECRET !== 'none') {
       if (adminKey !== ADMIN_SECRET) {
