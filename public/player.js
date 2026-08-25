@@ -284,7 +284,10 @@
 
   function stopMiniPractice() {
     if (miniPracticeGame) {
-      miniPracticeGame.stop();
+      try {
+        miniPracticeGame.stopListening();
+        miniPracticeGame.stop();
+      } catch (e) {}
       miniPracticeGame = null;
     }
   }
@@ -383,12 +386,18 @@
     startRunning(dinoGame);
   }
 
-  // Sincronización de posición / ranking individual
+  // Sincronización de posición / ranking individual (no invasivo)
+  const hudRankBox = document.getElementById('hud-rank-box');
   socket.on('player:rank_sync', (data) => {
     const prev = currentRank;
     currentRank = data.rank;
 
-    hudRank.textContent = data.rank + 'º';
+    let medalPrefix = '';
+    if (data.rank === 1) medalPrefix = '🥇 ';
+    else if (data.rank === 2) medalPrefix = '🥈 ';
+    else if (data.rank === 3) medalPrefix = '🥉 ';
+
+    hudRank.textContent = `${medalPrefix}${data.rank}º`;
     if (data.rank === 1) {
       hudRank.style.color = '#ffd700';
     } else if (data.rank === 2) {
@@ -407,10 +416,18 @@
       crashRank.textContent = '#' + currentRank;
     }
 
-    if (data.rankChange === 'up' && prev > data.rank) {
-      showRankToast(`⬆️ ¡Subiste al puesto ${data.rank}º!`, true);
-    } else if (data.rankChange === 'down' && prev < data.rank) {
-      showRankToast(`⬇️ Bajaste al puesto ${data.rank}º`, false);
+    // Micro-animación suave en el pill de posición sin tapar la pantalla
+    if (hudRankBox && prev && prev !== data.rank) {
+      hudRankBox.classList.remove('rank-up', 'rank-down');
+      void hudRankBox.offsetWidth; // trigger reflow
+      if (data.rank < prev) {
+        hudRankBox.classList.add('rank-up');
+      } else {
+        hudRankBox.classList.add('rank-down');
+      }
+      setTimeout(() => {
+        if (hudRankBox) hudRankBox.classList.remove('rank-up', 'rank-down');
+      }, 600);
     }
   });
 
@@ -493,47 +510,58 @@
   });
 
   // Controles táctiles virtuales para móviles
-  if (touchJump) {
-    const triggerJump = (e) => {
-      e.preventDefault();
-      const activeGame = dinoGame || miniPracticeGame;
-      if (activeGame && activeGame.playing && !activeGame.crashed) {
-        if (!activeGame.tRex.jumping && !activeGame.tRex.ducking) {
-          activeGame.playSound(activeGame.soundFx.BUTTON_PRESS);
-          activeGame.tRex.startJump(activeGame.currentSpeed);
-        }
+  // Controles táctiles virtuales y toque directo en pantalla para móviles y PC
+  const triggerGameJump = () => {
+    const activeGame = dinoGame || miniPracticeGame;
+    if (activeGame && activeGame.playing && !activeGame.crashed) {
+      if (!activeGame.tRex.jumping && !activeGame.tRex.ducking) {
+        activeGame.playSound(activeGame.soundFx.BUTTON_PRESS);
+        activeGame.tRex.startJump(activeGame.currentSpeed);
       }
-    };
-    touchJump.addEventListener('touchstart', triggerJump, { passive: false });
-    touchJump.addEventListener('mousedown', triggerJump);
+    }
+  };
+
+  const triggerGameDuckStart = () => {
+    const activeGame = dinoGame || miniPracticeGame;
+    if (activeGame && activeGame.playing && !activeGame.crashed) {
+      if (activeGame.tRex.jumping) {
+        activeGame.tRex.setSpeedDrop();
+      } else {
+        activeGame.tRex.setDuck(true);
+      }
+    }
+  };
+
+  const triggerGameDuckEnd = () => {
+    const activeGame = dinoGame || miniPracticeGame;
+    if (activeGame && activeGame.playing) {
+      activeGame.tRex.speedDrop = false;
+      activeGame.tRex.setDuck(false);
+    }
+  };
+
+  if (touchJump) {
+    touchJump.addEventListener('touchstart', (e) => { e.preventDefault(); triggerGameJump(); }, { passive: false });
+    touchJump.addEventListener('mousedown', (e) => { e.preventDefault(); triggerGameJump(); });
   }
 
   if (touchDuck) {
-    const startDuck = (e) => {
-      e.preventDefault();
-      const activeGame = dinoGame || miniPracticeGame;
-      if (activeGame && activeGame.playing && !activeGame.crashed) {
-        if (activeGame.tRex.jumping) {
-          activeGame.tRex.setSpeedDrop();
-        } else {
-          activeGame.tRex.setDuck(true);
-        }
-      }
-    };
+    touchDuck.addEventListener('touchstart', (e) => { e.preventDefault(); triggerGameDuckStart(); }, { passive: false });
+    touchDuck.addEventListener('touchend', (e) => { e.preventDefault(); triggerGameDuckEnd(); }, { passive: false });
+    touchDuck.addEventListener('mousedown', (e) => { e.preventDefault(); triggerGameDuckStart(); });
+    touchDuck.addEventListener('mouseup', (e) => { e.preventDefault(); triggerGameDuckEnd(); });
+    touchDuck.addEventListener('mouseleave', (e) => { e.preventDefault(); triggerGameDuckEnd(); });
+  }
 
-    const endDuck = (e) => {
-      e.preventDefault();
-      const activeGame = dinoGame || miniPracticeGame;
-      if (activeGame && activeGame.playing) {
-        activeGame.tRex.speedDrop = false;
-        activeGame.tRex.setDuck(false);
-      }
-    };
-
-    touchDuck.addEventListener('touchstart', startDuck, { passive: false });
-    touchDuck.addEventListener('touchend', endDuck, { passive: false });
-    touchDuck.addEventListener('mousedown', startDuck);
-    touchDuck.addEventListener('mouseup', endDuck);
-    touchDuck.addEventListener('mouseleave', endDuck);
+  // Tocar en el área del juego también salta
+  if (gameViewportWrapper) {
+    gameViewportWrapper.addEventListener('touchstart', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      triggerGameJump();
+    }, { passive: true });
+    gameViewportWrapper.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      triggerGameJump();
+    });
   }
 })();

@@ -47,6 +47,17 @@
         return Math.random();
     }
 
+    function obstacleRandom() {
+        if (Runner.instance_ && typeof Runner.instance_.obstacleRandom === 'function') {
+            return Runner.instance_.obstacleRandom();
+        }
+        return Math.random();
+    }
+
+    function getObstacleRandomNum(min, max) {
+        return Math.floor(obstacleRandom() * (max - min + 1)) + min;
+    }
+
     // Copyright (c) 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -78,8 +89,12 @@
 
         this.seed = this.config.seed || null;
         this.rng = this.seed ? createPRNG(this.seed) : null;
+        this.obstacleRng = this.seed ? createPRNG(this.seed) : null;
         this.random = function () {
             return this.rng ? this.rng() : Math.random();
+        }.bind(this);
+        this.obstacleRandom = function () {
+            return this.obstacleRng ? this.obstacleRng() : Math.random();
         }.bind(this);
 
         this.dimensions = Runner.defaultDimensions;
@@ -328,6 +343,7 @@
         setSeed: function (seed) {
             this.seed = seed;
             this.rng = seed ? createPRNG(seed) : null;
+            this.obstacleRng = seed ? createPRNG(seed) : null;
         },
 
         /**
@@ -453,15 +469,7 @@
          */
         setSpeed: function (opt_speed) {
             var speed = opt_speed || this.currentSpeed;
-
-            // Reduce the speed on smaller mobile screens.
-            if (this.dimensions.WIDTH < DEFAULT_WIDTH) {
-                var mobileSpeed = speed * this.dimensions.WIDTH / DEFAULT_WIDTH *
-                    this.config.MOBILE_SPEED_COEFFICIENT;
-                this.currentSpeed = mobileSpeed > speed ? speed : mobileSpeed;
-            } else if (opt_speed) {
-                this.currentSpeed = opt_speed;
-            }
+            this.currentSpeed = speed;
         },
 
         /**
@@ -606,6 +614,7 @@
             }
             if (this.containerEl) this.containerEl.style.webkitAnimation = '';
             this.playCount++;
+            this.startListening();
         },
 
         clearCanvas: function () {
@@ -983,6 +992,7 @@
                 cancelAnimationFrame(this.raqId);
                 this.raqId = 0;
             }
+            this.stopListening();
         },
 
         play: function () {
@@ -1523,7 +1533,7 @@
         this.spritePos = spriteImgPos;
         this.typeConfig = type;
         this.gapCoefficient = gapCoefficient;
-        this.size = getRandomNum(1, Obstacle.MAX_OBSTACLE_LENGTH);
+        this.size = getObstacleRandomNum(1, Obstacle.MAX_OBSTACLE_LENGTH);
         this.dimensions = dimensions;
         this.remove = false;
         this.xPos = dimensions.WIDTH + (opt_xOffset || 0);
@@ -1568,11 +1578,10 @@
 
                 this.width = this.typeConfig.width * this.size;
 
-                // Check if obstacle can be positioned at various heights.
+                // Check if obstacle can be positioned at various heights (consistent for all devices).
                 if (Array.isArray(this.typeConfig.yPos)) {
-                    var yPosConfig = IS_MOBILE ? this.typeConfig.yPosMobile :
-                        this.typeConfig.yPos;
-                    this.yPos = yPosConfig[getRandomNum(0, yPosConfig.length - 1)];
+                    var yPosConfig = this.typeConfig.yPos;
+                    this.yPos = yPosConfig[getObstacleRandomNum(0, yPosConfig.length - 1)];
                 } else {
                     this.yPos = this.typeConfig.yPos;
                 }
@@ -1595,7 +1604,7 @@
 
                 // For obstacles that go at a different speed from the horizon.
                 if (this.typeConfig.speedOffset) {
-                    this.speedOffset = engineRandom() > 0.5 ? this.typeConfig.speedOffset :
+                    this.speedOffset = obstacleRandom() > 0.5 ? this.typeConfig.speedOffset :
                         -this.typeConfig.speedOffset;
                 }
 
@@ -1671,7 +1680,7 @@
                 var minGap = Math.round(this.width * speed +
                     this.typeConfig.minGap * gapCoefficient);
                 var maxGap = Math.round(minGap * Obstacle.MAX_GAP_COEFFICIENT);
-                return getRandomNum(minGap, maxGap);
+                return getObstacleRandomNum(minGap, maxGap);
             },
 
             /**
@@ -2916,7 +2925,7 @@
          * @param {number} currentSpeed
          */
         addNewObstacle: function (currentSpeed) {
-            var obstacleTypeIndex = getRandomNum(0, Obstacle.types.length - 1);
+            var obstacleTypeIndex = getObstacleRandomNum(0, Obstacle.types.length - 1);
             var obstacleType = Obstacle.types[obstacleTypeIndex];
 
             // Check for multiples of the same type of obstacle.
