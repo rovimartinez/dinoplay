@@ -40,6 +40,18 @@
 
   const lobbyBigPin = document.getElementById('lobby-big-pin');
   const lobbyJoinUrl = document.getElementById('lobby-join-url');
+  const lobbyQrImg = document.getElementById('lobby-qr-img');
+  const btnCopyHeaderLink = document.getElementById('btn-copy-header-link');
+  const btnShowQrHeader = document.getElementById('btn-show-qr-header');
+  const btnCopyPin = document.getElementById('btn-copy-pin');
+  const btnCopyLobbyUrl = document.getElementById('btn-copy-lobby-url');
+  const btnQrClickZoom = document.getElementById('btn-qr-click-zoom');
+  const modalQrZoom = document.getElementById('modal-qr-zoom');
+  const modalQrBigImg = document.getElementById('modal-qr-big-img');
+  const modalQrPinText = document.getElementById('modal-qr-pin-text');
+  const btnCloseQrZoom = document.getElementById('btn-close-qr-zoom');
+  const btnCopyModalLink = document.getElementById('btn-copy-modal-link');
+
   const lobbyCount = document.getElementById('lobby-count');
   const lobbyPlayersGrid = document.getElementById('lobby-players-grid');
   const btnStartGame = document.getElementById('btn-start-game');
@@ -70,6 +82,7 @@
 
   // Estado del Admin
   let currentPin = '';
+  let currentJoinUrl = '';
   let currentPlayers = [];
   const playerVisualizers = new Map();
   let previousRanks = new Map();
@@ -361,8 +374,15 @@
     }
 
     const joinUrl = `${protocol}//${displayIp}${port}/player?pin=${data.pin}`;
-    hostUrlText.textContent = joinUrl;
+    currentJoinUrl = joinUrl;
+    hostUrlText.textContent = `${displayIp}${port}/player`;
     lobbyJoinUrl.textContent = joinUrl;
+
+    // Generar Código QR Dinámico de Alta Definición
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(joinUrl)}`;
+    if (lobbyQrImg) lobbyQrImg.src = qrUrl;
+    if (modalQrBigImg) modalQrBigImg.src = qrUrl;
+    if (modalQrPinText) modalQrPinText.textContent = data.pin;
 
     if (data.status === 'playing') {
       showView('game');
@@ -380,6 +400,76 @@
       showView('lobby');
     }
   });
+
+  // Funciones de Copiado Rápido al Portapapeles
+  function copyToClipboard(text, btnElement, successLabel) {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if (btnElement) {
+        const originalText = btnElement.textContent;
+        btnElement.textContent = successLabel || '¡Copiado! ✅';
+        btnElement.style.background = '#22c55e';
+        btnElement.style.color = '#ffffff';
+        setTimeout(() => {
+          btnElement.textContent = originalText;
+          btnElement.style.background = '';
+          btnElement.style.color = '';
+        }, 2000);
+      }
+    }).catch(() => {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (btnElement) {
+        btnElement.textContent = successLabel || '¡Copiado! ✅';
+        setTimeout(() => { btnElement.textContent = '📋 Copiar'; }, 2000);
+      }
+    });
+  }
+
+  if (btnCopyHeaderLink) {
+    btnCopyHeaderLink.addEventListener('click', () => {
+      copyToClipboard(currentJoinUrl, btnCopyHeaderLink, '¡Link Copiado! ✅');
+    });
+  }
+
+  if (btnCopyLobbyUrl) {
+    btnCopyLobbyUrl.addEventListener('click', () => {
+      copyToClipboard(currentJoinUrl, btnCopyLobbyUrl, '¡Link Copiado! ✅');
+    });
+  }
+
+  if (btnCopyPin) {
+    btnCopyPin.addEventListener('click', () => {
+      copyToClipboard(currentPin, btnCopyPin, '¡PIN Copiado! ✅');
+    });
+  }
+
+  if (btnCopyModalLink) {
+    btnCopyModalLink.addEventListener('click', () => {
+      copyToClipboard(currentJoinUrl, btnCopyModalLink, '¡Link Copiado! ✅');
+    });
+  }
+
+  function openQrModal() {
+    if (modalQrZoom) modalQrZoom.style.display = 'flex';
+  }
+
+  function closeQrModal() {
+    if (modalQrZoom) modalQrZoom.style.display = 'none';
+  }
+
+  if (btnShowQrHeader) btnShowQrHeader.addEventListener('click', openQrModal);
+  if (btnQrClickZoom) btnQrClickZoom.addEventListener('click', openQrModal);
+  if (btnCloseQrZoom) btnCloseQrZoom.addEventListener('click', closeQrModal);
+  if (modalQrZoom) {
+    modalQrZoom.addEventListener('click', (e) => {
+      if (e.target === modalQrZoom) closeQrModal();
+    });
+  }
 
   socket.on('room:config_updated', (data) => {
     headerEventName.textContent = data.eventName;

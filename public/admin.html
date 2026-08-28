@@ -36,8 +36,11 @@
       <div id="db-sync-badge" class="db-status-badge" title="Base de Datos conectada: guardando puntuaciones y partidas en tiempo real">
         <span class="db-pulse-dot"></span> 💾 BD en vivo
       </div>
-      <div id="connection-url-badge" class="url-badge">
-        🌐 Únete en: <strong id="host-url-text">http://localhost:3000/player</strong>
+      <div id="connection-url-badge" class="url-badge" title="Enlace de invitación para jugadores">
+        <span class="url-badge-icon">🌐</span>
+        <span id="host-url-text" class="url-badge-text">.../player</span>
+        <button id="btn-copy-header-link" class="btn-badge-action" title="Copiar enlace directo">📋 Copiar</button>
+        <button id="btn-show-qr-header" class="btn-badge-action qr" title="Mostrar QR en grande">📱 Ver QR</button>
       </div>
       <button id="btn-open-brackets" class="btn-nav btn-brackets" title="Abrir Cuadro de Eliminatorias y Diplomas">🏆 Eliminatorias & Diplomas</button>
       <button id="btn-open-spectator" class="btn-nav" title="Abrir pantalla para espectadores">👁️ Espectador</button>
@@ -82,13 +85,31 @@
       <div class="pin-card glass-panel">
         <div class="pin-card-top">
           <span class="pulse-indicator"></span>
-          <span>SALA ABIERTA</span>
+          <span>SALA ABIERTA EN VIVO</span>
         </div>
-        <div class="pin-big-text">
-          <span class="pin-title">CÓDIGO DE ACCESO:</span>
-          <h1 id="lobby-big-pin" class="pin-giant">----</h1>
+        <div class="pin-card-content">
+          <div class="pin-card-left">
+            <span class="pin-title">PIN DE ACCESO:</span>
+            <div class="pin-giant-row">
+              <h1 id="lobby-big-pin" class="pin-giant">----</h1>
+              <button id="btn-copy-pin" class="btn-copy-pill" title="Copiar solo el PIN">📋 Copiar PIN</button>
+            </div>
+            <div class="pin-instruction-box">
+              <span class="pin-instruction-label">🔗 O ingresa directamente desde tu navegador:</span>
+              <div class="pin-url-action-bar">
+                <span id="lobby-join-url" class="pin-url-display">https://.../player</span>
+                <button id="btn-copy-lobby-url" class="btn-copy-accent">📋 Copiar Link</button>
+              </div>
+            </div>
+          </div>
+          <div class="pin-card-right">
+            <div class="qr-container-box" id="btn-qr-click-zoom" title="Clic para agrandar QR">
+              <img id="lobby-qr-img" class="lobby-qr-image" src="" alt="QR para ingresar" />
+              <div class="qr-zoom-badge">🔍 Clic para agrandar</div>
+            </div>
+            <span class="qr-subtext">📱 <strong>Escanea con tu cámara</strong> para unirte</span>
+          </div>
         </div>
-        <p class="pin-instruction">Ingresa a <strong id="lobby-join-url">http://.../player</strong> e introduce este PIN para jugar.</p>
       </div>
 
       <div class="lobby-action-box">
@@ -287,6 +308,28 @@
           <button type="submit" class="btn-primary-large" style="width: 100%;">Ingresar al Panel</button>
         </form>
         <div id="admin-auth-error" class="error-msg" style="display: none; margin-top: 12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CÓDIGO QR GIGANTE PARA PROYECTOR -->
+  <div id="modal-qr-zoom" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 480px; text-align: center;">
+      <div class="modal-header">
+        <h2>📱 Escanea para Unirte a la Sala</h2>
+        <button id="btn-close-qr-zoom" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div class="modal-qr-frame">
+          <img id="modal-qr-big-img" src="" alt="QR Gigante" style="width: 260px; height: 260px; border-radius: 16px; background: white; padding: 12px; box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);" />
+        </div>
+        <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff;">
+          PIN DE SALA: <span id="modal-qr-pin-text" style="color: #38bdf8; font-size: 1.8rem; letter-spacing: 4px; margin-left: 8px;">----</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Apunta con la cámara de tu celular o tablet para entrar automáticamente sin escribir la URL.
+        </p>
+        <button id="btn-copy-modal-link" class="btn-copy-accent" style="width: 100%; padding: 14px; font-size: 1rem;">📋 Copiar Enlace Directo</button>
       </div>
     </div>
   </div>
