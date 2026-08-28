@@ -9,12 +9,12 @@ RUN npm install --omit=dev
 # Copiar el resto del código del juego
 COPY . .
 
-# Hugging Face Spaces utiliza el puerto 7860 por defecto
-ENV PORT=7860
+# Puerto estandar de Back4App Containers
+ENV PORT=8080
 ENV NODE_ENV=production
 ENV ADMIN_SECRET=dino2026
 
-EXPOSE 7860
+EXPOSE 8080
 
 # Iniciar servidor DinoPlay
 CMD ["node", "server.js"]

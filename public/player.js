@@ -2,9 +2,9 @@
   'use strict';
 
   const urlParams = new URLSearchParams(window.location.search);
-  const customBackendUrl = urlParams.get('server') || localStorage.getItem('dino_backend_url');
-  if (urlParams.get('server')) {
-    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  const customBackendUrl = urlParams.get('server');
+  if (customBackendUrl) {
+    localStorage.setItem('dino_backend_url', customBackendUrl);
   }
 
   const socket = (typeof io !== 'undefined')
