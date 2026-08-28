@@ -77,4 +77,4 @@ if %errorlevel% equ 0 (
 )
 
 echo.
-pause
+pause1
