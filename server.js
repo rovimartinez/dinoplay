@@ -30,6 +30,7 @@ const ALLOWED_AVATARS = new Set(['🦖', 'dino']);
 const ALLOWED_ACTIONS = new Set(['running', 'jumping', 'ducking', 'crashed']);
 const ALLOWED_OBSTACLE_TYPES = new Set(['CACTUS_SMALL', 'CACTUS_LARGE', 'PTERODACTYL']);
 const MAX_OBSTACLES_PER_UPDATE = 8;
+const MAX_PLAYER_NAME_LENGTH = 20;
 // Middleware CORS para permitir peticiones desde la portada (Cloudflare Pages)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
