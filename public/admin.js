@@ -548,11 +548,39 @@
     }
   });
 
-  // 4. CUENTA REGRESIVA SINCRONIZADA
+  // 4. CUENTA REGRESIVA DINÁMICA Y EMOCIONANTE
+  const countdownStages = {
+    3: { title: '¡PREPARADOS! ⚡', desc: 'Ajusten sus controles y concéntrense...', color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.6)' },
+    2: { title: '¡LISTOS! 🔥', desc: 'Los dinosaurios están en la línea de partida...', color: '#facc15', glow: 'rgba(250, 204, 21, 0.6)' },
+    1: { title: '¡A SUS MARCAS! 🎯', desc: 'Iniciando carrera en 3, 2, 1...', color: '#f43f5e', glow: 'rgba(244, 63, 94, 0.6)' },
+    0: { title: '¡¡¡A CORRER!!! 🦖💨', desc: '¡Que gane el dinosaurio más rápido!', color: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' }
+  };
+
   socket.on('game:countdown', (data) => {
     showView('countdown');
-    adminCountdownNum.textContent = data.countdown;
-    playBeep(data.countdown);
+    const num = data.countdown;
+    adminCountdownNum.textContent = num;
+
+    const info = countdownStages[num] || countdownStages[1];
+    const countdownTitleEl = document.getElementById('admin-countdown-title');
+    const countdownDescEl = document.getElementById('admin-countdown-desc');
+    const countdownCircleEl = document.getElementById('admin-countdown-circle');
+
+    if (countdownTitleEl) countdownTitleEl.textContent = info.title;
+    if (countdownDescEl) countdownDescEl.textContent = info.desc;
+
+    if (countdownCircleEl) {
+      countdownCircleEl.style.borderColor = info.color;
+      countdownCircleEl.style.boxShadow = `0 0 50px ${info.glow}, inset 0 0 30px ${info.glow}`;
+      countdownCircleEl.classList.remove('pulse-tick');
+      void countdownCircleEl.offsetWidth; // reflow para reiniciar animación
+      countdownCircleEl.classList.add('pulse-tick');
+    }
+
+    adminCountdownNum.style.color = info.color;
+    adminCountdownNum.style.textShadow = `0 0 30px ${info.color}`;
+
+    playBeep(num);
   });
 
   // 5. INICIO DE LA CARRERA EN VIVO
@@ -600,13 +628,16 @@
     card.innerHTML = `
       <div class="card-top-row">
         <div class="card-player-info" style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-          <span class="card-avatar" style="width: 28px; height: 28px; font-size: 1rem; border-radius: 50%; background: ${player.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${player.avatar || '🦖'}</span>
+          <span class="card-avatar" style="width: 28px; height: 28px; font-size: 1rem; border-radius: 50%; background: ${player.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 8px ${player.color};">${player.avatar || '🦖'}</span>
           <span class="card-player-name" style="font-weight: 800; font-size: 1.05rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(player.name)}</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
           <span class="player-lives-badge" style="display: none;">❤️❤️❤️</span>
           <span class="player-rank-badge">#--</span>
           <span class="player-action-tag running">🏃 Corriendo</span>
+          <div class="card-score-box" style="font-size: 1.15rem; font-weight: 900; color: #4ade80; font-family: monospace;">
+            00000 <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>
+          </div>
         </div>
       </div>
       <div class="card-dino-viewport">
@@ -614,18 +645,14 @@
         <div class="eliminated-overlay" id="elim-overlay-${player.id}">
           <div class="elim-stamp-box">
             <div class="elim-giant-x">✕</div>
-            <div class="elim-player-name">${escapeHtml(player.name)}</div>
             <div class="elim-badge-text">ELIMINADO</div>
-            <div class="elim-sub-stats">Puntaje: <span class="elim-score-val">0</span> pts</div>
+            <div class="elim-sub-stats">Puntaje final: <strong class="elim-score-val" style="color: #4ade80; font-size: 1.1rem;">0</strong> pts</div>
           </div>
         </div>
       </div>
-      <div class="card-track-container" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px;">
-        <div class="card-track-bar" style="flex: 1;">
+      <div class="card-track-container" style="margin-top: 4px;">
+        <div class="card-track-bar">
           <div class="card-track-fill" style="width: 0%;"></div>
-        </div>
-        <div class="card-score-box" style="font-size: 1.15rem; font-weight: 900; color: #4ade80; font-family: monospace;">
-          00000 <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>
         </div>
       </div>
     `;
@@ -697,14 +724,18 @@
       let actionClass = 'running';
       if (player.action === 'jumping') { actionLabel = '🦘 Saltando'; actionClass = 'jumping'; }
       else if (player.action === 'ducking') { actionLabel = '🦆 Agachado'; actionClass = 'ducking'; }
-      if (player.crashed) { actionLabel = '❌ ELIMINADO'; actionClass = 'crashed'; }
 
       card.querySelector('.player-rank-badge').textContent = medalSymbol;
       const actTag = card.querySelector('.player-action-tag');
-      actTag.textContent = actionLabel;
-      actTag.className = `player-action-tag ${actionClass}`;
+      if (player.crashed) {
+        actTag.style.display = 'none';
+      } else {
+        actTag.style.display = 'inline-flex';
+        actTag.textContent = actionLabel;
+        actTag.className = `player-action-tag ${actionClass}`;
+      }
 
-      card.querySelector('.card-score-box').innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.75rem; color: var(--text-muted);">pts</span>`;
+      card.querySelector('.card-score-box').innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>`;
 
       const elimScore = card.querySelector('.elim-score-val');
       if (elimScore) elimScore.textContent = player.score;

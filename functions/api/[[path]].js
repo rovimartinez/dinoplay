@@ -30,6 +30,50 @@ async function handleApi(request, env, url) {
     return json({ ok: true, database: result?.ok === 1, environment: env.ENVIRONMENT || 'production' }, 200, request, env);
   }
 
+  if (request.method === 'GET' && url.pathname === '/api/server-url') {
+    try {
+      await env.DB.prepare(
+        'CREATE TABLE IF NOT EXISTS server_status (id TEXT PRIMARY KEY, active_url TEXT, updated_at TEXT)'
+      ).run();
+      const status = await env.DB.prepare('SELECT * FROM server_status WHERE id = ?').bind('current').first();
+      const lastUpdated = status?.updated_at ? new Date(status.updated_at).getTime() : 0;
+      const isOnline = Boolean(status?.active_url) && (Date.now() - lastUpdated < 120000);
+      return json({
+        ok: true,
+        active_url: status?.active_url || null,
+        updated_at: status?.updated_at || null,
+        is_online: isOnline
+      }, 200, request, env);
+    } catch (e) {
+      return json({ ok: false, error: e.message }, 500, request, env);
+    }
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/server-url') {
+    try {
+      const body = await readJson(request);
+      const serverUrl = cleanText(body.url, 250);
+      if (!serverUrl) return json({ ok: false, error: 'url is required' }, 400, request, env);
+
+      await env.DB.prepare(
+        'CREATE TABLE IF NOT EXISTS server_status (id TEXT PRIMARY KEY, active_url TEXT, updated_at TEXT)'
+      ).run();
+
+      const nowIso = new Date().toISOString();
+      await env.DB.prepare(
+        `INSERT INTO server_status (id, active_url, updated_at)
+         VALUES ('current', ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           active_url = excluded.active_url,
+           updated_at = excluded.updated_at`
+      ).bind(serverUrl, nowIso).run();
+
+      return json({ ok: true, active_url: serverUrl, updated_at: nowIso }, 200, request, env);
+    } catch (e) {
+      return json({ ok: false, error: e.message }, 500, request, env);
+    }
+  }
+
   if (request.method === 'GET' && url.pathname === '/api/events') {
     const { results } = await env.DB.prepare(
       'SELECT * FROM events ORDER BY created_at DESC LIMIT 100'

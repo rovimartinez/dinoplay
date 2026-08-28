@@ -43,6 +43,15 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoints de Base de Datos en Tiempo Real
+app.get('/api/server-url', (req, res) => {
+  res.json({
+    ok: true,
+    active_url: `${req.protocol}://${req.get('host')}`,
+    updated_at: new Date().toISOString(),
+    is_online: true
+  });
+});
+
 app.get('/api/db/status', (req, res) => {
   res.json({
     ok: true,

@@ -26,30 +26,52 @@ function handleLine(line) {
     foundUrl = true;
     const url = match[0];
 
-    // Actualizar automáticamente los enlaces en la portada local
+    // 1. Actualizar automáticamente los archivos HTML locales
     try {
-      const portadaPath = path.join(__dirname, 'portada', 'index.html');
-      if (fs.existsSync(portadaPath)) {
-        let portadaHtml = fs.readFileSync(portadaPath, 'utf8');
-        portadaHtml = portadaHtml.replace(/https:\/\/[a-zA-Z0-9.-]+\.loca\.lt/g, url);
-        portadaHtml = portadaHtml.replace(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/g, url);
-        fs.writeFileSync(portadaPath, portadaHtml, 'utf8');
+      const pathsToUpdate = [
+        path.join(__dirname, 'public', 'index.html'),
+        path.join(__dirname, 'portada', 'index.html')
+      ];
+      for (const p of pathsToUpdate) {
+        if (fs.existsSync(p)) {
+          let html = fs.readFileSync(p, 'utf8');
+          html = html.replace(/https:\/\/[a-zA-Z0-9.-]+\.loca\.lt/g, url);
+          html = html.replace(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/g, url);
+          fs.writeFileSync(p, html, 'utf8');
+        }
       }
     } catch (e) {}
+
+    // 2. Sincronizar automáticamente con la Base de Datos en la Nube (Cloudflare Pages / D1)
+    async function sendHeartbeat() {
+      try {
+        await fetch('https://juegodino.pages.dev/api/server-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url })
+        });
+      } catch (err) {
+        // Fallback silencioso en caso de conexión intermitente
+      }
+    }
+
+    sendHeartbeat();
+    const heartbeatInterval = setInterval(sendHeartbeat, 30000);
 
     console.clear();
     console.log('\n=============================================================');
     console.log('       🎉 ¡TU JUEGO YA ESTÁ EN LÍNEA EN TODO EL MUNDO! 🎉   ');
     console.log('=============================================================\n');
-    console.log(' 🟢 ESTADO: Conectado a la Red Global de Cloudflare (Sin límites)\n');
+    console.log(' 🟢 ESTADO: Conectado a la Red Global de Cloudflare (Sin límites)');
+    console.log(' ☁️  NUBE: Sincronizado automáticamente con juegodino.pages.dev\n');
     console.log(' 🌐 ENLACE PARA LOS JUGADORES:');
     console.log(` 👉 ${url}/player.html\n`);
     console.log(' 👑 ENLACE DEL ADMINISTRADOR:');
     console.log(` 👉 ${url}/admin.html\n`);
     console.log(' 📺 PANTALLA DE ESPECTADORES / PROYECTOR:');
     console.log(` 👉 ${url}/spectator.html\n`);
-    console.log(' 🏠 PORTADA COMPLETA:');
-    console.log(` 👉 ${url}/\n`);
+    console.log(' 🏠 PORTADA EN LA NUBE (Actualizada en Vivo):');
+    console.log(` 👉 https://juegodino.pages.dev/\n`);
     console.log('=============================================================');
     console.log(' ℹ️  Los jugadores entran DIRECTO (sin pedir contraseñas ni IP).');
     console.log(' ℹ️  Deja esta ventana abierta mientras jueguen.');

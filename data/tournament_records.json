@@ -2,6 +2,18 @@
   "events": [],
   "matches": [
     {
+      "id": "mtcdhszp",
+      "pin": "7341",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-08-28T03:09:17.701Z"
+    },
+    {
       "id": "mtccivyw",
       "pin": "7596",
       "eventName": "Torneo Dino",
@@ -2307,5 +2319,5 @@
       ]
     }
   ],
-  "last_updated": "2026-08-28T02:42:08.705Z"
+  "last_updated": "2026-08-28T03:09:17.806Z"
 }

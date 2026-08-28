@@ -533,17 +533,17 @@
 
       <!-- Botones con enlaces directos -->
       <div class="cta-group">
-        <a href="https://screens-bring-latin-containers.trycloudflare.com/player.html" class="btn-main" target="_blank" rel="noopener noreferrer">
+        <a id="btn-player" href="/player.html" class="btn-main">
           <span>🎮</span>
           <span>¡ENTRAR A JUGAR AHORA!</span>
         </a>
 
-        <a href="https://screens-bring-latin-containers.trycloudflare.com/spectator.html" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        <a id="btn-spectator" href="/spectator.html" class="btn-secondary">
           <span>📺</span>
           <span>Pantalla de Espectadores</span>
         </a>
 
-        <a href="https://screens-bring-latin-containers.trycloudflare.com/admin.html" class="btn-admin" target="_blank" rel="noopener noreferrer">
+        <a id="btn-admin" href="/admin.html" class="btn-admin">
           <span>👑</span>
           <span>Panel de Administrador</span>
         </a>
@@ -619,38 +619,77 @@
       <p>🦖 <strong>DinoPlay Arena</strong> — Sistema Centralizado de Torneos en Tiempo Real.</p>
       <p style="color: #64748b; font-size: 0.8rem;">Desarrollado para eventos, instituciones y competencias interactivas.</p>
       
-    <!-- Script para detectar en tiempo real si el servidor de tu PC está encendido o apagado -->
+      <div class="footer-links">
+        <a id="link-player" href="/player.html">Entrar al Juego</a>
+        <span>•</span>
+        <a id="link-spectator" href="/spectator.html">Espectador</a>
+        <span>•</span>
+        <a id="link-practice" href="/practice.html">Práctica Libre</a>
+      </div>
+    </footer>
+
+    <!-- Script para detectar en tiempo real la URL activa y el estado del servidor -->
     <script>
       const statusContainer = document.getElementById('live-status');
       const pulseDot = document.getElementById('pulse-dot');
       const statusText = document.getElementById('status-text');
+      const btnPlayer = document.getElementById('btn-player');
+      const btnSpectator = document.getElementById('btn-spectator');
+      const btnAdmin = document.getElementById('btn-admin');
+      const linkPlayer = document.getElementById('link-player');
+      const linkSpectator = document.getElementById('link-spectator');
+      const linkPractice = document.getElementById('link-practice');
+
+      let currentActiveUrl = null;
 
       async function checkServerStatus() {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const isLocalHost = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+          const apiUrl = isLocalHost ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
 
-          await fetch('https://screens-bring-latin-containers.trycloudflare.com/api/db/status?t=' + Date.now(), {
-            mode: 'no-cors',
+          const response = await fetch(apiUrl + '?t=' + Date.now(), {
             cache: 'no-store',
-            signal: controller.signal
+            headers: { 'Accept': 'application/json' }
           });
-          clearTimeout(timeoutId);
 
-          statusContainer.className = 'live-status status-online';
-          pulseDot.className = 'pulse-dot dot-online';
-          statusText.textContent = 'Servidor En Línea 🟢';
+          if (!response.ok) throw new Error('API offline');
+          const data = await response.json();
+
+          if (data.ok && data.is_online && data.active_url) {
+            currentActiveUrl = data.active_url.replace(/\/+$/, '');
+
+            statusContainer.className = 'live-status status-online';
+            pulseDot.className = 'pulse-dot dot-online';
+            statusText.textContent = 'Servidor En Línea 🟢';
+
+            btnPlayer.href = `${currentActiveUrl}/player.html`;
+            btnPlayer.target = '_blank';
+            btnSpectator.href = `${currentActiveUrl}/spectator.html`;
+            btnSpectator.target = '_blank';
+            btnAdmin.href = `${currentActiveUrl}/admin.html`;
+            btnAdmin.target = '_blank';
+
+            if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
+            if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
+            if (linkPractice) { linkPractice.href = `${currentActiveUrl}/practice.html`; linkPractice.target = '_blank'; }
+            return;
+          }
+
+          throw new Error('Server not online');
         } catch (err) {
-          statusContainer.className = 'live-status status-offline';
-          pulseDot.className = 'pulse-dot dot-offline';
-          statusText.textContent = 'Servidor Desconectado 🔴';
+          if (window.location.origin.includes('localhost') || window.location.origin.includes('trycloudflare.com')) {
+            statusContainer.className = 'live-status status-online';
+            pulseDot.className = 'pulse-dot dot-online';
+            statusText.textContent = 'Servidor Local 🟢';
+          } else {
+            statusContainer.className = 'live-status status-offline';
+            pulseDot.className = 'pulse-dot dot-offline';
+            statusText.textContent = 'Servidor Desconectado 🔴';
+          }
         }
       }
 
-      // Comprobar de inmediato al cargar la página
       checkServerStatus();
-
-      // Repetir la comprobación cada 5 segundos
       setInterval(checkServerStatus, 5000);
     </script>
   </div>

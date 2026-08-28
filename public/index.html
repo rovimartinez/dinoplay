@@ -162,18 +162,37 @@
       font-size: 0.85rem;
       font-weight: 600;
       transition: all 0.3s ease;
+    }
+
+    .status-online {
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.3);
       color: #6ee7b7;
+    }
+
+    .status-offline {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
     }
 
     .pulse-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    .dot-online {
       background-color: #10b981;
       box-shadow: 0 0 10px #10b981;
       animation: pulse 1.5s infinite;
+    }
+
+    .dot-offline {
+      background-color: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+      animation: none;
     }
 
     @keyframes pulse {
@@ -482,9 +501,9 @@
         <span class="brand-badge">Torneo</span>
       </a>
 
-      <div class="live-status">
-        <span class="pulse-dot"></span>
-        <span>Servidor Listo 🟢</span>
+      <div id="live-status" class="live-status status-offline">
+        <span id="pulse-dot" class="pulse-dot dot-offline"></span>
+        <span id="status-text">Comprobando...</span>
       </div>
     </header>
 
@@ -503,17 +522,17 @@
       </p>
 
       <div class="cta-group">
-        <a href="/player.html" class="btn-main">
+        <a id="btn-player" href="/player.html" class="btn-main">
           <span>🎮</span>
           <span>¡ENTRAR A JUGAR AHORA!</span>
         </a>
 
-        <a href="/spectator.html" class="btn-secondary">
+        <a id="btn-spectator" href="/spectator.html" class="btn-secondary">
           <span>📺</span>
           <span>Pantalla de Espectadores</span>
         </a>
 
-        <a href="/admin.html" class="btn-admin">
+        <a id="btn-admin" href="/admin.html" class="btn-admin">
           <span>👑</span>
           <span>Panel de Administrador</span>
         </a>
@@ -587,15 +606,79 @@
       <p style="color: #64748b; font-size: 0.8rem;">Desarrollado para eventos, instituciones y competencias interactivas.</p>
       
       <div class="footer-links">
-        <a href="/player.html">Entrar al Juego</a>
+        <a id="link-player" href="/player.html">Entrar al Juego</a>
         <span>•</span>
-        <a href="/spectator.html">Espectador</a>
+        <a id="link-spectator" href="/spectator.html">Espectador</a>
         <span>•</span>
-        <a href="/practice.html">Práctica Libre</a>
+        <a id="link-practice" href="/practice.html">Práctica Libre</a>
       </div>
     </footer>
 
   </div>
+
+  <script>
+    const statusContainer = document.getElementById('live-status');
+    const pulseDot = document.getElementById('pulse-dot');
+    const statusText = document.getElementById('status-text');
+    const btnPlayer = document.getElementById('btn-player');
+    const btnSpectator = document.getElementById('btn-spectator');
+    const btnAdmin = document.getElementById('btn-admin');
+    const linkPlayer = document.getElementById('link-player');
+    const linkSpectator = document.getElementById('link-spectator');
+    const linkPractice = document.getElementById('link-practice');
+
+    let currentActiveUrl = null;
+
+    async function checkServerStatus() {
+      try {
+        const isLocalHost = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+        const apiUrl = isLocalHost ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
+
+        const response = await fetch(apiUrl + '?t=' + Date.now(), {
+          cache: 'no-store',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error('API offline');
+        const data = await response.json();
+
+        if (data.ok && data.is_online && data.active_url) {
+          currentActiveUrl = data.active_url.replace(/\/+$/, '');
+
+          statusContainer.className = 'live-status status-online';
+          pulseDot.className = 'pulse-dot dot-online';
+          statusText.textContent = 'Servidor En Línea 🟢';
+
+          btnPlayer.href = `${currentActiveUrl}/player.html`;
+          btnPlayer.target = '_blank';
+          btnSpectator.href = `${currentActiveUrl}/spectator.html`;
+          btnSpectator.target = '_blank';
+          btnAdmin.href = `${currentActiveUrl}/admin.html`;
+          btnAdmin.target = '_blank';
+
+          if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
+          if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
+          if (linkPractice) { linkPractice.href = `${currentActiveUrl}/practice.html`; linkPractice.target = '_blank'; }
+          return;
+        }
+
+        throw new Error('Server not online');
+      } catch (err) {
+        if (window.location.origin.includes('localhost') || window.location.origin.includes('trycloudflare.com')) {
+          statusContainer.className = 'live-status status-online';
+          pulseDot.className = 'pulse-dot dot-online';
+          statusText.textContent = 'Servidor Local 🟢';
+        } else {
+          statusContainer.className = 'live-status status-offline';
+          pulseDot.className = 'pulse-dot dot-offline';
+          statusText.textContent = 'Servidor Desconectado 🔴';
+        }
+      }
+    }
+
+    checkServerStatus();
+    setInterval(checkServerStatus, 5000);
+  </script>
 
 </body>
 </html>
