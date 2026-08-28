@@ -533,17 +533,17 @@
 
       <!-- Botones con enlaces directos -->
       <div class="cta-group">
-        <a href="https://dinoplay.loca.lt/player.html" class="btn-main" target="_blank" rel="noopener noreferrer">
+        <a href="https://screens-bring-latin-containers.trycloudflare.com/player.html" class="btn-main" target="_blank" rel="noopener noreferrer">
           <span>🎮</span>
           <span>¡ENTRAR A JUGAR AHORA!</span>
         </a>
 
-        <a href="https://dinoplay.loca.lt/spectator.html" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        <a href="https://screens-bring-latin-containers.trycloudflare.com/spectator.html" class="btn-secondary" target="_blank" rel="noopener noreferrer">
           <span>📺</span>
           <span>Pantalla de Espectadores</span>
         </a>
 
-        <a href="https://dinoplay.loca.lt/admin.html" class="btn-admin" target="_blank" rel="noopener noreferrer">
+        <a href="https://screens-bring-latin-containers.trycloudflare.com/admin.html" class="btn-admin" target="_blank" rel="noopener noreferrer">
           <span>👑</span>
           <span>Panel de Administrador</span>
         </a>
@@ -630,7 +630,7 @@
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-          await fetch('https://dinoplay.loca.lt/api/db/status?t=' + Date.now(), {
+          await fetch('https://screens-bring-latin-containers.trycloudflare.com/api/db/status?t=' + Date.now(), {
             mode: 'no-cors',
             cache: 'no-store',
             signal: controller.signal
