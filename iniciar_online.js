@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const readline = require('readline');
 const path = require('path');
 const fs = require('fs');
@@ -13,7 +13,18 @@ console.log(' [1/2] Iniciando servidor del juego (Node.js en puerto ' + PORT + '
 
 const serverProcess = spawn('node', ['server.js'], { stdio: 'inherit' });
 
-console.log(' [2/2] Creando túnel seguro y estable con Cloudflare...\n');
+serverProcess.on('error', (err) => {
+  console.error('\n❌ ERROR al arrancar server.js:', err.message);
+});
+
+serverProcess.on('exit', (code) => {
+  if (code !== 0 && code !== null) {
+    console.error(`\n⚠️  El servidor local se cerró con código ${code}. Verifica si el puerto ${PORT} está ocupado.`);
+  }
+});
+
+console.log(' [2/2] Creando túnel seguro con Cloudflare...');
+console.log(' ⏳ Conectando con la red global de Cloudflare (toma de 3 a 5 segundos)...\n');
 
 const cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
 const tunnelProcess = spawn(cloudflaredPath, ['tunnel', '--url', `http://localhost:${PORT}`]);
@@ -51,12 +62,12 @@ function handleLine(line) {
           body: JSON.stringify({ url: url })
         });
       } catch (err) {
-        // Fallback silencioso en caso de conexión intermitente
+        // Fallback silencioso en caso de micro-cortes
       }
     }
 
     sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 30000);
+    const heartbeatInterval = setInterval(sendHeartbeat, 25000);
 
     console.clear();
     console.log('\n=============================================================');
@@ -80,7 +91,7 @@ function handleLine(line) {
 
     // Abrir automáticamente el panel de admin en el navegador
     try {
-      spawn('cmd', ['/c', 'start', `${url}/admin.html`]);
+      exec(`start "" "${url}/admin.html"`);
     } catch (e) {}
   }
 }
@@ -92,7 +103,13 @@ const rlOut = readline.createInterface({ input: tunnelProcess.stdout });
 rlOut.on('line', handleLine);
 
 tunnelProcess.on('error', (err) => {
-  console.error('Error al iniciar Cloudflare Tunnel:', err.message);
+  console.error('\n❌ Error al iniciar Cloudflare Tunnel:', err.message);
+});
+
+tunnelProcess.on('exit', (code) => {
+  if (code !== 0 && code !== null) {
+    console.error(`\n⚠️  El túnel de Cloudflare se cerró con código ${code}.`);
+  }
 });
 
 process.on('SIGINT', () => {
@@ -100,3 +117,4 @@ process.on('SIGINT', () => {
   serverProcess.kill();
   process.exit();
 });
+

@@ -40,6 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoints de Base de Datos en Tiempo Real
@@ -50,6 +51,23 @@ app.get('/api/server-url', (req, res) => {
     updated_at: new Date().toISOString(),
     is_online: true
   });
+});
+
+app.get('/api/active-pin', (req, res) => {
+  const activeRooms = Array.from(rooms.values());
+  if (activeRooms.length > 0) {
+    const latest = activeRooms[activeRooms.length - 1];
+    return res.json({
+      ok: true,
+      has_room: true,
+      pin: latest.pin,
+      status: latest.status,
+      eventName: latest.eventName,
+      matchName: latest.matchName,
+      playersCount: Object.keys(latest.players).length
+    });
+  }
+  return res.json({ ok: true, has_room: false });
 });
 
 app.get('/api/db/status', (req, res) => {
@@ -77,6 +95,20 @@ app.get('/api/db/results', (req, res) => {
 
 app.get('/api/db/history', (req, res) => {
   res.json({ ok: true, success: true, results: Database.getAllResults() });
+});
+
+app.delete('/api/db/results/:id', (req, res) => {
+  const id = req.params.id;
+  const deleted = Database.deleteResult(id);
+  res.json({ ok: true, success: true, deleted, id });
+});
+
+app.post('/api/db/results/delete', (req, res) => {
+  const { id, pin } = req.body || {};
+  const target = id || pin;
+  if (!target) return res.status(400).json({ ok: false, error: 'id or pin is required' });
+  const deleted = Database.deleteResult(target);
+  res.json({ ok: true, success: true, deleted, target });
 });
 
 app.get('/api/db/export/csv', (req, res) => {
@@ -288,7 +320,10 @@ io.on('connection', (socket) => {
       if (data && data.matchName) room.matchName = data.matchName;
       if (data && data.maxPlayers !== undefined) room.maxPlayers = data.maxPlayers;
     } else {
-      pin = generateRoomPin();
+      // Si el admin traía un PIN previo válido (4 dígitos) y no está en conflicto, mantenerlo
+      if (!pin || pin.length < 4 || rooms.has(pin)) {
+        pin = generateRoomPin();
+      }
       room = {
         pin,
         hostId: socket.id,
@@ -568,9 +603,16 @@ io.on('connection', (socket) => {
     const room = rooms.get(safePin);
 
     if (!room) {
+      const activeRooms = Array.from(rooms.values());
+      const currentActive = activeRooms.length > 0 ? activeRooms[activeRooms.length - 1].pin : null;
+      let msg = 'La sala con el PIN indicado no existe o fue cerrada.';
+      if (currentActive && currentActive !== safePin) {
+        msg += ` (La sala activa actual es: ${currentActive})`;
+      }
       socket.emit('player:join_error', {
         code: 'ROOM_NOT_FOUND',
-        message: 'La sala con el PIN indicado no existe o fue cerrada.'
+        message: msg,
+        activePin: currentActive
       });
       return;
     }

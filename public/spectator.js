@@ -2,9 +2,31 @@
   'use strict';
 
   const urlParams = new URLSearchParams(window.location.search);
-  const customBackendUrl = urlParams.get('server');
-  if (customBackendUrl) {
-    localStorage.setItem('dino_backend_url', customBackendUrl);
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
+                  window.location.hostname.startsWith('192.168.') ||
+                  window.location.hostname.startsWith('10.');
+
+  let customBackendUrl = urlParams.get('server');
+  if (urlParams.get('server')) {
+    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  } else if (!isLocal) {
+    customBackendUrl = localStorage.getItem('dino_backend_url');
+  } else {
+    localStorage.removeItem('dino_backend_url');
+    customBackendUrl = null;
+  }
+
+  // Si se abre directamente en Cloudflare Pages, redirigir automáticamente al túnel activo
+  if (window.location.hostname.includes('pages.dev') && !urlParams.get('server')) {
+    fetch('/api/server-url?t=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.is_online && data.active_url) {
+          const targetUrl = data.active_url.replace(/\/+$/, '') + '/spectator.html' + window.location.search;
+          window.location.replace(targetUrl);
+        }
+      })
+      .catch(() => {});
   }
 
   const socket = (typeof io !== 'undefined')

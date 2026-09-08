@@ -2,9 +2,40 @@
   'use strict';
 
   const urlParams = new URLSearchParams(window.location.search);
-  const customBackendUrl = urlParams.get('server');
-  if (customBackendUrl) {
-    localStorage.setItem('dino_backend_url', customBackendUrl);
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
+                  window.location.hostname.startsWith('192.168.') ||
+                  window.location.hostname.startsWith('10.');
+
+  let customBackendUrl = urlParams.get('server');
+  if (urlParams.get('server')) {
+    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  } else if (!isLocal) {
+    customBackendUrl = localStorage.getItem('dino_backend_url');
+  } else {
+    // Si estamos en entorno local, limpiar cualquier túnel caducado anterior para evitar conexiones fantasmas
+    localStorage.removeItem('dino_backend_url');
+    customBackendUrl = null;
+  }
+
+  // Si se abre directamente en Cloudflare Pages, redirigir automáticamente al túnel activo
+  if (window.location.hostname.includes('pages.dev') && !urlParams.get('server')) {
+    fetch('/api/server-url?t=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.is_online && data.active_url) {
+          const targetUrl = data.active_url.replace(/\/+$/, '') + '/player.html' + window.location.search;
+          window.location.replace(targetUrl);
+        } else {
+          const banner = document.getElementById('reconnect-banner');
+          const bannerText = document.getElementById('reconnect-banner-text');
+          if (banner && bannerText) {
+            banner.style.display = 'flex';
+            banner.style.background = '#dc2626';
+            bannerText.textContent = '🔴 Servidor fuera de línea. El organizador debe abrir JUGAR_ONLINE.bat en su PC.';
+          }
+        }
+      })
+      .catch(() => {});
   }
 
   const socket = (typeof io !== 'undefined')
@@ -34,6 +65,8 @@
   const joinForm = document.getElementById('join-form');
   const inputPin = document.getElementById('input-pin');
   const inputName = document.getElementById('input-name');
+  const btnJoin = document.getElementById('btn-join');
+  const btnJoinText = btnJoin ? btnJoin.querySelector('span') : null;
   const colorBtns = document.querySelectorAll('.color-btn');
   const joinErrorBox = document.getElementById('join-error-box');
   const joinErrorMsg = document.getElementById('join-error-msg');
@@ -125,10 +158,60 @@
     if (savedPin) inputPin.value = savedPin;
   }
 
+  // Auto-detectar sala activa en el servidor local si el PIN guardado no existe o no hay PIN
+  fetch('/api/active-pin')
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.ok && d.has_room && d.pin) {
+        if (!pinFromUrl) {
+          inputPin.placeholder = `Activa: ${d.pin}`;
+          // Si el PIN actual en el input difiere de la sala activa, sugerirlo
+          if (!inputPin.value) {
+            inputPin.value = d.pin;
+          }
+        }
+      }
+    })
+    .catch(() => {});
+
+  // Monitoreo de estado de conexión del socket
+  if (socket) {
+    socket.on('connect', () => {
+      console.log('✅ Conectado al servidor de Dino Runner');
+      if (reconnectBanner) reconnectBanner.style.display = 'none';
+      if (btnJoin) {
+        btnJoin.disabled = false;
+        if (btnJoinText) btnJoinText.textContent = 'ENTRAR A LA SALA';
+      }
+    });
+
+    socket.on('connect_error', (err) => {
+      console.warn('⚠️ Error conectando al servidor:', err.message);
+      if (reconnectBanner && reconnectBannerText) {
+        reconnectBanner.style.display = 'flex';
+        reconnectBanner.style.background = '#dc2626';
+        reconnectBannerText.textContent = '🔴 Sin conexión con el servidor. Verifica que INICIAR_JUEGO.bat esté corriendo.';
+      }
+      if (btnJoin) {
+        btnJoin.disabled = false;
+        if (btnJoinText) btnJoinText.textContent = 'ENTRAR A LA SALA';
+      }
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.warn('⚠️ Socket desconectado:', reason);
+      if (reconnectBanner && reconnectBannerText) {
+        reconnectBanner.style.display = 'flex';
+        reconnectBanner.style.background = '#eab308';
+        reconnectBannerText.textContent = '⚠️ Conexión perdida con el servidor. Reconectando...';
+      }
+    });
+  }
+
   // Intentar reconexión automática si existe token guardado
   const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN);
   const targetPin = pinFromUrl || localStorage.getItem(STORAGE_KEY_PIN);
-  if (savedToken && targetPin) {
+  if (savedToken && targetPin && socket) {
     socket.emit('player:reconnect', {
       pin: targetPin,
       sessionToken: savedToken,
@@ -168,6 +251,25 @@
       return;
     }
 
+    if (!socket || !socket.connected) {
+      showError('⚠️ No hay conexión con el servidor. Verifica que esté iniciado y recarga la página.');
+      return;
+    }
+
+    if (btnJoin) {
+      btnJoin.disabled = true;
+      if (btnJoinText) btnJoinText.textContent = 'ENTRANDO...';
+    }
+
+    clearTimeout(window.__joinTimeout);
+    window.__joinTimeout = setTimeout(() => {
+      if (btnJoin) {
+        btnJoin.disabled = false;
+        if (btnJoinText) btnJoinText.textContent = 'ENTRAR A LA SALA';
+      }
+      showError('El servidor tardó en responder. Comprueba que el PIN sea el correcto.');
+    }, 4000);
+
     currentPin = pin;
     localStorage.setItem(STORAGE_KEY_NAME, name);
     localStorage.setItem(STORAGE_KEY_PIN, pin);
@@ -202,6 +304,11 @@
 
   // Respuesta de unión exitosa
   socket.on('player:join_success', (data) => {
+    clearTimeout(window.__joinTimeout);
+    if (btnJoin) {
+      btnJoin.disabled = false;
+      if (btnJoinText) btnJoinText.textContent = 'ENTRAR A LA SALA';
+    }
     myPlayerInfo = data.player;
     currentPin = data.pin;
     selectedColor = data.player.color || selectedColor;
@@ -260,7 +367,26 @@
   });
 
   socket.on('player:join_error', (data) => {
+    clearTimeout(window.__joinTimeout);
+    if (btnJoin) {
+      btnJoin.disabled = false;
+      if (btnJoinText) btnJoinText.textContent = 'ENTRAR A LA SALA';
+    }
     showError(data.message || 'Error al unirse a la sala.', data.allowSpectator, data.pin);
+
+    // Si el servidor informó una sala activa diferente, añadir botón rápido para unirse
+    if (data.activePin && inputPin && data.activePin !== inputPin.value.trim()) {
+      const activeBtn = document.createElement('button');
+      activeBtn.type = 'button';
+      activeBtn.className = 'btn-secondary-sm';
+      activeBtn.style.cssText = 'display: block; width: 100%; margin-top: 10px; background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80; font-weight: bold; cursor: pointer; padding: 10px; border-radius: 8px;';
+      activeBtn.textContent = `🚀 Entrar a la sala activa (PIN: ${data.activePin})`;
+      activeBtn.onclick = () => {
+        inputPin.value = data.activePin;
+        joinForm.requestSubmit ? joinForm.requestSubmit() : joinForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      };
+      joinErrorMsg.appendChild(activeBtn);
+    }
   });
 
   socket.on('room:players_update', (data) => {

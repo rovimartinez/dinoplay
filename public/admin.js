@@ -2,9 +2,31 @@
   'use strict';
 
   const urlParams = new URLSearchParams(window.location.search);
-  const customBackendUrl = urlParams.get('server');
-  if (customBackendUrl) {
-    localStorage.setItem('dino_backend_url', customBackendUrl);
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
+                  window.location.hostname.startsWith('192.168.') ||
+                  window.location.hostname.startsWith('10.');
+
+  let customBackendUrl = urlParams.get('server');
+  if (urlParams.get('server')) {
+    localStorage.setItem('dino_backend_url', urlParams.get('server'));
+  } else if (!isLocal) {
+    customBackendUrl = localStorage.getItem('dino_backend_url');
+  } else {
+    localStorage.removeItem('dino_backend_url');
+    customBackendUrl = null;
+  }
+
+  // Si se abre directamente en Cloudflare Pages, redirigir automáticamente al túnel activo
+  if (window.location.hostname.includes('pages.dev') && !urlParams.get('server')) {
+    fetch('/api/server-url?t=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.is_online && data.active_url) {
+          const targetUrl = data.active_url.replace(/\/+$/, '') + '/admin.html' + window.location.search;
+          window.location.replace(targetUrl);
+        }
+      })
+      .catch(() => {});
   }
 
   const socket = (typeof io !== 'undefined')
@@ -30,6 +52,16 @@
   const btnOpenSpectator = document.getElementById('btn-open-spectator');
   const btnOpenHistory = document.getElementById('btn-open-history');
   const btnSoundToggle = document.getElementById('btn-sound-toggle');
+
+  const btnOpenConfig = document.getElementById('btn-open-config');
+  const btnOpenConfigPill = document.getElementById('btn-open-config-pill');
+  const summaryPillText = document.getElementById('summary-pill-text');
+  const modalRoomConfig = document.getElementById('modal-room-config');
+  const btnCloseRoomConfig = document.getElementById('btn-close-room-config');
+  const formRoomConfig = document.getElementById('form-room-config');
+
+  const btnMoreDots = document.getElementById('btn-more-dots');
+  const moreDropdownMenu = document.getElementById('more-dropdown-menu');
 
   const inputEventName = document.getElementById('input-event-name');
   const inputMatchName = document.getElementById('input-match-name');
@@ -248,6 +280,10 @@
   const adminConnectionBannerText = document.getElementById('admin-connection-banner-text');
 
   function showConnectionAlert(message) {
+    if (socket && socket.connected) {
+      hideConnectionAlert();
+      return;
+    }
     if (adminConnectionBanner) {
       if (message && adminConnectionBannerText) adminConnectionBannerText.innerHTML = message;
       adminConnectionBanner.style.display = 'flex';
@@ -265,6 +301,7 @@
   const STORAGE_KEY_ADMIN_PIN = 'dino_admin_room_pin';
 
   function requestAdminRoomCreation() {
+    hideConnectionAlert();
     if (!currentAdminKey) {
       if (adminAuthModal) {
         adminAuthModal.style.display = 'flex';
@@ -296,6 +333,10 @@
   });
 
   socket.on('connect_error', () => {
+    if (socket && socket.connected) {
+      hideConnectionAlert();
+      return;
+    }
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocal) {
       showConnectionAlert('⚠️ No se pudo conectar con el servidor local. Ejecuta <code>INICIAR_JUEGO.bat</code> y accede a <a href="http://localhost:3000/admin" style="color:#6ee7b7; font-weight:bold; text-decoration:underline;">http://localhost:3000/admin</a>');
@@ -305,7 +346,11 @@
   });
 
   socket.on('disconnect', (reason) => {
-    showConnectionAlert('⚠️ Reconectando con el servidor de juego en tiempo real...');
+    if (reason === 'io client disconnect') {
+      hideConnectionAlert();
+    } else {
+      showConnectionAlert('⚠️ Reconectando con el servidor de juego en tiempo real...');
+    }
   });
 
   // 1. SOLICITAR CLAVE O CREAR SALA AL CARGAR
@@ -347,6 +392,7 @@
   }
 
   socket.on('admin:room_created', (data) => {
+    hideConnectionAlert();
     adminAuthModal.style.display = 'none';
     currentPin = data.pin;
     sessionStorage.setItem(STORAGE_KEY_ADMIN, currentAdminKey);
@@ -362,7 +408,12 @@
     headerEventName.textContent = data.eventName || 'Torneo';
     headerMatchName.textContent = data.matchName || 'Ronda 1';
     headerMatchBadge.style.display = 'inline-flex';
-    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `(Límite: ${data.maxPlayers})` : '';
+    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `/ ${data.maxPlayers}` : '/ ∞';
+    updateSummaryPillText(data.eventName, data.matchName);
+    const lobbyRosterTitle = document.getElementById('lobby-roster-title');
+    if (lobbyRosterTitle) {
+      lobbyRosterTitle.textContent = `👥 Participantes Conectados (${currentPlayers.length} / ${data.maxPlayers > 0 ? data.maxPlayers : '∞'})`;
+    }
 
     const protocol = window.location.protocol;
     const host = window.location.hostname;
@@ -471,11 +522,101 @@
     });
   }
 
+  // Funciones y Handlers de Configuración de Partida
+  function updateSummaryPillText(eventName, matchName) {
+    if (summaryPillText) {
+      const eName = eventName || (inputEventName ? inputEventName.value.trim() : '') || 'Torneo Dino';
+      const mName = matchName || (inputMatchName ? inputMatchName.value.trim() : '') || 'Ronda 1';
+      summaryPillText.textContent = `🏆 ${eName} • ${mName}`;
+    }
+  }
+
+  function openConfigModal() {
+    if (modalRoomConfig) modalRoomConfig.style.display = 'flex';
+  }
+
+  function closeConfigModal() {
+    if (modalRoomConfig) modalRoomConfig.style.display = 'none';
+  }
+
+  if (btnOpenConfig) btnOpenConfig.addEventListener('click', openConfigModal);
+  if (btnOpenConfigPill) btnOpenConfigPill.addEventListener('click', openConfigModal);
+  if (btnCloseRoomConfig) btnCloseRoomConfig.addEventListener('click', closeConfigModal);
+  if (modalRoomConfig) {
+    modalRoomConfig.addEventListener('click', (e) => {
+      if (e.target === modalRoomConfig) closeConfigModal();
+    });
+  }
+
+  if (formRoomConfig) {
+    formRoomConfig.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const eventName = inputEventName ? inputEventName.value.trim() : 'Torneo Dino';
+      const matchName = inputMatchName ? inputMatchName.value.trim() : 'Ronda 1';
+      const gameMode = selectGameMode ? selectGameMode.value : 'sudden_death';
+      const maxPlayers = selectMaxPlayers ? parseInt(selectMaxPlayers.value, 10) : 30;
+
+      updateSummaryPillText(eventName, matchName);
+      if (maxPlayersLabel) {
+        maxPlayersLabel.textContent = maxPlayers > 0 ? `/ ${maxPlayers}` : '/ ∞';
+      }
+      const lobbyRosterTitle = document.getElementById('lobby-roster-title');
+      if (lobbyRosterTitle) {
+        lobbyRosterTitle.textContent = `👥 Participantes Conectados (${currentPlayers.length} / ${maxPlayers > 0 ? maxPlayers : '∞'})`;
+      }
+
+      if (socket && currentPin) {
+        socket.emit('admin:update_config', {
+          pin: currentPin,
+          eventName,
+          matchName,
+          gameMode,
+          maxPlayers
+        });
+      }
+      closeConfigModal();
+    });
+  }
+
+  // Menú Desplegable de 3 Puntos
+  if (btnMoreDots && moreDropdownMenu) {
+    btnMoreDots.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = moreDropdownMenu.classList.contains('show');
+      if (isOpen) {
+        moreDropdownMenu.classList.remove('show');
+        btnMoreDots.classList.remove('active');
+      } else {
+        moreDropdownMenu.classList.add('show');
+        btnMoreDots.classList.add('active');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!moreDropdownMenu.contains(e.target) && e.target !== btnMoreDots) {
+        moreDropdownMenu.classList.remove('show');
+        btnMoreDots.classList.remove('active');
+      }
+    });
+
+    moreDropdownMenu.querySelectorAll('.dropdown-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        moreDropdownMenu.classList.remove('show');
+        btnMoreDots.classList.remove('active');
+      });
+    });
+  }
+
   socket.on('room:config_updated', (data) => {
     headerEventName.textContent = data.eventName;
     headerMatchName.textContent = data.matchName;
     headerMatchBadge.style.display = 'inline-flex';
-    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `(Límite: ${data.maxPlayers})` : '';
+    maxPlayersLabel.textContent = data.maxPlayers > 0 ? `/ ${data.maxPlayers}` : '/ ∞';
+    updateSummaryPillText(data.eventName, data.matchName);
+    const lobbyRosterTitle = document.getElementById('lobby-roster-title');
+    if (lobbyRosterTitle) {
+      lobbyRosterTitle.textContent = `👥 Participantes Conectados (${currentPlayers.length} / ${data.maxPlayers > 0 ? data.maxPlayers : '∞'})`;
+    }
   });
 
   // 2. ACTUALIZACIÓN DE JUGADORES EN EL LOBBY
@@ -483,37 +624,67 @@
     currentPlayers = data.players || [];
     lobbyCount.textContent = currentPlayers.length;
 
+    const maxLimit = selectMaxPlayers ? parseInt(selectMaxPlayers.value, 10) : 30;
+    const maxLimitText = maxLimit > 0 ? maxLimit : '∞';
+    const lobbyRosterTitle = document.getElementById('lobby-roster-title');
+    if (lobbyRosterTitle) {
+      lobbyRosterTitle.textContent = `👥 Participantes Conectados (${currentPlayers.length} / ${maxLimitText})`;
+    }
+
     if (currentPlayers.length >= 1) {
       btnStartGame.disabled = false;
-      startHint.textContent = `¡Todo listo! Hay ${currentPlayers.length} jugador(es) en la sala.`;
-      startHint.style.color = '#4ade80';
+      startHint.innerHTML = `✓ Sala lista para iniciar (${currentPlayers.length} conectados)`;
+      startHint.className = 'badge-ready';
     } else {
       btnStartGame.disabled = true;
-      startHint.textContent = 'Esperando que se una al menos 1 jugador...';
-      startHint.style.color = 'var(--text-muted)';
+      startHint.innerHTML = `⏳ Esperando que se unan jugadores...`;
+      startHint.className = 'badge-ready';
+      startHint.style.background = 'rgba(255, 255, 255, 0.05)';
+      startHint.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      startHint.style.color = '#94a3b8';
     }
 
     lobbyPlayersGrid.innerHTML = '';
-    currentPlayers.forEach((player) => {
-      const card = document.createElement('div');
-      card.className = 'lobby-player-card';
-      card.style.setProperty('--p-color', player.color);
-      card.innerHTML = `
-        <div class="player-avatar-circle">${player.avatar || '🦖'}</div>
-        <div class="player-name-text">${escapeHtml(player.name)}</div>
-        <button class="btn-kick" title="Expulsar" data-id="${player.id}">✕</button>
+    
+    if (currentPlayers.length === 0) {
+      // 1. Mensaje único centrado cuando no hay jugadores
+      lobbyPlayersGrid.innerHTML = `
+        <div class="lobby-empty-state">
+          <div class="empty-state-icon">🦖</div>
+          <div class="empty-state-title">Esperando participantes</div>
+          <p class="empty-state-subtitle">Los jugadores conectados aparecerán aquí en tiempo real cuando ingresen con el PIN o escaneen el código QR.</p>
+        </div>
       `;
-
-      const kickBtn = card.querySelector('.btn-kick');
-      kickBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm(`¿Expulsar a ${player.name}?`)) {
-          socket.emit('admin:kick_player', { pin: currentPin, playerId: player.id });
+    } else {
+      // 2. Renderizar únicamente las tarjetas de los jugadores conectados
+      currentPlayers.forEach((player) => {
+        const card = document.createElement('div');
+        card.className = 'player-pill';
+        if (player.color) {
+          card.style.borderColor = `${player.color}55`;
         }
-      });
+        card.innerHTML = `
+          <div class="player-avatar" style="background: ${player.color ? player.color + '25' : 'rgba(6, 182, 212, 0.15)'}; border-color: ${player.color || '#06b6d4'};">
+            ${player.avatar || '🦖'}
+          </div>
+          <div class="player-info">
+            <div class="player-name">${escapeHtml(player.name.toUpperCase())}</div>
+            <div class="player-role"><span class="live-dot" style="width: 5px; height: 5px; margin-right: 4px;"></span> Conectado</div>
+          </div>
+          <button class="btn-kick" title="Expulsar" data-id="${player.id}">✕</button>
+        `;
 
-      lobbyPlayersGrid.appendChild(card);
-    });
+        const kickBtn = card.querySelector('.btn-kick');
+        kickBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm(`¿Expulsar a ${player.name}?`)) {
+            socket.emit('admin:kick_player', { pin: currentPin, playerId: player.id });
+          }
+        });
+
+        lobbyPlayersGrid.appendChild(card);
+      });
+    }
   });
 
   // 3. INICIAR PARTIDA
@@ -1058,21 +1229,79 @@
         div.className = 'history-item';
         const dateObj = new Date(item.date);
         const timeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+
+        // Obtener los 3 primeros puestos (Podio)
+        const topPlayers = (item.podium && item.podium.length > 0)
+          ? item.podium
+          : ((item.leaderboard && item.leaderboard.length > 0)
+              ? item.leaderboard.slice(0, 3)
+              : [{ rank: 1, name: item.winner || 'Ganador', score: item.winnerScore || 0 }]);
+
+        let podiumHtml = '';
+        topPlayers.forEach((p, pIdx) => {
+          const rank = p.rank || (pIdx + 1);
+          let badgeClass = 'gold';
+          let medal = '🥇';
+          if (rank === 2) { badgeClass = 'silver'; medal = '🥈'; }
+          else if (rank === 3) { badgeClass = 'bronze'; medal = '🥉'; }
+          podiumHtml += `<span class="podium-badge ${badgeClass}">${medal} ${rank}º <strong>${escapeHtml(p.name || 'Dino')}</strong> (${p.score || 0} pts)</span>`;
+        });
+
         div.innerHTML = `
           <div class="history-item-info">
-            <strong>${escapeHtml(item.matchName || 'Carrera')} (${escapeHtml(item.eventName || 'Torneo')})</strong>
+            <span class="history-item-title">${escapeHtml(item.matchName || 'Carrera')} (${escapeHtml(item.eventName || 'Torneo')})</span>
             <div class="history-item-meta">
-              PIN: ${item.pin || '--'} • Fecha: ${timeStr} • Jugadores: ${item.totalPlayers || 0}
+              PIN: <strong style="color: #38bdf8;">${item.pin || '--'}</strong> • Fecha: ${timeStr} • Jugadores: ${item.totalPlayers || 0}
             </div>
-            <div class="history-item-winner">
-              👑 Ganador: ${escapeHtml(item.winner)} (${item.winnerScore} pts)
+            <div class="history-podium-badges">
+              ${podiumHtml}
             </div>
           </div>
-          <button class="btn-export btn-hist-dl" data-idx="${idx}">📥 CSV</button>
+          <div class="history-item-actions">
+            <button class="btn-action btn-hist-dl" style="padding: 6px 10px; font-size: 11px;" title="Descargar reporte CSV de esta partida">
+              📥 CSV
+            </button>
+            <button class="btn-delete-hist" title="Eliminar esta partida del historial">
+              🗑️
+            </button>
+          </div>
         `;
 
         div.querySelector('.btn-hist-dl').addEventListener('click', () => {
           exportCSV(results[idx]);
+        });
+
+        const btnDelete = div.querySelector('.btn-delete-hist');
+        btnDelete.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const matchLabel = `${item.matchName || 'Partida'} (PIN: ${item.pin || ''})`;
+          if (!confirm(`¿Eliminar la partida "${matchLabel}" del historial?`)) return;
+
+          btnDelete.disabled = true;
+          btnDelete.textContent = '⏳';
+
+          try {
+            const targetId = item.id || item.pin;
+            await fetch(`/api/db/results/${targetId}`, { method: 'DELETE' });
+            await fetch('/api/db/results/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: item.id, pin: item.pin })
+            });
+
+            // Remover de sessionHistory
+            const sessionIdx = sessionHistory.findIndex(s => s.id === item.id || s.pin === item.pin);
+            if (sessionIdx >= 0) {
+              sessionHistory.splice(sessionIdx, 1);
+            }
+
+            renderHistoryList();
+          } catch (delErr) {
+            console.error('Error al eliminar partida:', delErr);
+            alert('No se pudo eliminar la partida del historial.');
+            btnDelete.disabled = false;
+            btnDelete.textContent = '🗑️';
+          }
         });
 
         historyList.appendChild(div);

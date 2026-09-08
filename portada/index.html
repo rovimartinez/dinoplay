@@ -689,6 +689,18 @@
         }
       }
 
+      // Prevenir navegación a enlaces rotos si el servidor del torneo está fuera de línea
+      function handleOfflineClick(e) {
+        if (!currentActiveUrl && !window.location.origin.includes('trycloudflare.com') && !window.location.origin.includes('localhost')) {
+          e.preventDefault();
+          alert('⚠️ El servidor del torneo aún no está iniciado.\n\nPara que los jugadores puedan entrar, el organizador debe hacer doble clic en el archivo "JUGAR_ONLINE.bat" en su computadora.');
+        }
+      }
+
+      if (btnPlayer) btnPlayer.addEventListener('click', handleOfflineClick);
+      if (btnSpectator) btnSpectator.addEventListener('click', handleOfflineClick);
+      if (btnAdmin) btnAdmin.addEventListener('click', handleOfflineClick);
+
       checkServerStatus();
       setInterval(checkServerStatus, 5000);
     </script>

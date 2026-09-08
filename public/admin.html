@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dino Runner - Panel Anfitrión / Proyector</title>
+  <title>Dino Tournament - Command Center</title>
   <link rel="stylesheet" href="admin.css">
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -17,124 +17,144 @@
   <!-- BANNER DE ESTADO DE CONEXIÓN -->
   <div id="admin-connection-banner" class="admin-connection-banner" style="display: none;">
     <span class="banner-pulse"></span>
-    <span id="admin-connection-banner-text">⚠️ Sin conexión con el servidor. Ejecuta <code>INICIAR_JUEGO.bat</code> e ingresa a <a href="http://localhost:3000/admin" style="color: #6ee7b7; font-weight: bold; text-decoration: underline;">http://localhost:3000/admin</a></span>
+    <span id="admin-connection-banner-text">⚠️ Sin conexión con el servidor. Ejecuta <code>JUGAR_ONLINE.bat</code> o <code>INICIAR_JUEGO.bat</code>.</span>
   </div>
 
-  <!-- HEADER GLOBAL DEL ANFITRIÓN -->
-  <header class="admin-header">
-    <div class="header-left">
-      <div class="header-logo">🦖 DINO TOURNAMENT</div>
-      <div class="room-pin-display">
-        <span class="pin-label">PIN DE SALA:</span>
-        <span id="header-pin" class="pin-code">----</span>
-      </div>
-      <div id="header-match-badge" class="match-info-badge" style="display: none;">
-        <span id="header-event-name">Torneo</span> • <strong id="header-match-name">Ronda</strong>
-      </div>
-    </div>
-    <div class="header-right">
-      <div id="db-sync-badge" class="db-status-badge" title="Base de Datos conectada: guardando puntuaciones y partidas en tiempo real">
-        <span class="db-pulse-dot"></span> 💾 BD en vivo
-      </div>
-      <div id="connection-url-badge" class="url-badge" title="Enlace de invitación para jugadores">
-        <span class="url-badge-icon">🌐</span>
-        <span id="host-url-text" class="url-badge-text">.../player</span>
-        <button id="btn-copy-header-link" class="btn-badge-action" title="Copiar enlace directo">📋 Copiar</button>
-        <button id="btn-show-qr-header" class="btn-badge-action qr" title="Mostrar QR en grande">📱 Ver QR</button>
-      </div>
-      <button id="btn-open-brackets" class="btn-nav btn-brackets" title="Abrir Cuadro de Eliminatorias y Diplomas">🏆 Eliminatorias & Diplomas</button>
-      <button id="btn-open-spectator" class="btn-nav" title="Abrir pantalla para espectadores">👁️ Espectador</button>
-      <button id="btn-open-history" class="btn-nav" title="Ver historial de partidas">📜 Historial</button>
-      <button id="btn-sound-toggle" class="btn-icon" title="Sonido">🔊</button>
-    </div>
-  </header>
+  <div class="app-wrapper">
 
-  <!-- 1. VISTA: LOBBY DE ESPERA (PROYECTOR) -->
-  <section id="admin-view-lobby" class="admin-view active">
-    <!-- BARRA DE CONFIGURACIÓN DE PARTIDA Y EVENTO -->
-    <div class="match-setup-panel glass-panel">
-      <div class="setup-group">
-        <label for="input-event-name">🏆 Evento:</label>
-        <input type="text" id="input-event-name" class="setup-input" placeholder="Ej: Torneo Matemático 2026" maxlength="40">
-      </div>
-      <div class="setup-group">
-        <label for="input-match-name">🏁 Nombre de Partida:</label>
-        <input type="text" id="input-match-name" class="setup-input" placeholder="Ej: Cuarto Grado / Semifinal" maxlength="40">
-      </div>
-      <div class="setup-group">
-        <label for="select-game-mode">🎮 Modo de Juego:</label>
-        <select id="select-game-mode" class="setup-select">
-          <option value="sudden_death" selected>💀 Muerte Súbita (1 vida)</option>
-          <option value="three_lives">❤️ 3 Vidas (Modo Torneo)</option>
-        </select>
-      </div>
-      <div class="setup-group">
-        <label for="select-max-players">👥 Límite Jugadores:</label>
-        <select id="select-max-players" class="setup-select">
-          <option value="0">Sin límite</option>
-          <option value="10">10 jugadores</option>
-          <option value="20">20 jugadores</option>
-          <option value="30" selected>30 jugadores</option>
-          <option value="50">50 jugadores</option>
-          <option value="100">100 jugadores</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="lobby-hero">
-      <div class="pin-card glass-panel">
-        <div class="pin-card-top">
-          <span class="pulse-indicator"></span>
-          <span>SALA ABIERTA EN VIVO</span>
+    <!-- 1. BARRA SUPERIOR INTEGRADA Y LIMPIA -->
+    <header class="top-command-bar">
+      <div class="brand-section">
+        <div class="brand-logo">🦖</div>
+        <div>
+          <div class="brand-name">Dino Tournament</div>
         </div>
-        <div class="pin-card-content">
-          <div class="pin-card-left">
-            <span class="pin-title">PIN DE ACCESO:</span>
-            <div class="pin-giant-row">
-              <h1 id="lobby-big-pin" class="pin-giant">----</h1>
-              <button id="btn-copy-pin" class="btn-copy-pill" title="Copiar solo el PIN">📋 Copiar PIN</button>
+        <span class="config-pill pill-live" style="margin-left: 6px;">
+          <span class="live-dot"></span> EN VIVO
+        </span>
+      </div>
+
+      <!-- Píldora de Resumen (Abre la ventana de configuración al hacer clic) -->
+      <button id="btn-open-config-pill" class="config-summary-pill" title="Clic para configurar torneo, ronda y modo de juego">
+        <span class="gear-icon">⚙️</span>
+        <span id="summary-pill-text">🏆 Torneo Dino • Ronda 1</span>
+        <span style="font-size: 11px; opacity: 0.7; margin-left: 2px;">✏️</span>
+      </button>
+
+      <!-- Elementos de compatibilidad en segundo plano -->
+      <div style="display: none;">
+        <span id="header-match-badge"><span id="header-event-name"></span><span id="header-match-name"></span></span>
+        <span id="header-pin">----</span>
+        <span id="db-sync-badge"></span>
+        <span id="connection-url-badge"><span id="host-url-text"></span><button id="btn-copy-header-link"></button><button id="btn-show-qr-header"></button></span>
+      </div>
+
+      <div class="top-actions">
+        <button id="btn-open-config" class="btn-action" title="Abrir ventana de ajustes">
+          ⚙️ Ajustes
+        </button>
+
+        <!-- Menú desplegable de 3 puntos (Organizado) -->
+        <div class="dropdown-container">
+          <button id="btn-more-dots" class="btn-more-dots" title="Más opciones">
+            ⋮
+          </button>
+          <div id="more-dropdown-menu" class="more-dropdown-menu">
+            <button id="btn-open-brackets" class="dropdown-item gold" title="Cuadro de Eliminatorias">
+              🏆 Eliminatorias & Diplomas
+            </button>
+            <button id="btn-open-spectator" class="dropdown-item" title="Pantalla para espectadores">
+              👁️ Pantalla Espectador
+            </button>
+            <button id="btn-open-history" class="dropdown-item" title="Ver partidas anteriores">
+              📜 Historial de Partidas
+            </button>
+            <div class="dropdown-divider"></div>
+            <button id="btn-sound-toggle" class="dropdown-item" title="Activar/Desactivar sonido">
+              🔊 Sonido: ON
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 1. VISTA: LOBBY DE ESPERA (PROYECTOR) -->
+    <section id="admin-view-lobby" class="admin-view active">
+      <main class="dashboard-layout">
+        
+        <!-- COLUMNA IZQUIERDA: ACCESO & CONTROL -->
+        <div class="control-column">
+          
+          <!-- Tarjeta de Acceso -->
+          <div class="access-card">
+            <div class="access-header">
+              <span class="access-title">Acceso Rápido a Sala</span>
+              <button id="btn-copy-pin" class="btn-copy-pin" title="Copiar PIN">
+                📋 Copiar PIN
+              </button>
             </div>
-            <div class="pin-instruction-box">
-              <span class="pin-instruction-label">🔗 O ingresa directamente desde tu navegador:</span>
-              <div class="pin-url-action-bar">
-                <span id="lobby-join-url" class="pin-url-display">https://.../player</span>
-                <button id="btn-copy-lobby-url" class="btn-copy-accent">📋 Copiar Link</button>
+
+            <div class="access-body">
+              <div class="qr-frame" id="btn-qr-click-zoom" title="Clic para agrandar QR">
+                <img id="lobby-qr-img" src="" alt="QR Acceso">
+                <span class="qr-caption">📷 ESCANEAR QR</span>
+              </div>
+
+              <div class="pin-display-group">
+                <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">PIN de Entrada</span>
+                <div id="lobby-big-pin" class="pin-hero-number">----</div>
+                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.3;">Conéctate desde tu teléfono o navegador.</p>
               </div>
             </div>
+
+            <span id="lobby-join-url" style="display: none;">https://.../player</span>
+            <button id="btn-copy-lobby-url" class="btn-copy-link">
+              🔗 Copiar Enlace Directo
+            </button>
           </div>
-          <div class="pin-card-right">
-            <div class="qr-container-box" id="btn-qr-click-zoom" title="Clic para agrandar QR">
-              <img id="lobby-qr-img" class="lobby-qr-image" src="" alt="QR para ingresar" />
-              <div class="qr-zoom-badge">🔍 Clic para agrandar</div>
+
+          <!-- Tarjeta Contador & CTA -->
+          <div class="cta-card">
+            <div class="counter-wrap">
+              <div class="counter-label">Jugadores Listos</div>
+              <div class="counter-value">
+                <span id="lobby-count">0</span> <span id="max-players-label">/ 30</span>
+              </div>
+              <div id="start-hint" class="badge-ready">
+                ⏳ Esperando que se unan jugadores...
+              </div>
             </div>
-            <span class="qr-subtext">📱 <strong>Escanea con tu cámara</strong> para unirte</span>
+
+            <button id="btn-start-game" class="btn-launch" disabled>
+              ▶ Iniciar Partida
+            </button>
+          </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: SALA DE PARTICIPANTES COMPLETA -->
+        <div class="lobby-column">
+          <div class="lobby-top">
+            <div id="lobby-roster-title" class="lobby-title">
+              👥 Participantes Conectados (0 / 30)
+            </div>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 6px;">
+              <span class="live-dot" style="width: 6px; height: 6px;"></span> Sincronización en vivo
+            </span>
+          </div>
+
+          <div id="lobby-players-grid" class="roster-grid">
+            <!-- Mensaje único de estado vacío cuando no hay nadie conectado -->
+            <div class="lobby-empty-state">
+              <div class="empty-state-icon">🦖</div>
+              <div class="empty-state-title">Esperando participantes</div>
+              <p class="empty-state-subtitle">Los jugadores conectados aparecerán aquí en tiempo real cuando ingresen con el PIN o escaneen el código QR.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="lobby-action-box">
-        <div class="players-counter-box">
-          <span class="counter-num" id="lobby-count">0</span>
-          <span class="counter-label">JUGADORES CONECTADOS</span>
-          <span id="max-players-label" class="max-players-indicator"></span>
-        </div>
-
-        <button id="btn-start-game" class="btn-start" disabled>
-          <span class="btn-icon-start">🎮</span>
-          <span class="btn-text">INICIAR PARTIDA</span>
-        </button>
-        <div id="start-hint" class="start-hint">Esperando que se una al menos 1 jugador...</div>
-      </div>
-    </div>
-
-    <!-- LISTA DINÁMICA DE JUGADORES EN EL LOBBY -->
-    <div class="lobby-players-container">
-      <h3 class="section-title">Participantes en el Lobby:</h3>
-      <div id="lobby-players-grid" class="lobby-players-grid">
-        <!-- Tarjetas de jugadores generadas dinámicamente -->
-      </div>
-    </div>
-  </section>
+      </main>
+    </section>
 
   <!-- 2. VISTA: CUENTA REGRESIVA SINCRONIZADA (PROYECTOR) -->
   <section id="admin-view-countdown" class="admin-view">
@@ -279,18 +299,17 @@
 
   <!-- MODAL: HISTORIAL DE PARTIDAS -->
   <div id="history-modal" class="modal-backdrop" style="display: none;">
-    <div class="modal-card glass-panel">
+    <div class="modal-card glass-panel" style="max-width: 650px;">
       <div class="modal-header">
-        <h2>📜 Historial de Partidas</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h2>📜 Historial de Partidas</h2>
+          <a href="/api/db/export/csv" download="historial_completo_dinoplay.csv" class="btn-action" style="text-decoration: none; padding: 4px 10px; font-size: 11px; color: #38bdf8; border-color: rgba(6, 182, 212, 0.35); background: rgba(6, 182, 212, 0.12);" title="Descargar todo el historial (CSV / Excel)">
+            📥 Descargar CSV
+          </a>
+        </div>
         <button id="btn-close-history" class="btn-close-modal">✕</button>
       </div>
       <div class="modal-body">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; color: var(--text-muted);">Todas las partidas guardadas en el servidor:</span>
-          <a href="/api/db/export/csv" download="historial_completo_dinoplay.csv" class="btn-export" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-            📥 Descargar Todo el Historial (CSV / Excel)
-          </a>
-        </div>
         <div id="history-empty" class="history-empty-msg">No hay partidas registradas en la Base de Datos todavía.</div>
         <div id="history-list" class="history-list"></div>
       </div>
@@ -312,6 +331,63 @@
           <button type="submit" class="btn-primary-large" style="width: 100%;">Ingresar al Panel</button>
         </form>
         <div id="admin-auth-error" class="error-msg" style="display: none; margin-top: 12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURACIÓN Y AJUSTES DE PARTIDA -->
+  <div id="modal-room-config" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2>⚙️ Ajustes de la Partida</h2>
+        <button id="btn-close-room-config" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-room-config" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label for="input-event-name" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              🏆 Nombre del Evento / Torneo
+            </label>
+            <input type="text" id="input-event-name" value="Torneo Dino" class="setup-input" maxlength="40" style="width: 100%; font-size: 14px; padding: 10px 14px;" placeholder="Ej: Torneo Matemático 2026">
+          </div>
+
+          <div>
+            <label for="input-match-name" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              ⚔️ Nombre de la Ronda / Fase
+            </label>
+            <input type="text" id="input-match-name" value="Ronda 1" class="setup-input" maxlength="40" style="width: 100%; font-size: 14px; padding: 10px 14px;" placeholder="Ej: Ronda 1 / Semifinal">
+          </div>
+
+          <div>
+            <label for="select-game-mode" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              💀 Modo de Juego
+            </label>
+            <select id="select-game-mode" class="setup-select" style="width: 100%; font-size: 14px; padding: 10px 14px;">
+              <option value="sudden_death" selected>💀 Muerte Súbita (1 vida)</option>
+              <option value="three_lives">❤️ 3 Vidas (Modo Torneo por Puntos)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="select-max-players" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              👥 Capacidad Máxima de Jugadores
+            </label>
+            <select id="select-max-players" class="setup-select" style="width: 100%; font-size: 14px; padding: 10px 14px;">
+              <option value="0">Sin límite</option>
+              <option value="10">10 jugadores</option>
+              <option value="20">20 jugadores</option>
+              <option value="30" selected>30 jugadores</option>
+              <option value="50">50 jugadores</option>
+              <option value="100">100 jugadores</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 8px;">
+            <button type="submit" class="btn-primary-large" style="flex: 1; padding: 12px; font-size: 14px;">
+              💾 Guardar y Aplicar
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -338,8 +414,10 @@
     </div>
   </div>
 
-  <!-- CANVAS PARA CONFETI -->
-  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+    <!-- CANVAS PARA CONFETI -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  </div>
 
   <script src="admin.js"></script>
 </body>
