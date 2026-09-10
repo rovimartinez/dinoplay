@@ -303,6 +303,29 @@
       transform: translateY(-3px);
     }
 
+    .btn-wifi {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 18px 28px;
+      border-radius: 16px;
+      text-decoration: none;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-wifi:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(2, 132, 199, 0.5);
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    }
+
     .btn-admin {
       display: inline-flex;
       align-items: center;
@@ -538,6 +561,11 @@
           <span>¡ENTRAR A JUGAR AHORA!</span>
         </a>
 
+        <a id="btn-wifi" href="#" class="btn-wifi" style="display: none;">
+          <span>📶</span>
+          <span>Entrar por Wi-Fi Local (0 Lag)</span>
+        </a>
+
         <a id="btn-spectator" href="/spectator.html" class="btn-secondary">
           <span>📺</span>
           <span>Pantalla de Espectadores</span>
@@ -634,6 +662,7 @@
       const pulseDot = document.getElementById('pulse-dot');
       const statusText = document.getElementById('status-text');
       const btnPlayer = document.getElementById('btn-player');
+      const btnWifi = document.getElementById('btn-wifi');
       const btnSpectator = document.getElementById('btn-spectator');
       const btnAdmin = document.getElementById('btn-admin');
       const linkPlayer = document.getElementById('link-player');
@@ -666,8 +695,15 @@
             btnPlayer.target = '_blank';
             btnSpectator.href = `${currentActiveUrl}/spectator.html`;
             btnSpectator.target = '_blank';
-            btnAdmin.href = `${currentActiveUrl}/admin.html`;
+            btnAdmin.href = isLocalHost ? 'http://localhost:3000/admin.html' : `${currentActiveUrl}/admin.html`;
             btnAdmin.target = '_blank';
+
+            if (data.wifi_url) {
+              const wifiUrlClean = data.wifi_url.replace(/\/+$/, '');
+              btnWifi.href = `${wifiUrlClean}/player.html`;
+              btnWifi.target = '_blank';
+              btnWifi.style.display = 'inline-flex';
+            }
 
             if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
             if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
@@ -677,10 +713,13 @@
 
           throw new Error('Server not online');
         } catch (err) {
-          if (window.location.origin.includes('localhost') || window.location.origin.includes('trycloudflare.com')) {
+          if (window.location.origin.includes('localhost') || window.location.origin.includes('172.16.') || window.location.origin.includes('192.168.')) {
             statusContainer.className = 'live-status status-online';
             pulseDot.className = 'pulse-dot dot-online';
             statusText.textContent = 'Servidor Local 🟢';
+            btnPlayer.href = '/player.html';
+            btnSpectator.href = '/spectator.html';
+            btnAdmin.href = '/admin.html';
           } else {
             statusContainer.className = 'live-status status-offline';
             pulseDot.className = 'pulse-dot dot-offline';
@@ -689,9 +728,8 @@
         }
       }
 
-      // Prevenir navegación a enlaces rotos si el servidor del torneo está fuera de línea
       function handleOfflineClick(e) {
-        if (!currentActiveUrl && !window.location.origin.includes('trycloudflare.com') && !window.location.origin.includes('localhost')) {
+        if (!currentActiveUrl && !window.location.origin.includes('localhost') && !window.location.origin.includes('172.16.') && !window.location.origin.includes('192.168.')) {
           e.preventDefault();
           alert('⚠️ El servidor del torneo aún no está iniciado.\n\nPara que los jugadores puedan entrar, el organizador debe hacer doble clic en el archivo "JUGAR_ONLINE.bat" en su computadora.');
         }
@@ -699,7 +737,6 @@
 
       if (btnPlayer) btnPlayer.addEventListener('click', handleOfflineClick);
       if (btnSpectator) btnSpectator.addEventListener('click', handleOfflineClick);
-      if (btnAdmin) btnAdmin.addEventListener('click', handleOfflineClick);
 
       checkServerStatus();
       setInterval(checkServerStatus, 5000);

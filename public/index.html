@@ -58,59 +58,61 @@
       left: 15%;
       width: 550px;
       height: 550px;
-      background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+      background: radial-gradient(circle, #38bdf8 0%, rgba(56, 189, 248, 0) 70%);
     }
 
     .bg-glow-2 {
-      top: 40%;
-      right: -5%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, #10b981 0%, transparent 70%);
+      bottom: 10%;
+      right: 5%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
       animation-delay: -5s;
     }
 
     .bg-glow-3 {
-      bottom: -10%;
-      left: 30%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, #ec4899 0%, transparent 70%);
+      top: 40%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
       animation-delay: -9s;
     }
 
     @keyframes floatGlow {
       0% { transform: translate(0, 0) scale(1); }
       50% { transform: translate(40px, 60px) scale(1.1); }
-      100% { transform: translate(-30px, -40px) scale(0.95); }
+      100% { transform: translate(-30px, 30px) scale(0.95); }
     }
 
     .grid-overlay {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background-image: 
         linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 40px 40px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 60%, transparent 100%);
       pointer-events: none;
       z-index: 0;
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 0 24px;
       position: relative;
-      z-index: 10;
+      z-index: 1;
     }
 
     header {
-      padding: 28px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .brand {
@@ -118,39 +120,34 @@
       align-items: center;
       gap: 12px;
       text-decoration: none;
+      color: var(--text-main);
     }
 
     .brand-icon {
-      font-size: 2.4rem;
-      filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6));
-      animation: bounce 2s infinite ease-in-out;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      font-size: 2rem;
+      filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6));
     }
 
     .brand-text {
       font-family: var(--font-display);
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .brand-badge {
       background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--primary);
+      border: 1px solid rgba(16, 185, 129, 0.4);
       color: #34d399;
       font-size: 0.75rem;
       font-weight: 700;
       padding: 3px 8px;
-      border-radius: 6px;
+      border-radius: 20px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .live-status {
@@ -158,29 +155,30 @@
       align-items: center;
       gap: 8px;
       padding: 6px 14px;
-      border-radius: 30px;
+      border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
       transition: all 0.3s ease;
     }
 
     .status-online {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
     }
 
     .status-offline {
       background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #f87171;
     }
 
     .pulse-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      transition: background-color 0.3s ease;
     }
 
     .dot-online {
@@ -276,6 +274,29 @@
       background: linear-gradient(135deg, #34d399 0%, #059669 100%);
     }
 
+    .btn-wifi {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 18px 28px;
+      border-radius: 16px;
+      text-decoration: none;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-wifi:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(2, 132, 199, 0.5);
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    }
+
     .btn-secondary {
       display: inline-flex;
       align-items: center;
@@ -354,26 +375,10 @@
       overflow: hidden;
     }
 
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
     .feature-card:hover {
       transform: translateY(-5px);
-      background: var(--bg-card-hover);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .feature-card:hover::before {
-      opacity: 1;
+      border-color: var(--border-glow);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
     }
 
     .feature-icon {
@@ -385,8 +390,7 @@
     .feature-card h3 {
       font-size: 1.25rem;
       font-weight: 700;
-      margin-bottom: 10px;
-      color: #ffffff;
+      margin-bottom: 8px;
     }
 
     .feature-card p {
@@ -479,7 +483,7 @@
       .cta-group {
         flex-direction: column;
       }
-      .btn-main, .btn-secondary, .btn-admin {
+      .btn-main, .btn-wifi, .btn-secondary, .btn-admin {
         width: 100%;
       }
     }
@@ -493,7 +497,6 @@
   <div class="grid-overlay"></div>
 
   <div class="container">
-    
     <header>
       <a href="#" class="brand">
         <span class="brand-icon">🦖</span>
@@ -525,6 +528,11 @@
         <a id="btn-player" href="/player.html" class="btn-main">
           <span>🎮</span>
           <span>¡ENTRAR A JUGAR AHORA!</span>
+        </a>
+
+        <a id="btn-wifi" href="#" class="btn-wifi" style="display: none;">
+          <span>📶</span>
+          <span>Entrar por Wi-Fi Local (0 Lag)</span>
         </a>
 
         <a id="btn-spectator" href="/spectator.html" class="btn-secondary">
@@ -614,83 +622,91 @@
       </div>
     </footer>
 
+    <script>
+      const statusContainer = document.getElementById('live-status');
+      const pulseDot = document.getElementById('pulse-dot');
+      const statusText = document.getElementById('status-text');
+      const btnPlayer = document.getElementById('btn-player');
+      const btnWifi = document.getElementById('btn-wifi');
+      const btnSpectator = document.getElementById('btn-spectator');
+      const btnAdmin = document.getElementById('btn-admin');
+      const linkPlayer = document.getElementById('link-player');
+      const linkSpectator = document.getElementById('link-spectator');
+      const linkPractice = document.getElementById('link-practice');
+
+      let currentActiveUrl = null;
+
+      async function checkServerStatus() {
+        try {
+          const isLocalHost = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+          const apiUrl = isLocalHost ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
+
+          const response = await fetch(apiUrl + '?t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (!response.ok) throw new Error('API offline');
+          const data = await response.json();
+
+          if (data.ok && data.is_online && data.active_url) {
+            currentActiveUrl = data.active_url.replace(/\/+$/, '');
+
+            statusContainer.className = 'live-status status-online';
+            pulseDot.className = 'pulse-dot dot-online';
+            statusText.textContent = 'Servidor En Línea 🟢';
+
+            btnPlayer.href = `${currentActiveUrl}/player.html`;
+            btnPlayer.target = '_blank';
+            btnSpectator.href = `${currentActiveUrl}/spectator.html`;
+            btnSpectator.target = '_blank';
+            btnAdmin.href = isLocalHost ? 'http://localhost:3000/admin.html' : `${currentActiveUrl}/admin.html`;
+            btnAdmin.target = '_blank';
+
+            if (data.wifi_url) {
+              const wifiUrlClean = data.wifi_url.replace(/\/+$/, '');
+              btnWifi.href = `${wifiUrlClean}/player.html`;
+              btnWifi.target = '_blank';
+              btnWifi.style.display = 'inline-flex';
+            }
+
+            if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
+            if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
+            if (linkPractice) { linkPractice.href = `${currentActiveUrl}/practice.html`; linkPractice.target = '_blank'; }
+            return;
+          }
+
+          throw new Error('Server not online');
+        } catch (err) {
+          if (window.location.origin.includes('localhost') || window.location.origin.includes('172.16.') || window.location.origin.includes('192.168.')) {
+            statusContainer.className = 'live-status status-online';
+            pulseDot.className = 'pulse-dot dot-online';
+            statusText.textContent = 'Servidor Local 🟢';
+            btnPlayer.href = '/player.html';
+            btnSpectator.href = '/spectator.html';
+            btnAdmin.href = '/admin.html';
+          } else {
+            statusContainer.className = 'live-status status-offline';
+            pulseDot.className = 'pulse-dot dot-offline';
+            statusText.textContent = 'Servidor Desconectado 🔴';
+          }
+        }
+      }
+
+      function handleOfflineClick(e) {
+        if (!currentActiveUrl && !window.location.origin.includes('localhost') && !window.location.origin.includes('172.16.') && !window.location.origin.includes('192.168.')) {
+          e.preventDefault();
+          alert('⚠️ El servidor del torneo aún no está iniciado.\n\nPara que los jugadores puedan entrar, el organizador debe hacer doble clic en el archivo "JUGAR_ONLINE.bat" en su computadora.');
+        }
+      }
+
+      if (btnPlayer) btnPlayer.addEventListener('click', handleOfflineClick);
+      if (btnSpectator) btnSpectator.addEventListener('click', handleOfflineClick);
+
+      checkServerStatus();
+      setInterval(checkServerStatus, 5000);
+    </script>
   </div>
-
-  <script>
-    const statusContainer = document.getElementById('live-status');
-    const pulseDot = document.getElementById('pulse-dot');
-    const statusText = document.getElementById('status-text');
-    const btnPlayer = document.getElementById('btn-player');
-    const btnSpectator = document.getElementById('btn-spectator');
-    const btnAdmin = document.getElementById('btn-admin');
-    const linkPlayer = document.getElementById('link-player');
-    const linkSpectator = document.getElementById('link-spectator');
-    const linkPractice = document.getElementById('link-practice');
-
-    let currentActiveUrl = null;
-
-    async function checkServerStatus() {
-      try {
-        const isLocalHost = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
-        const apiUrl = isLocalHost ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
-
-        const response = await fetch(apiUrl + '?t=' + Date.now(), {
-          cache: 'no-store',
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (!response.ok) throw new Error('API offline');
-        const data = await response.json();
-
-        if (data.ok && data.is_online && data.active_url) {
-          currentActiveUrl = data.active_url.replace(/\/+$/, '');
-
-          statusContainer.className = 'live-status status-online';
-          pulseDot.className = 'pulse-dot dot-online';
-          statusText.textContent = 'Servidor En Línea 🟢';
-
-          btnPlayer.href = `${currentActiveUrl}/player.html`;
-          btnPlayer.target = '_blank';
-          btnSpectator.href = `${currentActiveUrl}/spectator.html`;
-          btnSpectator.target = '_blank';
-          btnAdmin.href = `${currentActiveUrl}/admin.html`;
-          btnAdmin.target = '_blank';
-
-          if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
-          if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
-          if (linkPractice) { linkPractice.href = `${currentActiveUrl}/practice.html`; linkPractice.target = '_blank'; }
-          return;
-        }
-
-        throw new Error('Server not online');
-      } catch (err) {
-        if (window.location.origin.includes('localhost') || window.location.origin.includes('trycloudflare.com')) {
-          statusContainer.className = 'live-status status-online';
-          pulseDot.className = 'pulse-dot dot-online';
-          statusText.textContent = 'Servidor Local 🟢';
-        } else {
-          statusContainer.className = 'live-status status-offline';
-          pulseDot.className = 'pulse-dot dot-offline';
-          statusText.textContent = 'Servidor Desconectado 🔴';
-        }
-      }
-    }
-
-    // Prevenir navegación a enlaces rotos si el servidor del torneo está fuera de línea
-    function handleOfflineClick(e) {
-      if (!currentActiveUrl && !window.location.origin.includes('trycloudflare.com') && !window.location.origin.includes('localhost')) {
-        e.preventDefault();
-        alert('⚠️ El servidor del torneo aún no está iniciado.\n\nPara que los jugadores puedan entrar, el organizador debe hacer doble clic en el archivo "JUGAR_ONLINE.bat" en su computadora.');
-      }
-    }
-
-    if (btnPlayer) btnPlayer.addEventListener('click', handleOfflineClick);
-    if (btnSpectator) btnSpectator.addEventListener('click', handleOfflineClick);
-    if (btnAdmin) btnAdmin.addEventListener('click', handleOfflineClick);
-
-    checkServerStatus();
-    setInterval(checkServerStatus, 5000);
-  </script>
 
 </body>
 </html>

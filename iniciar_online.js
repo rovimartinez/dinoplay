@@ -1,12 +1,29 @@
 const { spawn, exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 const PORT = process.env.PORT || 3000;
 
+function getLocalIp() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return '127.0.0.1';
+}
+
+const localIp = getLocalIp();
+const wifiUrl = `http://${localIp}:${PORT}`;
+const localAdminUrl = `http://localhost:${PORT}/admin.html`;
+
 console.clear();
 console.log('\n=============================================================');
-console.log('            🦖 INICIANDO DINOPLAY MODO ONLINE 🦖             ');
+console.log('            🦖 INICIANDO DINOPLAY SERVIDOR 🦖               ');
 console.log('=============================================================\n');
 console.log(' [1/3] Iniciando servidor del juego (Node.js en puerto ' + PORT + ')...');
 
@@ -22,7 +39,7 @@ serverProcess.on('exit', (code) => {
   }
 });
 
-console.log(' [2/3] Creando túnel seguro y público para los jugadores...');
+console.log(' [2/3] Conectando túnel público y red local Wi-Fi/LAN...');
 
 async function startTunnel() {
   let localtunnel;
@@ -32,91 +49,103 @@ async function startTunnel() {
     try {
       localtunnel = require(path.join(__dirname, 'node_modules', 'localtunnel'));
     } catch (err) {
-      console.error('❌ No se encontró el paquete localtunnel. Ejecuta: npm install localtunnel');
-      return;
+      console.error('❌ No se encontró localtunnel.');
     }
   }
 
+  let onlineUrl = null;
+  let tunnelInstance = null;
+
+  if (localtunnel) {
+    try {
+      tunnelInstance = await localtunnel({ port: PORT });
+      onlineUrl = tunnelInstance.url.replace('http://', 'https://');
+      
+      tunnelInstance.on('close', () => {
+        console.log('\n⚠️  El túnel online se ha desconectado.');
+      });
+      tunnelInstance.on('error', (err) => {
+        console.error('\n⚠️  Error en túnel:', err.message);
+      });
+    } catch (err) {
+      console.log('⚠️  Túnel externo no disponible, operando en modo Wi-Fi/LAN local.');
+    }
+  }
+
+  // 1. Actualizar archivos HTML locales y portadas con los enlaces de LAN y Online
   try {
-    const tunnel = await localtunnel({ port: PORT });
-    const url = tunnel.url.replace('http://', 'https://');
-
-    console.log(' [3/3] Verificando conexión en vivo con la red global...');
-    
-    // 1. Actualizar archivos HTML locales
-    try {
-      const pathsToUpdate = [
-        path.join(__dirname, 'public', 'index.html'),
-        path.join(__dirname, 'portada', 'index.html')
-      ];
-      for (const p of pathsToUpdate) {
-        if (fs.existsSync(p)) {
-          let html = fs.readFileSync(p, 'utf8');
-          html = html.replace(/https:\/\/[a-zA-Z0-9.-]+\.loca\.lt/g, url);
-          html = html.replace(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/g, url);
-          fs.writeFileSync(p, html, 'utf8');
+    const pathsToUpdate = [
+      path.join(__dirname, 'public', 'index.html'),
+      path.join(__dirname, 'portada', 'index.html')
+    ];
+    for (const p of pathsToUpdate) {
+      if (fs.existsSync(p)) {
+        let html = fs.readFileSync(p, 'utf8');
+        if (onlineUrl) {
+          html = html.replace(/https:\/\/[a-zA-Z0-9.-]+\.loca\.lt/g, onlineUrl);
+          html = html.replace(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/g, onlineUrl);
         }
+        fs.writeFileSync(p, html, 'utf8');
       }
-    } catch (e) {}
-
-    // 2. Sincronizar automáticamente con la Nube (Cloudflare Pages / D1)
-    async function sendHeartbeat() {
-      try {
-        await fetch('https://juegodino.pages.dev/api/server-url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: url })
-        });
-      } catch (err) {}
     }
+  } catch (e) {}
 
-    await sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 20000);
-
-    tunnel.on('close', () => {
-      console.log('\n⚠️  El túnel se ha desconectado.');
-    });
-
-    tunnel.on('error', (err) => {
-      console.error('\n⚠️  Error en el túnel:', err.message);
-    });
-
-    console.clear();
-    console.log('\n=============================================================');
-    console.log('       🎉 ¡TU JUEGO YA ESTÁ EN LÍNEA EN TODO EL MUNDO! 🎉   ');
-    console.log('=============================================================\n');
-    console.log(' 🟢 ESTADO: Conectado y 100% Operativo');
-    console.log(' ☁️  NUBE: Sincronizado automáticamente con juegodino.pages.dev\n');
-    console.log(' 🌐 ENLACE PÚBLICO PARA LOS JUGADORES (Cualquier celular/PC):');
-    console.log(` 👉 ${url}/player.html\n`);
-    console.log(' 👑 ENLACE DEL ADMINISTRADOR (En tu computadora):');
-    console.log(` 👉 http://localhost:${PORT}/admin.html\n`);
-    console.log(' 📺 PANTALLA DE ESPECTADORES / PROYECTOR:');
-    console.log(` 👉 ${url}/spectator.html\n`);
-    console.log(' 🏠 PORTADA EN LA NUBE (Actualizada en Vivo):');
-    console.log(` 👉 https://juegodino.pages.dev/\n`);
-    console.log('=============================================================');
-    console.log(' ℹ️  Comparte el enlace con tus jugadores.');
-    console.log(' ℹ️  Deja esta ventana abierta mientras jueguen.');
-    console.log(' ℹ️  Para detener el juego y apagar el servidor, cierra esta ventana.');
-    console.log('=============================================================\n');
-
-    // Abrir automáticamente el panel de administrador en localhost
+  // 2. Sincronizar automáticamente con la Nube (Cloudflare Pages / D1)
+  async function sendHeartbeat() {
     try {
-      exec(`start "" "http://localhost:${PORT}/admin.html"`);
-    } catch (e) {}
-
-    process.on('SIGINT', () => {
-      clearInterval(heartbeatInterval);
-      tunnel.close();
-      serverProcess.kill();
-      process.exit();
-    });
-
-  } catch (error) {
-    console.error('\n❌ Error al crear el túnel online:', error.message);
+      await fetch('https://juegodino.pages.dev/api/server-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          url: onlineUrl || wifiUrl,
+          wifi_url: wifiUrl
+        })
+      });
+    } catch (err) {}
   }
+
+  await sendHeartbeat();
+  const heartbeatInterval = setInterval(sendHeartbeat, 15000);
+
+  console.clear();
+  console.log('\n=============================================================');
+  console.log('        🎉 ¡TU SERVIDOR DINOPLAY YA ESTÁ ACTIVO! 🎉         ');
+  console.log('=============================================================\n');
+
+  console.log(' 👑 PANEL DEL ADMINISTRADOR (Solo para ti en esta PC):');
+  console.log(` 👉 ${localAdminUrl}\n`);
+
+  console.log(' 📶 OPCIÓN 1: JUGADORES EN EL MISMO WI-FI / RED LOCAL (Recomendado - 0 lag):');
+  console.log(` 👉 ${wifiUrl}/player.html\n`);
+
+  if (onlineUrl) {
+    console.log(' 🌐 OPCIÓN 2: JUGADORES POR INTERNET (Online / Datos móviles):');
+    console.log(` 👉 ${onlineUrl}/player.html\n`);
+  }
+
+  console.log(' 📺 PANTALLA GIGANTE / ESPECTADORES / PROYECTOR:');
+  console.log(` 👉 ${wifiUrl}/spectator.html\n`);
+
+  console.log(' 🏠 PORTADA EN LA NUBE (Conecta directo a tu juego):');
+  console.log(` 👉 https://juegodino.pages.dev/\n`);
+
+  console.log('=============================================================');
+  console.log(' ℹ️  Los jugadores en tu mismo Wi-Fi entran al enlace de la OPCIÓN 1.');
+  console.log(' ℹ️  Los jugadores en otras casas entran al enlace de la OPCIÓN 2 o Portada.');
+  console.log(' ℹ️  Deja esta ventana abierta mientras jueguen.');
+  console.log('=============================================================\n');
+
+  // Abrir automáticamente el panel de administrador en tu navegador
+  try {
+    exec(`start "" "${localAdminUrl}"`);
+  } catch (e) {}
+
+  process.on('SIGINT', () => {
+    clearInterval(heartbeatInterval);
+    if (tunnelInstance) tunnelInstance.close();
+    serverProcess.kill();
+    process.exit();
+  });
 }
 
-// Dar 1 segundo para que el servidor local inicie y luego abrir el túnel
 setTimeout(startTunnel, 1200);
