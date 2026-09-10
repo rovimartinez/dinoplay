@@ -4,7 +4,7 @@ color 0a
 cd /d "%~dp0"
 
 echo =============================================================
-echo        INICIANDO DINOPLAY (MODO ONLINE CLOUDFLARE)
+echo               INICIANDO DINOPLAY ONLINE
 echo =============================================================
 echo.
 
@@ -30,4 +30,3 @@ taskkill /F /IM cloudflared.exe >nul 2>nul
 :: 4. Arrancar lanzador inteligente
 node iniciar_online.js
 pause
-

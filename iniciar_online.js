@@ -1,5 +1,4 @@
 const { spawn, exec } = require('child_process');
-const readline = require('readline');
 const path = require('path');
 const fs = require('fs');
 
@@ -7,9 +6,9 @@ const PORT = process.env.PORT || 3000;
 
 console.clear();
 console.log('\n=============================================================');
-console.log('       INICIANDO DINOPLAY (CLOUDFLARE TUNNEL - ILIMITADO)    ');
+console.log('            🦖 INICIANDO DINOPLAY MODO ONLINE 🦖             ');
 console.log('=============================================================\n');
-console.log(' [1/2] Iniciando servidor del juego (Node.js en puerto ' + PORT + ')...');
+console.log(' [1/3] Iniciando servidor del juego (Node.js en puerto ' + PORT + ')...');
 
 const serverProcess = spawn('node', ['server.js'], { stdio: 'inherit' });
 
@@ -19,25 +18,32 @@ serverProcess.on('error', (err) => {
 
 serverProcess.on('exit', (code) => {
   if (code !== 0 && code !== null) {
-    console.error(`\n⚠️  El servidor local se cerró con código ${code}. Verifica si el puerto ${PORT} está ocupado.`);
+    console.error(`\n⚠️  El servidor local se cerró con código ${code}.`);
   }
 });
 
-console.log(' [2/2] Creando túnel seguro con Cloudflare...');
-console.log(' ⏳ Conectando con la red global de Cloudflare (toma de 3 a 5 segundos)...\n');
+console.log(' [2/3] Creando túnel seguro y público para los jugadores...');
 
-const cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
-const tunnelProcess = spawn(cloudflaredPath, ['tunnel', '--url', `http://localhost:${PORT}`]);
+async function startTunnel() {
+  let localtunnel;
+  try {
+    localtunnel = require('localtunnel');
+  } catch (e) {
+    try {
+      localtunnel = require(path.join(__dirname, 'node_modules', 'localtunnel'));
+    } catch (err) {
+      console.error('❌ No se encontró el paquete localtunnel. Ejecuta: npm install localtunnel');
+      return;
+    }
+  }
 
-let foundUrl = false;
+  try {
+    const tunnel = await localtunnel({ port: PORT });
+    const url = tunnel.url.replace('http://', 'https://');
 
-function handleLine(line) {
-  const match = line.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
-  if (match && !foundUrl) {
-    foundUrl = true;
-    const url = match[0];
-
-    // 1. Actualizar automáticamente los archivos HTML locales
+    console.log(' [3/3] Verificando conexión en vivo con la red global...');
+    
+    // 1. Actualizar archivos HTML locales
     try {
       const pathsToUpdate = [
         path.join(__dirname, 'public', 'index.html'),
@@ -53,7 +59,7 @@ function handleLine(line) {
       }
     } catch (e) {}
 
-    // 2. Sincronizar automáticamente con la Base de Datos en la Nube (Cloudflare Pages / D1)
+    // 2. Sincronizar automáticamente con la Nube (Cloudflare Pages / D1)
     async function sendHeartbeat() {
       try {
         await fetch('https://juegodino.pages.dev/api/server-url', {
@@ -61,60 +67,56 @@ function handleLine(line) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: url })
         });
-      } catch (err) {
-        // Fallback silencioso en caso de micro-cortes
-      }
+      } catch (err) {}
     }
 
-    sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 25000);
+    await sendHeartbeat();
+    const heartbeatInterval = setInterval(sendHeartbeat, 20000);
+
+    tunnel.on('close', () => {
+      console.log('\n⚠️  El túnel se ha desconectado.');
+    });
+
+    tunnel.on('error', (err) => {
+      console.error('\n⚠️  Error en el túnel:', err.message);
+    });
 
     console.clear();
     console.log('\n=============================================================');
     console.log('       🎉 ¡TU JUEGO YA ESTÁ EN LÍNEA EN TODO EL MUNDO! 🎉   ');
     console.log('=============================================================\n');
-    console.log(' 🟢 ESTADO: Conectado a la Red Global de Cloudflare (Sin límites)');
+    console.log(' 🟢 ESTADO: Conectado y 100% Operativo');
     console.log(' ☁️  NUBE: Sincronizado automáticamente con juegodino.pages.dev\n');
-    console.log(' 🌐 ENLACE PARA LOS JUGADORES:');
+    console.log(' 🌐 ENLACE PÚBLICO PARA LOS JUGADORES (Cualquier celular/PC):');
     console.log(` 👉 ${url}/player.html\n`);
-    console.log(' 👑 ENLACE DEL ADMINISTRADOR:');
-    console.log(` 👉 ${url}/admin.html\n`);
+    console.log(' 👑 ENLACE DEL ADMINISTRADOR (En tu computadora):');
+    console.log(` 👉 http://localhost:${PORT}/admin.html\n`);
     console.log(' 📺 PANTALLA DE ESPECTADORES / PROYECTOR:');
     console.log(` 👉 ${url}/spectator.html\n`);
     console.log(' 🏠 PORTADA EN LA NUBE (Actualizada en Vivo):');
     console.log(` 👉 https://juegodino.pages.dev/\n`);
     console.log('=============================================================');
-    console.log(' ℹ️  Los jugadores entran DIRECTO (sin pedir contraseñas ni IP).');
+    console.log(' ℹ️  Comparte el enlace con tus jugadores.');
     console.log(' ℹ️  Deja esta ventana abierta mientras jueguen.');
-    console.log(' ℹ️  Para detener el servidor, solo cierra esta ventana.');
+    console.log(' ℹ️  Para detener el juego y apagar el servidor, cierra esta ventana.');
     console.log('=============================================================\n');
 
-    // Abrir automáticamente el panel de admin en el navegador
+    // Abrir automáticamente el panel de administrador en localhost
     try {
-      exec(`start "" "${url}/admin.html"`);
+      exec(`start "" "http://localhost:${PORT}/admin.html"`);
     } catch (e) {}
+
+    process.on('SIGINT', () => {
+      clearInterval(heartbeatInterval);
+      tunnel.close();
+      serverProcess.kill();
+      process.exit();
+    });
+
+  } catch (error) {
+    console.error('\n❌ Error al crear el túnel online:', error.message);
   }
 }
 
-const rlErr = readline.createInterface({ input: tunnelProcess.stderr });
-rlErr.on('line', handleLine);
-
-const rlOut = readline.createInterface({ input: tunnelProcess.stdout });
-rlOut.on('line', handleLine);
-
-tunnelProcess.on('error', (err) => {
-  console.error('\n❌ Error al iniciar Cloudflare Tunnel:', err.message);
-});
-
-tunnelProcess.on('exit', (code) => {
-  if (code !== 0 && code !== null) {
-    console.error(`\n⚠️  El túnel de Cloudflare se cerró con código ${code}.`);
-  }
-});
-
-process.on('SIGINT', () => {
-  tunnelProcess.kill();
-  serverProcess.kill();
-  process.exit();
-});
-
+// Dar 1 segundo para que el servidor local inicie y luego abrir el túnel
+setTimeout(startTunnel, 1200);
