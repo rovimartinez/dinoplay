@@ -37,6 +37,9 @@ async function handleApi(request, env, url) {
       await env.DB.prepare(
         'CREATE TABLE IF NOT EXISTS server_status (id TEXT PRIMARY KEY, active_url TEXT, updated_at TEXT, wifi_url TEXT)'
       ).run();
+      try {
+        await env.DB.prepare('ALTER TABLE server_status ADD COLUMN wifi_url TEXT').run();
+      } catch (_) {}
       const status = await env.DB.prepare('SELECT * FROM server_status WHERE id = ?').bind('current').first();
       const lastUpdated = status?.updated_at ? new Date(status.updated_at).getTime() : 0;
       const isOnline = Boolean(status?.active_url) && (Date.now() - lastUpdated < 120000);
@@ -67,15 +70,29 @@ async function handleApi(request, env, url) {
         'CREATE TABLE IF NOT EXISTS server_status (id TEXT PRIMARY KEY, active_url TEXT, updated_at TEXT, wifi_url TEXT)'
       ).run();
 
+      try {
+        await env.DB.prepare('ALTER TABLE server_status ADD COLUMN wifi_url TEXT').run();
+      } catch (_) {}
+
       const nowIso = new Date().toISOString();
-      await env.DB.prepare(
-        `INSERT INTO server_status (id, active_url, updated_at, wifi_url)
-         VALUES ('current', ?, ?, ?)
-         ON CONFLICT(id) DO UPDATE SET
-           active_url = excluded.active_url,
-           updated_at = excluded.updated_at,
-           wifi_url = excluded.wifi_url`
-      ).bind(serverUrl, nowIso, wifiUrl || null).run();
+      try {
+        await env.DB.prepare(
+          `INSERT INTO server_status (id, active_url, updated_at, wifi_url)
+           VALUES ('current', ?, ?, ?)
+           ON CONFLICT(id) DO UPDATE SET
+             active_url = excluded.active_url,
+             updated_at = excluded.updated_at,
+             wifi_url = excluded.wifi_url`
+        ).bind(serverUrl, nowIso, wifiUrl || null).run();
+      } catch (insertErr) {
+        await env.DB.prepare(
+          `INSERT INTO server_status (id, active_url, updated_at)
+           VALUES ('current', ?, ?)
+           ON CONFLICT(id) DO UPDATE SET
+             active_url = excluded.active_url,
+             updated_at = excluded.updated_at`
+        ).bind(serverUrl, nowIso).run();
+      }
 
       return json({ ok: true, active_url: serverUrl, wifi_url: wifiUrl || null, updated_at: nowIso }, 200, request, env);
     } catch (e) {
