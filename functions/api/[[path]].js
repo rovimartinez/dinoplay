@@ -21,16 +21,18 @@ export async function onRequest(context) {
 }
 
 async function handleApi(request, env, url) {
-  if (!env.DB) {
-    return json({ ok: false, error: 'D1 binding DB is not configured' }, 500, request, env);
-  }
-
-  if (request.method === 'GET' && url.pathname === '/api/health') {
-    const result = await env.DB.prepare('SELECT 1 AS ok').first();
-    return json({ ok: true, database: result?.ok === 1, environment: env.ENVIRONMENT || 'production' }, 200, request, env);
-  }
-
   if (request.method === 'GET' && url.pathname === '/api/server-url') {
+    if (!env.DB) {
+      return json({
+        ok: true,
+        active_url: null,
+        wifi_url: null,
+        updated_at: null,
+        is_online: false,
+        warning: 'D1 binding DB is not configured'
+      }, 200, request, env);
+    }
+
     try {
       await env.DB.prepare(
         'CREATE TABLE IF NOT EXISTS server_status (id TEXT PRIMARY KEY, active_url TEXT, updated_at TEXT, wifi_url TEXT)'
@@ -51,6 +53,10 @@ async function handleApi(request, env, url) {
   }
 
   if (request.method === 'POST' && url.pathname === '/api/server-url') {
+    if (!env.DB) {
+      return json({ ok: false, error: 'D1 binding DB is not configured' }, 503, request, env);
+    }
+
     try {
       const body = await readJson(request);
       const serverUrl = cleanText(body.url, 250);
@@ -75,6 +81,15 @@ async function handleApi(request, env, url) {
     } catch (e) {
       return json({ ok: false, error: e.message }, 500, request, env);
     }
+  }
+
+  if (!env.DB) {
+    return json({ ok: false, error: 'D1 binding DB is not configured' }, 500, request, env);
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/health') {
+    const result = await env.DB.prepare('SELECT 1 AS ok').first();
+    return json({ ok: true, database: result?.ok === 1, environment: env.ENVIRONMENT || 'production' }, 200, request, env);
   }
 
   if (request.method === 'GET' && url.pathname === '/api/events') {

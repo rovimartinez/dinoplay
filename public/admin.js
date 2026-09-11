@@ -18,15 +18,19 @@
 
   // Si se abre directamente en Cloudflare Pages, redirigir automáticamente al túnel activo
   if (window.location.hostname.includes('pages.dev') && !urlParams.get('server')) {
-    fetch('/api/server-url?t=' + Date.now())
-      .then(r => r.json())
-      .then(data => {
-        if (data.ok && data.is_online && data.active_url) {
-          const targetUrl = data.active_url.replace(/\/+$/, '') + '/admin.html' + window.location.search;
-          window.location.replace(targetUrl);
-        }
-      })
-      .catch(() => {});
+    const pollServer = () => {
+      fetch('/api/server-url?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok && data.is_online && data.active_url) {
+            const targetUrl = data.active_url.replace(/\/+$/, '') + '/admin.html' + window.location.search;
+            window.location.replace(targetUrl);
+          }
+        })
+        .catch(() => {});
+    };
+    pollServer();
+    setInterval(pollServer, 4000);
   }
 
   const socket = (typeof io !== 'undefined')
@@ -123,6 +127,76 @@
   let audioCtx = null;
   let lastGameResult = null;
   let sessionHistory = [];
+
+  function normalizeBaseUrl(url) {
+    if (typeof url !== 'string') return '';
+    const clean = url.trim().replace(/\/+$/, '');
+    if (!/^https?:\/\//i.test(clean)) return '';
+    return clean;
+  }
+
+  function setJoinUrl(baseUrl, pin) {
+    const safeBase = normalizeBaseUrl(baseUrl);
+    if (!safeBase || !pin) return;
+
+    const joinUrl = `${safeBase}/player?pin=${encodeURIComponent(pin)}`;
+    currentJoinUrl = joinUrl;
+
+    try {
+      const parsed = new URL(safeBase);
+      const label = `${parsed.hostname}${parsed.port ? `:${parsed.port}` : ''}/player`;
+      if (hostUrlText) hostUrlText.textContent = label;
+    } catch (e) {
+      if (hostUrlText) hostUrlText.textContent = `${safeBase}/player`;
+    }
+
+    if (lobbyJoinUrl) lobbyJoinUrl.textContent = joinUrl;
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(joinUrl)}`;
+    if (lobbyQrImg) lobbyQrImg.src = qrUrl;
+    if (modalQrBigImg) modalQrBigImg.src = qrUrl;
+    if (modalQrPinText) modalQrPinText.textContent = pin;
+  }
+
+  function getLocalJoinBase(data) {
+    const protocol = window.location.protocol;
+    const host = window.location.hostname;
+    const port = window.location.port ? `:${window.location.port}` : '';
+    let displayIp = host;
+
+    if (data.localIps && data.localIps.length > 0 && (host === 'localhost' || host === '127.0.0.1')) {
+      displayIp = data.localIps[0];
+    }
+
+    return `${protocol}//${displayIp}${port}`;
+  }
+
+  async function refreshJoinUrlFromOnlineStatus(pin, fallbackBase) {
+    setJoinUrl(fallbackBase, pin);
+
+    const host = window.location.hostname;
+    const alreadyPublic = !['localhost', '127.0.0.1'].includes(host) &&
+      !host.startsWith('192.168.') &&
+      !host.startsWith('10.') &&
+      !host.startsWith('172.');
+
+    if (alreadyPublic || customBackendUrl) {
+      setJoinUrl(customBackendUrl || fallbackBase, pin);
+      return;
+    }
+
+    try {
+      const res = await fetch('https://juegodino.pages.dev/api/server-url?t=' + Date.now(), {
+        cache: 'no-store',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) return;
+      const status = await res.json();
+      if (status && status.ok && status.is_online && status.active_url) {
+        setJoinUrl(status.active_url, pin);
+      }
+    } catch (e) {}
+  }
 
   // Audio FX con Web Audio API
   function initAudio() {
@@ -309,6 +383,10 @@
       }
       return;
     }
+    if (!socket || !socket.connected) {
+      showConnectionAlert('Conectando con el servidor de juego en tiempo real...');
+      return;
+    }
     const savedPin = sessionStorage.getItem(STORAGE_KEY_ADMIN_PIN) || '';
     socket.emit('admin:create_room', {
       adminKey: currentAdminKey,
@@ -339,9 +417,9 @@
     }
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocal) {
-      showConnectionAlert('⚠️ No se pudo conectar con el servidor local. Ejecuta <code>INICIAR_JUEGO.bat</code> y accede a <a href="http://localhost:3000/admin" style="color:#6ee7b7; font-weight:bold; text-decoration:underline;">http://localhost:3000/admin</a>');
+      showConnectionAlert('⚠️ No se pudo conectar con el servidor local. Ejecuta <code>INICIAR_JUEGO.bat</code> o <code>JUGAR_ONLINE.bat</code> y accede a <a href="http://localhost:3000/admin" style="color:#6ee7b7; font-weight:bold; text-decoration:underline;">http://localhost:3000/admin</a>');
     } else {
-      showConnectionAlert('⚠️ Conectando con el servidor en la nube... Espera un momento.');
+      showConnectionAlert('🔴 Servidor fuera de línea. Para abrir el torneo, ejecuta <code>JUGAR_ONLINE.bat</code> en tu PC. Se conectará automáticamente.');
     }
   });
 
@@ -434,6 +512,7 @@
     if (lobbyQrImg) lobbyQrImg.src = qrUrl;
     if (modalQrBigImg) modalQrBigImg.src = qrUrl;
     if (modalQrPinText) modalQrPinText.textContent = data.pin;
+    refreshJoinUrlFromOnlineStatus(data.pin, getLocalJoinBase(data));
 
     if (data.status === 'playing') {
       showView('game');

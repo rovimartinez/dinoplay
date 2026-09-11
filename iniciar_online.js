@@ -42,33 +42,83 @@ serverProcess.on('exit', (code) => {
 console.log(' [2/3] Conectando túnel público y red local Wi-Fi/LAN...');
 
 async function startTunnel() {
-  let localtunnel;
-  try {
-    localtunnel = require('localtunnel');
-  } catch (e) {
-    try {
-      localtunnel = require(path.join(__dirname, 'node_modules', 'localtunnel'));
-    } catch (err) {
-      console.error('❌ No se encontró localtunnel.');
-    }
+  let onlineUrl = null;
+  let cfProcess = null;
+  let ltInstance = null;
+
+  const cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
+
+  if (fs.existsSync(cloudflaredPath)) {
+    console.log(' 🌐 Conectando túnel seguro Cloudflare...');
+    onlineUrl = await new Promise((resolve) => {
+      let resolved = false;
+      try {
+        cfProcess = spawn(cloudflaredPath, ['tunnel', '--url', `http://localhost:${PORT}`]);
+
+        const urlRegex = /https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/;
+
+        const onData = (data) => {
+          const text = data.toString();
+          const match = text.match(urlRegex);
+          if (match && !resolved) {
+            resolved = true;
+            resolve(match[0]);
+          }
+        };
+
+        cfProcess.stdout.on('data', onData);
+        cfProcess.stderr.on('data', onData);
+
+        cfProcess.on('error', (err) => {
+          console.error('⚠️  Error al iniciar cloudflared:', err.message);
+          if (!resolved) {
+            resolved = true;
+            resolve(null);
+          }
+        });
+
+        cfProcess.on('exit', (code) => {
+          console.log('\n⚠️  El túnel de Cloudflare se cerró.');
+          if (!resolved) {
+            resolved = true;
+            resolve(null);
+          }
+        });
+
+        // Timeout de seguridad de 12 segundos para obtener URL
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            resolve(null);
+          }
+        }, 12000);
+      } catch (err) {
+        console.error('⚠️  Fallo al ejecutar cloudflared:', err.message);
+        resolve(null);
+      }
+    });
   }
 
-  let onlineUrl = null;
-  let tunnelInstance = null;
-
-  if (localtunnel) {
+  // Fallback a localtunnel si cloudflared no produjo URL
+  if (!onlineUrl) {
+    console.log(' 🌐 Intentando túnel alternativo...');
+    let localtunnel;
     try {
-      tunnelInstance = await localtunnel({ port: PORT });
-      onlineUrl = tunnelInstance.url.replace('http://', 'https://');
-      
-      tunnelInstance.on('close', () => {
-        console.log('\n⚠️  El túnel online se ha desconectado.');
-      });
-      tunnelInstance.on('error', (err) => {
-        console.error('\n⚠️  Error en túnel:', err.message);
-      });
-    } catch (err) {
-      console.log('⚠️  Túnel externo no disponible, operando en modo Wi-Fi/LAN local.');
+      localtunnel = require('localtunnel');
+    } catch (e) {
+      try {
+        localtunnel = require(path.join(__dirname, 'node_modules', 'localtunnel'));
+      } catch (err) {}
+    }
+
+    if (localtunnel) {
+      try {
+        ltInstance = await localtunnel({ port: PORT });
+        onlineUrl = ltInstance.url.replace('http://', 'https://');
+        ltInstance.on('close', () => console.log('\n⚠️  El túnel alternativo se desconectó.'));
+      } catch (err) {
+        console.log('⚠️  Túnel externo no disponible, operando en modo Wi-Fi/LAN local.');
+      }
     }
   }
 
@@ -137,12 +187,18 @@ async function startTunnel() {
 
   // Abrir automáticamente el panel de administrador en tu navegador
   try {
-    exec(`start "" "${localAdminUrl}"`);
+    const adminUrlToOpen = onlineUrl ? `${onlineUrl}/admin.html` : localAdminUrl;
+    exec(`start "" "${adminUrlToOpen}"`);
   } catch (e) {}
 
   process.on('SIGINT', () => {
     clearInterval(heartbeatInterval);
-    if (tunnelInstance) tunnelInstance.close();
+    if (cfProcess) {
+      try { cfProcess.kill(); } catch (e) {}
+    }
+    if (ltInstance) {
+      try { ltInstance.close(); } catch (e) {}
+    }
     serverProcess.kill();
     process.exit();
   });

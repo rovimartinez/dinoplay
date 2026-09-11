@@ -36,7 +36,8 @@ async function runE2EValidation() {
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1280,800']
   });
 
-  const artifactDir = 'C:/Users/Elizabeth/.gemini/antigravity-ide/brain/2604d6ac-1904-47c3-b6ff-630e662c92bb';
+  const artifactDir = path.join(__dirname, 'test-results');
+  fs.mkdirSync(artifactDir, { recursive: true });
 
   try {
     const adminPage = await browser.newPage();

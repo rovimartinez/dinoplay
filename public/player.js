@@ -302,6 +302,11 @@
     joinErrorActions.style.display = 'none';
   }
 
+  if (!socket) {
+    showError('No se pudo cargar Socket.IO. Verifica tu conexion o abre el enlace directo del servidor del juego.');
+    return;
+  }
+
   // Respuesta de unión exitosa
   socket.on('player:join_success', (data) => {
     clearTimeout(window.__joinTimeout);
@@ -336,6 +341,8 @@
     currentPin = data.pin;
     selectedColor = data.player.color;
     lastRaceSeed = data.race_seed;
+    currentGameMode = data.gameMode || currentGameMode;
+    currentMaxLives = data.maxLives || currentMaxLives;
     lobbyPin.textContent = data.pin;
     lobbyPlayerName.textContent = data.player.name;
 
@@ -348,13 +355,14 @@
 
     if (data.roomStatus === 'playing') {
       showScreen('game');
-      if (!dinoGame) {
+      if (!dinoGame && data.race_seed) {
         startLiveGame(data.race_seed);
       }
     } else if (data.roomStatus === 'finished') {
       showScreen('podium');
     } else if (data.roomStatus === 'starting') {
       showScreen('countdown');
+      if (countdownNum) countdownNum.textContent = data.countdown || 1;
     } else {
       showScreen('lobby');
     }

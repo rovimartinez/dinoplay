@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer-core');
+const fs = require('fs');
+const path = require('path');
 
 async function testObstaclesSync() {
   console.log('--- TESTING REAL-TIME OBSTACLES SYNCHRONIZATION ---');
@@ -10,7 +12,7 @@ async function testObstaclesSync() {
 
   try {
     const adminPage = await browser.newPage();
-    await adminPage.goto('http://localhost:3000/admin', { waitUntil: 'networkidle0' });
+    await adminPage.goto('http://localhost:3000/admin?key=dino2026', { waitUntil: 'networkidle0' });
     await new Promise(r => setTimeout(r, 600));
     const pin = await adminPage.$eval('#header-pin', el => el.textContent.trim());
 
@@ -32,8 +34,10 @@ async function testObstaclesSync() {
     await playerPage.keyboard.press('Space');
     await new Promise(r => setTimeout(r, 300));
 
-    const adminShot = 'C:/Users/Elizabeth/.gemini/antigravity-ide/brain/d0e286b9-5c6f-4cfe-beaa-f152b894ce15/admin_obstacles_sync.png';
-    const playerShot = 'C:/Users/Elizabeth/.gemini/antigravity-ide/brain/d0e286b9-5c6f-4cfe-beaa-f152b894ce15/player_obstacles_sync.png';
+    const artifactDir = path.join(__dirname, 'test-results');
+    fs.mkdirSync(artifactDir, { recursive: true });
+    const adminShot = path.join(artifactDir, 'admin_obstacles_sync.png');
+    const playerShot = path.join(artifactDir, 'player_obstacles_sync.png');
 
     await adminPage.screenshot({ path: adminShot });
     await playerPage.screenshot({ path: playerShot });

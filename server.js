@@ -400,6 +400,8 @@ io.on('connection', (socket) => {
     room.gameMode = (gameMode === 'three_lives') ? 'three_lives' : 'sudden_death';
     room.maxLives = (room.gameMode === 'three_lives') ? 3 : 1;
     room.status = 'starting';
+    room.countdown = 3;
+    room.countdownStartedAt = Date.now();
     if (room.finishingTimer) {
       clearTimeout(room.finishingTimer);
       room.finishingTimer = null;
@@ -450,6 +452,7 @@ io.on('connection', (socket) => {
 
     const interval = setInterval(() => {
       countdown--;
+      room.countdown = Math.max(0, countdown);
       if (countdown > 0) {
         io.to(safePin).emit('game:countdown', {
           countdown,
@@ -464,6 +467,7 @@ io.on('connection', (socket) => {
         room.status = 'playing';
         room.started_at = Date.now();
         room.raceConfig.started_at = room.started_at;
+        room.countdown = 0;
 
         // Actualizar inicio en Base de Datos
         Database.saveMatch({
@@ -744,7 +748,12 @@ io.on('connection', (socket) => {
       roomStatus: room.status,
       eventName: room.eventName,
       matchName: room.matchName,
-      race_seed: room.race_seed
+      race_seed: room.race_seed,
+      countdown: room.countdown || 0,
+      gameMode: room.gameMode || 'sudden_death',
+      maxLives: room.maxLives || (room.gameMode === 'three_lives' ? 3 : 1),
+      raceConfig: room.raceConfig || null,
+      started_at: room.started_at || null
     });
 
     io.to(safePin).emit('room:players_update', {
