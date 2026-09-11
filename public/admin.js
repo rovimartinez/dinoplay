@@ -960,11 +960,27 @@
       if (!vis) return;
 
       vis.playerState = player;
-      vis.obstacles = (player.obstacles || []).map((o) => ({ ...o }));
       vis.targetDinoY = (player.dinoY !== undefined) ? player.dinoY : 93;
       vis.speed = (player.speed !== undefined) ? player.speed : 6;
 
+      // Reconciliación suave de obstáculos para evitar parpadeos/saltos
+      const incomingObstacles = player.obstacles || [];
+      if (!vis.obstacles || vis.obstacles.length === 0) {
+        vis.obstacles = incomingObstacles.map((o) => ({ ...o }));
+      } else {
+        // Actualizar suavemente manteniendo la interpolación fluida
+        vis.obstacles = incomingObstacles.map((inc) => {
+          const match = vis.obstacles.find((existing) => existing.type === inc.type && Math.abs(existing.x - inc.x) < 80);
+          if (match) {
+            return { ...inc, x: match.x + (inc.x - match.x) * 0.3 };
+          }
+          return { ...inc };
+        });
+      }
+
       const card = vis.cardEl;
+      card.style.order = player.rank; // Ordenar tarjetas según el 1°, 2°, 3° puesto en vivo
+
       let medalSymbol = `#${player.rank}`;
       if (player.rank === 1) medalSymbol = '🥇 1º';
       else if (player.rank === 2) medalSymbol = '🥈 2º';
