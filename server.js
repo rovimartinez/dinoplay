@@ -176,18 +176,25 @@ function generateRoomPin() {
 
 function getLeaderboard(room) {
   const playersList = Object.values(room.players);
-  // Reglas de desempate ordenadas estrictamente:
-  // 1. Mayor puntaje
-  // 2. Mayor distancia
-  // 3. Jugador sobreviviente (!crashed) antes que chocado (crashed)
-  // 4. Mayor tiempo de supervivencia / momento de choque más tardío (crashed_at o survival_ms)
-  // 5. Orden de ingreso (joinedAt)
+  // Reglas de desempate ordenadas para Torneo en Vivo:
+  // 1. Jugador VIVO (!crashed) SIEMPRE antes que jugador ELIMINADO (crashed)
+  // 2. Entre jugadores VIVOS: Mayor puntaje, luego mayor distancia
+  // 3. Entre jugadores ELIMINADOS: Quien sobrevivió más tiempo (crashed_at o survival_ms más alto), luego mayor puntaje
+  // 4. Orden de ingreso (joinedAt)
   playersList.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    if (b.distance !== a.distance) return b.distance - a.distance;
+    // 1. Estado de supervivencia (los vivos van primero)
     if (a.crashed !== b.crashed) {
       return a.crashed ? 1 : -1;
     }
+
+    // 2. Si ambos están vivos: mayor puntaje y distancia
+    if (!a.crashed && !b.crashed) {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.distance !== a.distance) return b.distance - a.distance;
+      return (a.joinedAt || 0) - (b.joinedAt || 0);
+    }
+
+    // 3. Si ambos están eliminados: quien sobrevivió más tiempo o chocó más tarde va primero
     const aCrashTime = a.crashed_at || 0;
     const bCrashTime = b.crashed_at || 0;
     if (bCrashTime !== aCrashTime) return bCrashTime - aCrashTime;
@@ -195,6 +202,9 @@ function getLeaderboard(room) {
     const aSurvival = a.survival_ms || 0;
     const bSurvival = b.survival_ms || 0;
     if (bSurvival !== aSurvival) return bSurvival - aSurvival;
+
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.distance !== a.distance) return b.distance - a.distance;
 
     return (a.joinedAt || 0) - (b.joinedAt || 0);
   });
@@ -914,10 +924,22 @@ io.on('connection', (socket) => {
         if (player) {
           const playerName = player.name;
           if (room.status === 'playing' || room.status === 'starting') {
-            // Mantener jugador durante ventana de gracia de reconexión
+            // Marcar inmediatamente como chocado/eliminado para evitar dinos fantasmas
             player.disconnected = true;
             player.disconnectedAt = Date.now();
-            console.log(`[JUGADOR DESCONECTADO TEMPORALMENTE] ${playerName} de sala ${currentPin} (puede reconectarse)`);
+            if (!player.crashed) {
+              player.crashed = true;
+              player.action = 'crashed';
+              player.crashed_at = Date.now();
+              player.speed = 0;
+              player.survival_ms = Math.max(0, Date.now() - (room.started_at || Date.now()));
+              Database.savePlayerCrash(currentPin, socket.id, {
+                score: player.score,
+                distance: player.distance,
+                survival_ms: player.survival_ms
+              });
+            }
+            console.log(`[JUGADOR DESCONECTADO (ELIMINADO)] ${playerName} de sala ${currentPin}`);
             setTimeout(() => {
               if (room.players[socket.id] && room.players[socket.id].disconnected) {
                 delete room.players[socket.id];
@@ -927,7 +949,7 @@ io.on('connection', (socket) => {
                 });
                 console.log(`[JUGADOR EXPIRADO] ${playerName} removido tras tiempo de gracia.`);
               }
-            }, 45000);
+            }, 30000);
           } else {
             delete room.players[socket.id];
             io.to(currentPin).emit('room:players_update', {
@@ -944,7 +966,57 @@ io.on('connection', (socket) => {
 
 // Bucle de sincronización de Leaderboard en tiempo real (10 veces por segundo = 100ms)
 setInterval(() => {
+  const now = Date.now();
   for (const [pin, room] of rooms.entries()) {
+    if (room.status === 'playing') {
+      // Watchdog: Si un jugador no envía paquetes por más de 4s (app en segundo plano, celular bloqueado o corte), marcarlo como chocado
+      for (const p of Object.values(room.players)) {
+        if (!p.crashed) {
+          const lastActive = p.lastUpdateAt || room.started_at || now;
+          if ((now - lastActive > 4000) && (now - (room.started_at || now) > 3000)) {
+            p.crashed = true;
+            p.action = 'crashed';
+            p.crashed_at = lastActive;
+            p.speed = 0;
+            p.survival_ms = Math.max(0, lastActive - (room.started_at || lastActive));
+            Database.savePlayerCrash(pin, p.id, {
+              score: p.score,
+              distance: p.distance,
+              survival_ms: p.survival_ms
+            });
+          }
+        }
+      }
+
+      // Si todos los jugadores de la partida chocaron, autocompletar la carrera
+      const allPlayers = Object.values(room.players);
+      const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
+      if (allCrashed && !room.finishingTimer) {
+        room.finishingTimer = setTimeout(() => {
+          room.finishingTimer = null;
+          if (room.status !== 'playing') return;
+          room.status = 'finished';
+          const leaderboard = getLeaderboard(room);
+          const resultSummary = {
+            id: Date.now().toString(36),
+            pin: room.pin,
+            eventName: room.eventName || 'Torneo',
+            matchName: room.matchName || 'Carrera',
+            date: new Date().toISOString(),
+            winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
+            winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
+            totalPlayers: leaderboard.length,
+            podium: leaderboard.slice(0, 3),
+            leaderboard: leaderboard
+          };
+          if (!room.matchHistory) room.matchHistory = [];
+          room.matchHistory.unshift(resultSummary);
+          Database.saveMatchResult(resultSummary);
+          io.to(pin).emit('game:ended', resultSummary);
+        }, 2500);
+      }
+    }
+
     if (room.status === 'playing' || room.status === 'starting' || room.status === 'finished') {
       const leaderboard = getLeaderboard(room);
       const totalPlayers = leaderboard.length;
