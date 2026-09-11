@@ -247,104 +247,198 @@
       margin: 0 auto 40px;
     }
 
-    /* Botones de Acción Principales */
-    .cta-group {
+    /* Contenedor de Modos (Online / Local) */
+    .modes-container {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      max-width: 980px;
+      margin: 0 auto 60px;
+    }
+
+    .mode-card {
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: 20px;
+      padding: 22px 24px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .mode-online-card {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+
+    .mode-online-card:hover {
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 14px 40px rgba(16, 185, 129, 0.2);
+    }
+
+    .mode-local-card {
+      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+
+    .mode-local-card:hover {
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 14px 40px rgba(56, 189, 248, 0.2);
+    }
+
+    .mode-header {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 60px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .btn-main {
+    .mode-badge {
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-online {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .badge-local {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    .mode-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .cta-row {
+        grid-template-columns: 1fr;
+      }
+      .mode-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .btn-action {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    /* Botones Online */
+    .btn-online-main {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
-      font-size: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+      font-size: 1.12rem;
       font-weight: 800;
-      padding: 18px 36px;
-      border-radius: 16px;
-      text-decoration: none;
-      box-shadow: 0 10px 30px var(--primary-glow);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      cursor: pointer;
     }
 
-    .btn-main:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 16px 40px rgba(16, 185, 129, 0.6);
+    .btn-online-main:hover {
       background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.55);
     }
 
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: var(--bg-card);
-      color: var(--text-main);
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 18px 28px;
-      border-radius: 16px;
-      text-decoration: none;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(12px);
-      transition: all 0.2s ease;
+    .btn-online-sec {
+      background: rgba(30, 41, 59, 0.85);
+      color: #e2e8f0;
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-3px);
+    .btn-online-sec:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #34d399;
+      color: #ffffff;
+      transform: translateY(-2px);
     }
 
-    .btn-wifi {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+    .btn-online-adm {
+      background: rgba(99, 102, 241, 0.18);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-online-adm:hover {
+      background: rgba(99, 102, 241, 0.3);
+      border-color: #818cf8;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    /* Botones Local */
+    .btn-local-main {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 18px 28px;
-      border-radius: 16px;
-      text-decoration: none;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
-      transition: all 0.2s ease;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+      font-size: 1.12rem;
+      font-weight: 800;
     }
 
-    .btn-wifi:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 15px 35px rgba(2, 132, 199, 0.5);
+    .btn-local-main:hover {
       background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.55);
     }
 
-    .btn-admin {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: rgba(99, 102, 241, 0.15);
-      color: #c7d2fe;
-      font-size: 0.95rem;
-      font-weight: 700;
-      padding: 16px 24px;
-      border-radius: 16px;
-      text-decoration: none;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      transition: all 0.2s ease;
+    .btn-local-sec {
+      background: rgba(30, 41, 59, 0.85);
+      color: #e2e8f0;
+      border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
-    .btn-admin:hover {
-      background: rgba(99, 102, 241, 0.25);
-      border-color: var(--secondary);
+    .btn-local-sec:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .btn-local-adm {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .btn-local-adm:hover {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #fbbf24;
+      color: #ffffff;
       transform: translateY(-2px);
     }
 
@@ -375,11 +469,11 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 20px;
-      padding: 28px 24px;
-      backdrop-filter: blur(14px);
-      transition: all 0.3s ease;
+      padding: 30px 24px;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
     }
 
     .feature-card::before {
@@ -388,14 +482,14 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #38bdf8, transparent);
       opacity: 0;
       transition: opacity 0.3s ease;
     }
 
     .feature-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
       background: var(--bg-card-hover);
       border-color: rgba(255, 255, 255, 0.2);
     }
@@ -487,30 +581,23 @@
       display: flex;
       justify-content: center;
       gap: 20px;
-      margin-top: 16px;
+      margin-bottom: 16px;
     }
 
     .footer-links a {
-      color: #38bdf8;
+      color: var(--text-main);
       text-decoration: none;
       font-weight: 600;
       transition: color 0.2s;
     }
 
     .footer-links a:hover {
-      color: #7dd3fc;
-      text-decoration: underline;
+      color: #38bdf8;
     }
 
     @media (max-width: 768px) {
       .hero {
         padding: 50px 0 40px;
-      }
-      .cta-group {
-        flex-direction: column;
-      }
-      .btn-main, .btn-secondary, .btn-admin {
-        width: 100%;
       }
     }
   </style>
@@ -554,27 +641,53 @@
         Únete a la arena multijugador en vivo. Esquiva obstáculos sincronizados al milisegundo, acumula puntos y clasifica a la Gran Final.
       </p>
 
-      <!-- Botones con enlaces directos -->
-      <div class="cta-group">
-        <a id="btn-player" href="/player.html" class="btn-main">
-          <span>🎮</span>
-          <span>¡ENTRAR A JUGAR AHORA!</span>
-        </a>
+      <!-- Panel de 6 Botones Divididos: 3 Online y 3 Local -->
+      <div class="modes-container">
+        
+        <!-- SECCIÓN 1: ONLINE (Internet / Cloudflare Tunnel) -->
+        <div class="mode-card mode-online-card">
+          <div class="mode-header">
+            <span class="mode-badge badge-online">🌐 MODO ONLINE (INTERNET)</span>
+            <span class="mode-sub">Para jugadores desde cualquier lugar con datos o Wi-Fi externo</span>
+          </div>
+          <div class="cta-row">
+            <a id="btn-player-online" href="/player.html" class="btn-action btn-online-main">
+              <span>🎮</span>
+              <span>¡Entrar Online!</span>
+            </a>
+            <a id="btn-spectator-online" href="/spectator.html" class="btn-action btn-online-sec">
+              <span>📺</span>
+              <span>Espectador Online</span>
+            </a>
+            <a id="btn-admin-online" href="/admin.html" class="btn-action btn-online-adm">
+              <span>👑</span>
+              <span>Admin Online</span>
+            </a>
+          </div>
+        </div>
 
-        <a id="btn-wifi" href="#" class="btn-wifi" style="display: none;">
-          <span>📶</span>
-          <span>Entrar por Wi-Fi Local (0 Lag)</span>
-        </a>
+        <!-- SECCIÓN 2: LOCAL / WI-FI (LAN / Mismo Router) -->
+        <div class="mode-card mode-local-card">
+          <div class="mode-header">
+            <span class="mode-badge badge-local">📶 MODO LOCAL (MISMO WI-FI / PC)</span>
+            <span class="mode-sub">Cero lag para torneos presenciales conectados a la misma red</span>
+          </div>
+          <div class="cta-row">
+            <a id="btn-player-local" href="/player.html" class="btn-action btn-local-main">
+              <span>🎮</span>
+              <span>¡Entrar en Red Local!</span>
+            </a>
+            <a id="btn-spectator-local" href="/spectator.html" class="btn-action btn-local-sec">
+              <span>📺</span>
+              <span>Espectador Local</span>
+            </a>
+            <a id="btn-admin-local" href="http://localhost:3000/admin.html" class="btn-action btn-local-adm">
+              <span>👑</span>
+              <span>Admin Local (PC)</span>
+            </a>
+          </div>
+        </div>
 
-        <a id="btn-spectator" href="/spectator.html" class="btn-secondary">
-          <span>📺</span>
-          <span>Pantalla de Espectadores</span>
-        </a>
-
-        <a id="btn-admin" href="/admin.html" class="btn-admin">
-          <span>👑</span>
-          <span>Panel de Administrador</span>
-        </a>
       </div>
     </main>
 
@@ -661,19 +774,29 @@
       const statusContainer = document.getElementById('live-status');
       const pulseDot = document.getElementById('pulse-dot');
       const statusText = document.getElementById('status-text');
-      const btnPlayer = document.getElementById('btn-player');
-      const btnWifi = document.getElementById('btn-wifi');
-      const btnSpectator = document.getElementById('btn-spectator');
-      const btnAdmin = document.getElementById('btn-admin');
+
+      // Botones Online
+      const btnPlayerOnline = document.getElementById('btn-player-online');
+      const btnSpectatorOnline = document.getElementById('btn-spectator-online');
+      const btnAdminOnline = document.getElementById('btn-admin-online');
+
+      // Botones Local
+      const btnPlayerLocal = document.getElementById('btn-player-local');
+      const btnSpectatorLocal = document.getElementById('btn-spectator-local');
+      const btnAdminLocal = document.getElementById('btn-admin-local');
+
       const linkPlayer = document.getElementById('link-player');
       const linkSpectator = document.getElementById('link-spectator');
       const linkPractice = document.getElementById('link-practice');
 
       let currentActiveUrl = null;
+      let currentWifiUrl = null;
 
       async function checkServerStatus() {
         try {
-          const isLocalHost = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+          const isLocalHost = ['localhost', '127.0.0.1'].some(h => window.location.origin.includes(h)) ||
+                              window.location.origin.includes('192.168.') ||
+                              window.location.origin.includes('172.16.');
           const apiUrl = isLocalHost ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
 
           const response = await fetch(apiUrl + '?t=' + Date.now(), {
@@ -686,24 +809,28 @@
 
           if (data.ok && data.is_online && data.active_url) {
             currentActiveUrl = data.active_url.replace(/\/+$/, '');
+            currentWifiUrl = data.wifi_url ? data.wifi_url.replace(/\/+$/, '') : (isLocalHost ? window.location.origin : null);
 
             statusContainer.className = 'live-status status-online';
             pulseDot.className = 'pulse-dot dot-online';
             statusText.textContent = 'Servidor En Línea 🟢';
 
-            btnPlayer.href = `${currentActiveUrl}/player.html`;
-            btnPlayer.target = '_blank';
-            btnSpectator.href = `${currentActiveUrl}/spectator.html`;
-            btnSpectator.target = '_blank';
-            btnAdmin.href = isLocalHost ? 'http://localhost:3000/admin.html' : `${currentActiveUrl}/admin.html`;
-            btnAdmin.target = '_blank';
+            // 1. Configurar botones ONLINE
+            btnPlayerOnline.href = `${currentActiveUrl}/player.html`;
+            btnPlayerOnline.target = '_blank';
+            btnSpectatorOnline.href = `${currentActiveUrl}/spectator.html`;
+            btnSpectatorOnline.target = '_blank';
+            btnAdminOnline.href = `${currentActiveUrl}/admin.html`;
+            btnAdminOnline.target = '_blank';
 
-            if (data.wifi_url) {
-              const wifiUrlClean = data.wifi_url.replace(/\/+$/, '');
-              btnWifi.href = `${wifiUrlClean}/player.html`;
-              btnWifi.target = '_blank';
-              btnWifi.style.display = 'inline-flex';
-            }
+            // 2. Configurar botones LOCAL / WI-FI
+            const localBase = currentWifiUrl || (isLocalHost ? window.location.origin : 'http://localhost:3000');
+            btnPlayerLocal.href = `${localBase}/player.html`;
+            btnPlayerLocal.target = '_blank';
+            btnSpectatorLocal.href = `${localBase}/spectator.html`;
+            btnSpectatorLocal.target = '_blank';
+            btnAdminLocal.href = isLocalHost ? `${window.location.origin}/admin.html` : `${localBase}/admin.html`;
+            btnAdminLocal.target = '_blank';
 
             if (linkPlayer) { linkPlayer.href = `${currentActiveUrl}/player.html`; linkPlayer.target = '_blank'; }
             if (linkSpectator) { linkSpectator.href = `${currentActiveUrl}/spectator.html`; linkSpectator.target = '_blank'; }
@@ -713,13 +840,22 @@
 
           throw new Error('Server not online');
         } catch (err) {
-          if (window.location.origin.includes('localhost') || window.location.origin.includes('172.16.') || window.location.origin.includes('192.168.')) {
+          const isLocalEnv = ['localhost', '127.0.0.1'].some(h => window.location.origin.includes(h)) ||
+                             window.location.origin.includes('192.168.') ||
+                             window.location.origin.includes('172.16.');
+
+          if (isLocalEnv) {
             statusContainer.className = 'live-status status-online';
             pulseDot.className = 'pulse-dot dot-online';
             statusText.textContent = 'Servidor Local 🟢';
-            btnPlayer.href = '/player.html';
-            btnSpectator.href = '/spectator.html';
-            btnAdmin.href = '/admin.html';
+
+            btnPlayerOnline.href = '/player.html';
+            btnSpectatorOnline.href = '/spectator.html';
+            btnAdminOnline.href = '/admin.html';
+
+            btnPlayerLocal.href = '/player.html';
+            btnSpectatorLocal.href = '/spectator.html';
+            btnAdminLocal.href = '/admin.html';
           } else {
             statusContainer.className = 'live-status status-offline';
             pulseDot.className = 'pulse-dot dot-offline';
@@ -728,15 +864,27 @@
         }
       }
 
-      function handleOfflineClick(e) {
+      function handleOnlineClick(e) {
         if (!currentActiveUrl && !window.location.origin.includes('localhost') && !window.location.origin.includes('172.16.') && !window.location.origin.includes('192.168.')) {
           e.preventDefault();
-          alert('⚠️ El servidor del torneo aún no está iniciado.\n\nPara que los jugadores puedan entrar, el organizador debe hacer doble clic en el archivo "INICIAR_JUEGO.bat" en su computadora.');
+          alert('⚠️ El servidor ONLINE aún no está iniciado.\n\nPara que los jugadores puedan entrar desde internet, ejecuta "INICIAR_JUEGO.bat" en tu computadora.');
         }
       }
 
-      if (btnPlayer) btnPlayer.addEventListener('click', handleOfflineClick);
-      if (btnSpectator) btnSpectator.addEventListener('click', handleOfflineClick);
+      function handleLocalClick(e) {
+        if (!currentWifiUrl && !window.location.origin.includes('localhost') && !window.location.origin.includes('172.16.') && !window.location.origin.includes('192.168.')) {
+          e.preventDefault();
+          alert('⚠️ Para jugar en Red Local / Wi-Fi:\n\n1. Conéctate a la misma red Wi-Fi de la computadora organizadora.\n2. Asegúrate de que "INICIAR_JUEGO.bat" esté abierto en la PC.');
+        }
+      }
+
+      btnPlayerOnline.addEventListener('click', handleOnlineClick);
+      btnSpectatorOnline.addEventListener('click', handleOnlineClick);
+      btnAdminOnline.addEventListener('click', handleOnlineClick);
+
+      btnPlayerLocal.addEventListener('click', handleLocalClick);
+      btnSpectatorLocal.addEventListener('click', handleLocalClick);
+      btnAdminLocal.addEventListener('click', handleLocalClick);
 
       checkServerStatus();
       setInterval(checkServerStatus, 5000);
