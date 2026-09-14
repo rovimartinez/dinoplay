@@ -111,6 +111,58 @@ app.post('/api/db/results/delete', (req, res) => {
   res.json({ ok: true, success: true, deleted, target });
 });
 
+// Endpoint de Emergencia / Respaldo Offline para recepción de puntajes de estudiantes
+app.post('/api/player/submit-offline-score', (req, res) => {
+  const { pin, sessionToken, name, score, distance, survival_ms } = req.body || {};
+  const safePin = cleanRoomPin(pin);
+  const room = rooms.get(safePin);
+
+  const cleanScore = clampNumber(score, 0, 999999, 0);
+  const cleanDistance = clampNumber(distance, 0, 999999, 0);
+  const cleanSurvival = clampNumber(survival_ms, 0, 86400000, 0);
+
+  if (room) {
+    let player = Object.values(room.players).find(p => (sessionToken && p.sessionToken === sessionToken) || (name && p.name.toLowerCase() === String(name).trim().toLowerCase()));
+    if (player) {
+      if (cleanScore >= player.score) player.score = cleanScore;
+      if (cleanDistance >= player.distance) player.distance = cleanDistance;
+      if (cleanSurvival >= (player.survival_ms || 0)) player.survival_ms = cleanSurvival;
+      player.crashed = true;
+      player.action = 'crashed';
+      player.crashed_at = player.crashed_at || Date.now();
+      player.lastUpdateAt = Date.now();
+
+      Database.savePlayerCrash(safePin, player.id, {
+        score: player.score,
+        distance: player.distance,
+        survival_ms: player.survival_ms
+      });
+
+      const liveLeaderboard = getLeaderboard(room);
+      io.to(safePin).emit('leaderboard:sync', {
+        leaderboard: liveLeaderboard,
+        totalPlayers: liveLeaderboard.length,
+        activeCount: liveLeaderboard.filter(p => !p.crashed).length,
+        crashedCount: liveLeaderboard.filter(p => p.crashed).length,
+        status: room.status
+      });
+
+      return res.json({ ok: true, message: 'Puntaje sincronizado con la sala', player });
+    }
+  }
+
+  // Si la sala en memoria no estaba activa o el socket no existía, registrar directamente en Database
+  Database.updateLiveScore(safePin, sessionToken || name || 'offline_player', {
+    score: cleanScore,
+    distance: cleanDistance,
+    survival_ms: cleanSurvival,
+    action: 'crashed',
+    crashed: true
+  });
+
+  return res.json({ ok: true, message: 'Puntaje offline guardado en base de datos' });
+});
+
 app.get('/api/db/export/csv', (req, res) => {
   const csv = Database.exportCSV();
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -612,7 +664,7 @@ io.on('connection', (socket) => {
   // 3. EVENTOS DEL JUGADOR (PLAYER)
   // ==========================================
 
-  socket.on('player:join_room', ({ pin, name, color, avatar }) => {
+  socket.on('player:join_room', ({ pin, name, color, avatar, sessionToken: clientSessionToken }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
 
@@ -628,6 +680,42 @@ io.on('connection', (socket) => {
         message: msg,
         activePin: currentActive
       });
+      return;
+    }
+
+    const cleanName = cleanPlayerName(name);
+
+    // Si ya existe un jugador con este token o nombre, permitir reasociación en vez de rechazar con NAME_TAKEN
+    let existingPlayer = Object.values(room.players).find(p => (clientSessionToken && p.sessionToken === clientSessionToken) || p.name.toLowerCase() === cleanName.toLowerCase());
+    if (existingPlayer) {
+      const oldId = existingPlayer.id;
+      if (oldId !== socket.id) {
+        delete room.players[oldId];
+        existingPlayer.id = socket.id;
+        room.players[socket.id] = existingPlayer;
+      }
+      existingPlayer.disconnected = false;
+      existingPlayer.disconnectedAt = null;
+
+      currentRole = 'player';
+      currentPin = safePin;
+      socket.join(safePin);
+
+      socket.emit('player:join_success', {
+        pin: safePin,
+        sessionToken: existingPlayer.sessionToken,
+        player: existingPlayer,
+        roomStatus: room.status,
+        eventName: room.eventName,
+        matchName: room.matchName
+      });
+
+      io.to(safePin).emit('room:players_update', {
+        players: Object.values(room.players),
+        count: Object.keys(room.players).length
+      });
+
+      console.log(`[JUGADOR REINCORPORADO/ACTUALIZADO] ${cleanName} a la sala ${safePin}`);
       return;
     }
 
@@ -649,19 +737,9 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const cleanName = cleanPlayerName(name);
-    const isDuplicate = Object.values(room.players).some(p => p.name.toLowerCase() === cleanName.toLowerCase());
-    if (isDuplicate) {
-      socket.emit('player:join_error', {
-        code: 'NAME_TAKEN',
-        message: `El nombre "${cleanName}" ya está en uso en esta sala. Elige otro nombre.`
-      });
-      return;
-    }
-
     const validColor = cleanColor(color);
     const validAvatar = cleanAvatar(avatar);
-    const sessionToken = Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36);
+    const sessionToken = clientSessionToken || (Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e9).toString(36));
 
     room.players[socket.id] = {
       id: socket.id,
@@ -774,7 +852,7 @@ io.on('connection', (socket) => {
     console.log(`[JUGADOR RECONECTADO] ${existingPlayer.name} a sala ${safePin} (Status: ${room.status})`);
   });
 
-  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles, dinoY, speed, lives }) => {
+  socket.on('player:update_state', ({ pin, score, distance, action, crashed, obstacles, dinoY, speed, lives, survival_ms }) => {
     const safePin = cleanRoomPin(pin);
     const room = rooms.get(safePin);
     if (!room || !room.players[socket.id]) return;
@@ -823,12 +901,16 @@ io.on('connection', (socket) => {
     player.action = cleanAction(action, player.action);
 
     // 3. Manejo de choque y tiempo de supervivencia
+    const clientSurvival = clampNumber(survival_ms, 0, 86400000, 0);
+    const calculatedSurvival = Math.max(0, now - (room.started_at || now));
+    const effectiveSurvival = clientSurvival > 0 ? clientSurvival : calculatedSurvival;
+
     if (!player.crashed && isCrashed) {
       player.crashed = true;
       player.action = 'crashed';
       player.speed = 0;
       player.crashed_at = now;
-      player.survival_ms = Math.max(0, now - (room.started_at || now));
+      player.survival_ms = effectiveSurvival;
 
       // Guardar choque en Base de Datos
       Database.savePlayerCrash(safePin, socket.id, {
@@ -847,7 +929,7 @@ io.on('connection', (socket) => {
         status: room.status
       });
     } else if (!player.crashed) {
-      player.survival_ms = Math.max(0, now - (room.started_at || now));
+      player.survival_ms = effectiveSurvival;
 
       // Guardar puntaje en vivo en Base de Datos en tiempo real
       Database.updateLiveScore(safePin, socket.id, {
@@ -903,61 +985,49 @@ io.on('connection', (socket) => {
   });
 
   // ==========================================
-  // 4. DESCONEXIÓN
+  // 4. DESCONEXIÓN CON BUFFER EXTENDIDO (120s)
   // ==========================================
 
   socket.on('disconnect', () => {
     if (currentPin && rooms.has(currentPin)) {
       const room = rooms.get(currentPin);
       if (currentRole === 'admin' && room.hostId === socket.id) {
-        // Ventana de gracia para permitir reconexión del anfitrión (ej. recarga de página o microcorte)
-        console.log(`[HOST DESCONECTADO TEMPORALMENTE] Sala ${currentPin}. Esperando posible reconexión (60s)...`);
+        console.log(`[HOST DESCONECTADO TEMPORALMENTE] Sala ${currentPin}. Esperando reconexión (120s)...`);
         room.hostDisconnectTimer = setTimeout(() => {
           if (rooms.has(currentPin) && rooms.get(currentPin).hostId === socket.id) {
             io.to(currentPin).emit('room:closed', { message: 'El anfitrión ha cerrado la sala.' });
             rooms.delete(currentPin);
             console.log(`[SALA CERRADA] PIN ${currentPin} porque el anfitrión no se reconectó.`);
           }
-        }, 60000);
+        }, 120000);
       } else if (currentRole === 'player') {
         const player = room.players[socket.id];
         if (player) {
           const playerName = player.name;
-          if (room.status === 'playing' || room.status === 'starting') {
-            // Marcar inmediatamente como chocado/eliminado para evitar dinos fantasmas
-            player.disconnected = true;
-            player.disconnectedAt = Date.now();
-            if (!player.crashed) {
-              player.crashed = true;
-              player.action = 'crashed';
-              player.crashed_at = Date.now();
-              player.speed = 0;
-              player.survival_ms = Math.max(0, Date.now() - (room.started_at || Date.now()));
-              Database.savePlayerCrash(currentPin, socket.id, {
-                score: player.score,
-                distance: player.distance,
-                survival_ms: player.survival_ms
-              });
-            }
-            console.log(`[JUGADOR DESCONECTADO (ELIMINADO)] ${playerName} de sala ${currentPin}`);
-            setTimeout(() => {
-              if (room.players[socket.id] && room.players[socket.id].disconnected) {
+          player.disconnected = true;
+          player.disconnectedAt = Date.now();
+
+          // NO borrar al jugador inmediatamente. Notificar estado al admin
+          io.to(currentPin).emit('room:players_update', {
+            players: Object.values(room.players),
+            count: Object.keys(room.players).length
+          });
+
+          console.log(`[JUGADOR DESCONECTADO (CONSERVADO EN MEMORIA)] ${playerName} de sala ${currentPin}`);
+
+          // Dar 120 segundos de gracia antes de limpiar el socket si no reconecta
+          setTimeout(() => {
+            if (room.players[socket.id] && room.players[socket.id].disconnected && (Date.now() - room.players[socket.id].disconnectedAt >= 115000)) {
+              if (room.status === 'lobby') {
                 delete room.players[socket.id];
                 io.to(currentPin).emit('room:players_update', {
                   players: Object.values(room.players),
                   count: Object.keys(room.players).length
                 });
-                console.log(`[JUGADOR EXPIRADO] ${playerName} removido tras tiempo de gracia.`);
+                console.log(`[JUGADOR EXPIRADO EN LOBBY] ${playerName} removido tras 120s.`);
               }
-            }, 30000);
-          } else {
-            delete room.players[socket.id];
-            io.to(currentPin).emit('room:players_update', {
-              players: Object.values(room.players),
-              count: Object.keys(room.players).length
-            });
-            console.log(`[JUGADOR DESCONECTADO] ${playerName} de sala ${currentPin}`);
-          }
+            }
+          }, 120000);
         }
       }
     }
@@ -969,16 +1039,16 @@ setInterval(() => {
   const now = Date.now();
   for (const [pin, room] of rooms.entries()) {
     if (room.status === 'playing') {
-      // Watchdog: Si un jugador no envía paquetes por más de 4s (app en segundo plano, celular bloqueado o corte), marcarlo como chocado
+      // Tolerancia: Watchdog pasivo de 12s para no expulsar a celulares con lag
       for (const p of Object.values(room.players)) {
-        if (!p.crashed) {
-          const lastActive = p.lastUpdateAt || room.started_at || now;
-          if ((now - lastActive > 4000) && (now - (room.started_at || now) > 3000)) {
+        if (!p.crashed && p.disconnected) {
+          const lastActive = p.disconnectedAt || p.lastUpdateAt || now;
+          if (now - lastActive > 12000) {
             p.crashed = true;
             p.action = 'crashed';
-            p.crashed_at = lastActive;
+            p.crashed_at = p.crashed_at || lastActive;
             p.speed = 0;
-            p.survival_ms = Math.max(0, lastActive - (room.started_at || lastActive));
+            p.survival_ms = p.survival_ms || Math.max(0, lastActive - (room.started_at || lastActive));
             Database.savePlayerCrash(pin, p.id, {
               score: p.score,
               distance: p.distance,

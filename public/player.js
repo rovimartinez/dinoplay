@@ -502,11 +502,48 @@
       }
     }
 
+    const sendCrashResultToServer = (validScore, distance, survivalMs) => {
+      const payload = {
+        pin: currentPin,
+        sessionToken: localStorage.getItem(STORAGE_KEY_TOKEN),
+        name: localStorage.getItem(STORAGE_KEY_NAME) || (myPlayerInfo ? myPlayerInfo.name : 'Dino'),
+        score: validScore,
+        distance: distance || 0,
+        survival_ms: survivalMs || 0,
+        action: 'crashed',
+        crashed: true,
+        obstacles: [],
+        dinoY: 93,
+        speed: 0
+      };
+
+      // 1. Guardar en localStorage para máxima persistencia
+      localStorage.setItem('dino_last_score', String(validScore));
+      localStorage.setItem('dino_last_survival', String(survivalMs || 0));
+
+      // 2. Enviar por Socket.IO
+      if (socket && socket.connected) {
+        socket.emit('player:update_state', payload);
+      }
+
+      // 3. Respaldo por HTTP fetch (garantiza entrega incluso con microcortes de websocket)
+      try {
+        fetch('/api/player/submit-offline-score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      } catch (e) {}
+    };
+
+    let gameStartTime = Date.now();
+
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
       seed: seed || null,
       maxLives: currentMaxLives,
       onEngineReady: function () {
+        gameStartTime = Date.now();
         startRunning(this);
       },
       onStateUpdate: (state) => {
@@ -521,20 +558,27 @@
           else hudLives.textContent = '💀';
         }
 
-        socket.emit('player:update_state', {
-          pin: currentPin,
-          score: validScore,
-          distance: Number.isFinite(state.distance) ? state.distance : 0,
-          action: state.action,
-          crashed: state.crashed,
-          lives: (state.lives !== undefined) ? state.lives : (state.crashed ? 0 : currentMaxLives),
-          obstacles: state.obstacles || [],
-          dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
-          speed: Number.isFinite(state.speed) ? state.speed : 6
-        });
+        const survivalMs = Math.max(0, Date.now() - gameStartTime);
+
+        if (socket && socket.connected) {
+          socket.emit('player:update_state', {
+            pin: currentPin,
+            score: validScore,
+            distance: Number.isFinite(state.distance) ? state.distance : 0,
+            action: state.action,
+            crashed: state.crashed,
+            lives: (state.lives !== undefined) ? state.lives : (state.crashed ? 0 : currentMaxLives),
+            obstacles: state.obstacles || [],
+            dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
+            speed: Number.isFinite(state.speed) ? state.speed : 6,
+            survival_ms: survivalMs
+          });
+        }
       },
       onCrash: (state) => {
         const validScore = Number.isFinite(state.score) ? state.score : 0;
+        const validDistance = Number.isFinite(state.distance) ? state.distance : 0;
+        const survivalMs = Math.max(0, Date.now() - gameStartTime);
         lastScore = validScore;
 
         // Feedback háptico (Vibración)
@@ -548,16 +592,7 @@
           setTimeout(() => gameViewportWrapper.classList.remove('screen-shake'), 450);
         }
 
-        socket.emit('player:update_state', {
-          pin: currentPin,
-          score: validScore,
-          distance: Number.isFinite(state.distance) ? state.distance : 0,
-          action: 'crashed',
-          crashed: true,
-          obstacles: state.obstacles || [],
-          dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,
-          speed: 0
-        });
+        sendCrashResultToServer(validScore, validDistance, survivalMs);
 
         setTimeout(() => {
           crashScore.textContent = validScore;

@@ -2,6 +2,72 @@
   "events": [],
   "matches": [
     {
+      "id": "mu1b5j0r",
+      "pin": "9667",
+      "eventName": "Test Event",
+      "matchName": "Ronda Resiliencia",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-09-14T13:58:00.075Z"
+    },
+    {
+      "id": "mu1b2dhc",
+      "pin": "9498",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-09-14T13:55:32.928Z",
+      "ended_at": "2026-09-14T13:37:03.660Z",
+      "winner": "ivan perez",
+      "winnerScore": 180
+    },
+    {
+      "id": "mtx5a7u1",
+      "pin": "6990",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-09-11T16:02:36.457Z"
+    },
+    {
+      "id": "mtx6hv6l",
+      "pin": "7965",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "finished",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-09-11T16:36:32.925Z",
+      "ended_at": "2026-09-11T16:14:50.821Z",
+      "winner": "luis carrillo",
+      "winnerScore": 49
+    },
+    {
+      "id": "mtx58ols",
+      "pin": "8247",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "stage": "qualifier",
+      "status": "lobby",
+      "race_seed": null,
+      "max_players": 30,
+      "started_at": null,
+      "created_at": "2026-09-11T16:01:24.880Z"
+    },
+    {
       "id": "mtx176md",
       "pin": "9606",
       "eventName": "Torneo Dino",
@@ -1038,6 +1104,862 @@
     }
   ],
   "players": [
+    {
+      "id": "PjTNyTF4rej1isz-AAFr",
+      "name": "Estudiante1",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9667",
+      "joined_at": "2026-09-14T13:58:00.101Z"
+    },
+    {
+      "id": "KS0x_plPSEcfDHMpAAEL",
+      "name": "hele",
+      "color": "#E65100",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:38:54.801Z"
+    },
+    {
+      "id": "S2lpe4OFONHEwiELAAET",
+      "name": "maria celeste",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:38:12.419Z"
+    },
+    {
+      "id": "0tr8zFeGCLnNpdCsAAEQ",
+      "name": "checa",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:38:11.515Z"
+    },
+    {
+      "id": "xoxCTz0ZAOFoy5cgAADl",
+      "name": "checa",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:36:08.696Z"
+    },
+    {
+      "id": "ApYJb-RbYHBfFs3xAADm",
+      "name": "hele",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:36:03.532Z"
+    },
+    {
+      "id": "0ckj6tqvZmOw-L5PAADx",
+      "name": "salome ospina",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:36:01.569Z"
+    },
+    {
+      "id": "p2HA4ehMN3sNOcOkAADd",
+      "name": "mariana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:36:00.824Z"
+    },
+    {
+      "id": "mXcSQXOblv67HwHLAAD0",
+      "name": "ivan perez",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:36:00.324Z"
+    },
+    {
+      "id": "lAeF4Ij5Tf0BimsjAADi",
+      "name": "maria celeste",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:59.761Z"
+    },
+    {
+      "id": "8_HJCotQMq9bnKHwAADZ",
+      "name": "nataly serrano",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:57.399Z"
+    },
+    {
+      "id": "vZxx3mQFduFf2H2rAADK",
+      "name": "checa",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:39.078Z"
+    },
+    {
+      "id": "7rJuE0iTeVsrzXI1AAC1",
+      "name": "maria celeste",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:36.846Z"
+    },
+    {
+      "id": "fkyILMpmMV_mR6QYAADE",
+      "name": "mariana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:36.140Z"
+    },
+    {
+      "id": "tx7aCxGy0APJYIuaAADJ",
+      "name": "hele",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:34.735Z"
+    },
+    {
+      "id": "OBM-M_Bk7BLhSF3BAADA",
+      "name": "nataly serrano",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:34.551Z"
+    },
+    {
+      "id": "1X7vNBNJGBoH1EzdAADM",
+      "name": "ivan perez",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:31.025Z"
+    },
+    {
+      "id": "nmL8JiFmtx3cAZ3XAAC8",
+      "name": "salome ospina",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:35:30.488Z"
+    },
+    {
+      "id": "yqjDL0E45SyjECbDAACE",
+      "name": "pau",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:33:48.127Z"
+    },
+    {
+      "id": "JxzbcMVBPtAiQpPBAACm",
+      "name": "mariana",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:22.934Z"
+    },
+    {
+      "id": "loockGkukY-oj2fmAACk",
+      "name": "maria celeste",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:06.313Z"
+    },
+    {
+      "id": "wUvywYL98gKc3RqKAACI",
+      "name": "hele",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:02.725Z"
+    },
+    {
+      "id": "CrjWWIaJG4tLoVaGAACg",
+      "name": "checa",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:02.721Z"
+    },
+    {
+      "id": "vMg9RsMMHLVKCiyiAACe",
+      "name": "nataly serrano",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:01.720Z"
+    },
+    {
+      "id": "llg7IfGTBPWz-zt-AACN",
+      "name": "ivan perez",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:32:01.643Z"
+    },
+    {
+      "id": "F4_RKNWwvDCu__r0AACS",
+      "name": "ilsy causado",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:31:57.317Z"
+    },
+    {
+      "id": "Iy0pS1g3vN3pFg0ZAACj",
+      "name": "El pro Mateo",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:31:56.170Z"
+    },
+    {
+      "id": "iLDmjKic2eoDsu6UAACZ",
+      "name": "gabrieldavid",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:31:55.113Z"
+    },
+    {
+      "id": "ZS_NLkTRizWgfWJUAACD",
+      "name": "salome ospina",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:31:54.912Z"
+    },
+    {
+      "id": "7jAITk18V_KPybm5AACM",
+      "name": "hannalucia",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:31:53.293Z"
+    },
+    {
+      "id": "3S0qeSif7HefXaM1AABM",
+      "name": "max412",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:52.247Z"
+    },
+    {
+      "id": "AN4hhB-OmxnsVETYAABS",
+      "name": "gabrieldavid",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:41.048Z"
+    },
+    {
+      "id": "4d69l5t03XntovlYAABO",
+      "name": "ferxxo87667",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:34.753Z"
+    },
+    {
+      "id": "QQEnbBYSaaF0XMZLAABK",
+      "name": "emi",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:30.663Z"
+    },
+    {
+      "id": "ZvrbFrxsOV8HZUhMAABI",
+      "name": "El pro Mateo",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:29.134Z"
+    },
+    {
+      "id": "Tus1ZNBaHCTyXhjhAABG",
+      "name": "pau",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:27.337Z"
+    },
+    {
+      "id": "tc3eo-fq34ss0Zj6AABC",
+      "name": "luci2342",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:16.010Z"
+    },
+    {
+      "id": "XwjUT6SJJhyuzALSAABA",
+      "name": "helena con h",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:14.697Z"
+    },
+    {
+      "id": "1eVucrVu2ibK4xC9AAA5",
+      "name": "Malu1512nina",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:12.276Z"
+    },
+    {
+      "id": "JItaPRlYFi718woDAABE",
+      "name": "ilsy causado",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:08.952Z"
+    },
+    {
+      "id": "Tg7jIZvTFBuZppo1AAA3",
+      "name": "ivan eduardo xd",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:29:08.258Z"
+    },
+    {
+      "id": "UK69xVLTZs3Ns8YIAAA7",
+      "name": "hannalucia",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:28:45.566Z"
+    },
+    {
+      "id": "GDWs1dQIfPZfHhNrAAA1",
+      "name": "nataly serrano",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:28:10.885Z"
+    },
+    {
+      "id": "1CjZPnbhEfKyh23UAAAX",
+      "name": "ilsy causado",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:45.758Z"
+    },
+    {
+      "id": "1QrT2Xk8OTVEHUVyAAAT",
+      "name": "hannalucia",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:44.720Z"
+    },
+    {
+      "id": "HbzOzHrpCgjRfoEQAAAn",
+      "name": "checa",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:44.584Z"
+    },
+    {
+      "id": "lkcdUSDKuK4rmFNoAAAj",
+      "name": "gabrieldavid",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:39.993Z"
+    },
+    {
+      "id": "9SsactNc5WF1mrsnAAAp",
+      "name": "maria celeste",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:38.294Z"
+    },
+    {
+      "id": "NLxs_LnrK0XuKDW1AAAt",
+      "name": "salome ospina",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:37.517Z"
+    },
+    {
+      "id": "_3rtqVXug2DnMB7_AAAb",
+      "name": "El pro Mateo",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:33.040Z"
+    },
+    {
+      "id": "92ljeG6HbBOMSA3FAAAf",
+      "name": "ferxxo87667",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:28.439Z"
+    },
+    {
+      "id": "tjYxPvSwAFmHgW9wAAAr",
+      "name": "santiagoc123",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:26.971Z"
+    },
+    {
+      "id": "b4C6-LPUoR_29X57AAAl",
+      "name": "Ana lu",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:27:13.007Z"
+    },
+    {
+      "id": "dZcOHg7J09QnW_XLAAAd",
+      "name": "max142",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:26:40.333Z"
+    },
+    {
+      "id": "3HBz7Qpe-4B40iJXAAAP",
+      "name": "Malu1512nina",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:26:32.222Z"
+    },
+    {
+      "id": "2mmiEYb9I1R0ad9JAAAV",
+      "name": "luci",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:26:22.666Z"
+    },
+    {
+      "id": "4E8C9m9u_ZHs7hdTAAAZ",
+      "name": "hele",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:26:21.829Z"
+    },
+    {
+      "id": "HV9IXiJZFJkC4GKFAAAR",
+      "name": "ivan perez",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:26:02.168Z"
+    },
+    {
+      "id": "wBPsSotOKWGHMSjnAAAL",
+      "name": "nataly serrano",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:25:51.145Z"
+    },
+    {
+      "id": "qUvbWlkd1zOeuNW4AAAF",
+      "name": "salome ospina",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "9498",
+      "joined_at": "2026-09-14T13:25:27.888Z"
+    },
+    {
+      "id": "kjBmIjmFx8kVeaqzAACF",
+      "name": "jimenez tizzian",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:56.311Z"
+    },
+    {
+      "id": "R0XQkAY9NdGFnLauAACI",
+      "name": "lia alaniz",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:27.246Z"
+    },
+    {
+      "id": "TitoQ1ruqpAJbil4AACA",
+      "name": "Ana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:24.491Z"
+    },
+    {
+      "id": "-FaFU5zZjjARhnFeAACV",
+      "name": "mariana ortiz",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:21.433Z"
+    },
+    {
+      "id": "gESrA9e33zAZjzmKAACB",
+      "name": "Valeria sophia",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:18.776Z"
+    },
+    {
+      "id": "6EGeglumYUIxji00AACc",
+      "name": "luis carrillo",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:17.388Z"
+    },
+    {
+      "id": "rGQhNp7oQ1cv5S_QAAB_",
+      "name": "salome madrid",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:16.346Z"
+    },
+    {
+      "id": "MY3NezblsrHkb6YIAACY",
+      "name": "luciana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:16.033Z"
+    },
+    {
+      "id": "XULAHuoYVj0SFnDAAACE",
+      "name": "morelomaria",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:15.289Z"
+    },
+    {
+      "id": "rzRoKjQb7pSgR8MSAACG",
+      "name": "veronicas rojas",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:14.905Z"
+    },
+    {
+      "id": "NoaX-hsB4uyqWS1nAACD",
+      "name": "elizabeth s",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:14.689Z"
+    },
+    {
+      "id": "Wn3PoKJNEM67jAtNAACC",
+      "name": "maria campo",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:14.456Z"
+    },
+    {
+      "id": "t4StUhGicTQ_XPl0AACH",
+      "name": "camilo",
+      "color": "#0288D1",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:14.021Z"
+    },
+    {
+      "id": "xBHdlwDz5lotyyMhAACK",
+      "name": "jeronimo garz8o",
+      "color": "#FBC02D",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:13.254Z"
+    },
+    {
+      "id": "KWA4MCHW_npCUEQlAACL",
+      "name": "maria gabriela",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:13:08.941Z"
+    },
+    {
+      "id": "ZfmSwcZcM1yHaXNlAABx",
+      "name": "salome madrid",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:09:34.568Z"
+    },
+    {
+      "id": "mfhWAureNQ60C7otAABt",
+      "name": "salome madrid",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "6990",
+      "joined_at": "2026-09-11T16:06:34.513Z"
+    },
+    {
+      "id": "DM3xycbyC3ngEkA3AABv",
+      "name": "maria gabriela",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:06:10.954Z"
+    },
+    {
+      "id": "Xy__E-8OxC7iaeo-AABr",
+      "name": "jeronimo garz8o",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:04:16.034Z"
+    },
+    {
+      "id": "g-jbd6aTIlbSYK_UAABp",
+      "name": "luciana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:04:07.054Z"
+    },
+    {
+      "id": "N7SYDhDJ3P68yMDVAABb",
+      "name": "ana",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:04:00.949Z"
+    },
+    {
+      "id": "vJfi0LQ2aw95ZrnWAABh",
+      "name": "lia alaniz",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:48.303Z"
+    },
+    {
+      "id": "5w9ntugzuOMJ3-SxAABX",
+      "name": "elizabeth s",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:36.754Z"
+    },
+    {
+      "id": "uRLEDdUeMKemVnpKAABd",
+      "name": "jimenez tizzian",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:36.657Z"
+    },
+    {
+      "id": "e5dHr8vcrYeBuU5kAABl",
+      "name": "veronicas rojas",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:34.178Z"
+    },
+    {
+      "id": "oTF3MCk5cKzlweF9AABn",
+      "name": "maria campo",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:19.454Z"
+    },
+    {
+      "id": "JVJfDQsbNXWOSzS8AABF",
+      "name": "Valeria sophia",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:07.988Z"
+    },
+    {
+      "id": "bz96Ag-kMZ442R7KAABZ",
+      "name": "camilo",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:03:01.206Z"
+    },
+    {
+      "id": "WeNHhBU6vN2-JP1TAABf",
+      "name": "maria gabriela",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "6990",
+      "joined_at": "2026-09-11T16:03:00.963Z"
+    },
+    {
+      "id": "GHysG0VXICr7amppAAA_",
+      "name": "luis carrillo",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:02:40.304Z"
+    },
+    {
+      "id": "yqaC8tAXHoCQP_4HAAAz",
+      "name": "morelomaria",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:02:13.099Z"
+    },
+    {
+      "id": "zPT4oyWJePY4QBcZAAA5",
+      "name": "mariana ortiz",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:02:10.756Z"
+    },
+    {
+      "id": "vtaIztWtjoFID-JyAAA3",
+      "name": "Valeria sophia",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "7965",
+      "joined_at": "2026-09-11T16:01:59.018Z"
+    },
+    {
+      "id": "r_PPuIQkGOhQIAOiAAAn",
+      "name": "maria gabriela",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T16:01:13.103Z"
+    },
+    {
+      "id": "ObLAgND4fhVr2tGjAAAr",
+      "name": "camilo",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T16:01:12.412Z"
+    },
+    {
+      "id": "497-0OR1XAVf0dKYAAAf",
+      "name": "Valeria sophia",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T16:00:28.217Z"
+    },
+    {
+      "id": "xcqfw8vvgS6wnZpGAAAV",
+      "name": "elizabeth s",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T16:00:17.905Z"
+    },
+    {
+      "id": "YoUwp0ezxYR-d93JAAAb",
+      "name": "luciana",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T16:00:11.463Z"
+    },
+    {
+      "id": "o_lxPnLsTEpcMAIbAAAh",
+      "name": "jimenez tizzian",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:59:35.649Z"
+    },
+    {
+      "id": "DIbbSAfsgkUeQVw0AAAj",
+      "name": "lia",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:59:17.710Z"
+    },
+    {
+      "id": "vfiaBZx5S5yJx6jDAAAd",
+      "name": "veronicas rojas",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:59:06.886Z"
+    },
+    {
+      "id": "5OdY9Vte1VcxmXsOAAAR",
+      "name": "morelomaria",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:58:51.974Z"
+    },
+    {
+      "id": "nQEty4mjk68sxO8_AAAZ",
+      "name": "lia",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:58:39.590Z"
+    },
+    {
+      "id": "Bq_90Z48dS1QKnz8AAAX",
+      "name": "maria campo",
+      "color": "#7B1FA2",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:58:29.935Z"
+    },
+    {
+      "id": "lz5BAH8CPPGMPMqjAAAT",
+      "name": "STRAY KIDS",
+      "color": "#C2185B",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:58:24.929Z"
+    },
+    {
+      "id": "Yzsz1rQ059xTm9uTAAAN",
+      "name": "luis carrillo",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:57:18.066Z"
+    },
+    {
+      "id": "6ayoEN0TRvDAyyobAAAL",
+      "name": "el bueno",
+      "color": "#2E7D32",
+      "avatar": "🦖",
+      "pin": "8247",
+      "joined_at": "2026-09-11T15:56:49.532Z"
+    },
     {
       "id": "NgHw6e2JfKZcN4ZpAABX",
       "name": "andrea",
@@ -6114,6 +7036,34 @@
         "crashed_at": "2026-08-28T16:01:00.831Z"
       }
     },
+    "6990": {
+      "WeNHhBU6vN2-JP1TAABf": {
+        "playerId": "WeNHhBU6vN2-JP1TAABf",
+        "playerName": "maria gabriela",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:03:00.964Z"
+      },
+      "mfhWAureNQ60C7otAABt": {
+        "playerId": "mfhWAureNQ60C7otAABt",
+        "playerName": "salome madrid",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:06:34.513Z"
+      }
+    },
     "7570": {
       "_1zU8k2Aoo5F7KIXAAAD": {
         "playerId": "_1zU8k2Aoo5F7KIXAAAD",
@@ -6238,6 +7188,441 @@
         "crashed": false,
         "survival_ms": 0,
         "updated_at": "2026-09-01T13:39:10.476Z"
+      }
+    },
+    "7965": {
+      "vtaIztWtjoFID-JyAAA3": {
+        "playerId": "vtaIztWtjoFID-JyAAA3",
+        "playerName": "Valeria sophia",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:01:59.018Z"
+      },
+      "zPT4oyWJePY4QBcZAAA5": {
+        "playerId": "zPT4oyWJePY4QBcZAAA5",
+        "playerName": "mariana ortiz",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 1631,
+        "distance": 65232,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 94909,
+        "updated_at": "2026-09-11T16:11:32.967Z",
+        "crashed_at": "2026-09-11T16:11:32.967Z"
+      },
+      "yqaC8tAXHoCQP_4HAAAz": {
+        "playerId": "yqaC8tAXHoCQP_4HAAAz",
+        "playerName": "morelomaria",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 257,
+        "distance": 10272,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 22291,
+        "updated_at": "2026-09-11T16:10:20.349Z",
+        "crashed_at": "2026-09-11T16:10:20.349Z"
+      },
+      "GHysG0VXICr7amppAAA_": {
+        "playerId": "GHysG0VXICr7amppAAA_",
+        "playerName": "luis carrillo",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 1161,
+        "distance": 46432,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 70856,
+        "updated_at": "2026-09-11T16:11:08.914Z",
+        "crashed_at": "2026-09-11T16:11:08.914Z"
+      },
+      "bz96Ag-kMZ442R7KAABZ": {
+        "playerId": "bz96Ag-kMZ442R7KAABZ",
+        "playerName": "camilo",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 107,
+        "distance": 4273,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 11144,
+        "updated_at": "2026-09-11T16:10:09.202Z",
+        "crashed_at": "2026-09-11T16:10:09.202Z"
+      },
+      "JVJfDQsbNXWOSzS8AABF": {
+        "playerId": "JVJfDQsbNXWOSzS8AABF",
+        "playerName": "Valeria sophia",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 107,
+        "distance": 4270,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 11024,
+        "updated_at": "2026-09-11T16:10:09.082Z",
+        "crashed_at": "2026-09-11T16:10:09.082Z"
+      },
+      "oTF3MCk5cKzlweF9AABn": {
+        "playerId": "oTF3MCk5cKzlweF9AABn",
+        "playerName": "maria campo",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 181,
+        "distance": 7215,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 16879,
+        "updated_at": "2026-09-11T16:10:14.937Z",
+        "crashed_at": "2026-09-11T16:10:14.937Z"
+      },
+      "e5dHr8vcrYeBuU5kAABl": {
+        "playerId": "e5dHr8vcrYeBuU5kAABl",
+        "playerName": "veronicas rojas",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 107,
+        "distance": 4279,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 11170,
+        "updated_at": "2026-09-11T16:10:09.228Z",
+        "crashed_at": "2026-09-11T16:10:09.228Z"
+      },
+      "uRLEDdUeMKemVnpKAABd": {
+        "playerId": "uRLEDdUeMKemVnpKAABd",
+        "playerName": "jimenez tizzian",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 148,
+        "distance": 5891,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 15155,
+        "updated_at": "2026-09-11T16:10:13.213Z",
+        "crashed_at": "2026-09-11T16:10:13.213Z"
+      },
+      "5w9ntugzuOMJ3-SxAABX": {
+        "playerId": "5w9ntugzuOMJ3-SxAABX",
+        "playerName": "elizabeth s",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 45,
+        "distance": 1778,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 5443,
+        "updated_at": "2026-09-11T16:10:03.501Z",
+        "crashed_at": "2026-09-11T16:10:03.501Z"
+      },
+      "vJfi0LQ2aw95ZrnWAABh": {
+        "playerId": "vJfi0LQ2aw95ZrnWAABh",
+        "playerName": "lia alaniz",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 195,
+        "distance": 7771,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 17919,
+        "updated_at": "2026-09-11T16:10:15.977Z",
+        "crashed_at": "2026-09-11T16:10:15.977Z"
+      },
+      "N7SYDhDJ3P68yMDVAABb": {
+        "playerId": "N7SYDhDJ3P68yMDVAABb",
+        "playerName": "ana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1752,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 5376,
+        "updated_at": "2026-09-11T16:10:03.434Z",
+        "crashed_at": "2026-09-11T16:10:03.434Z"
+      },
+      "g-jbd6aTIlbSYK_UAABp": {
+        "playerId": "g-jbd6aTIlbSYK_UAABp",
+        "playerName": "luciana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 195,
+        "distance": 7793,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 18044,
+        "updated_at": "2026-09-11T16:10:16.102Z",
+        "crashed_at": "2026-09-11T16:10:16.102Z"
+      },
+      "Xy__E-8OxC7iaeo-AABr": {
+        "playerId": "Xy__E-8OxC7iaeo-AABr",
+        "playerName": "jeronimo garz8o",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 365,
+        "distance": 14590,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 29256,
+        "updated_at": "2026-09-11T16:10:27.314Z",
+        "crashed_at": "2026-09-11T16:10:27.314Z"
+      },
+      "DM3xycbyC3ngEkA3AABv": {
+        "playerId": "DM3xycbyC3ngEkA3AABv",
+        "playerName": "maria gabriela",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 107,
+        "distance": 4268,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 11109,
+        "updated_at": "2026-09-11T16:10:09.167Z",
+        "crashed_at": "2026-09-11T16:10:09.167Z"
+      },
+      "ZfmSwcZcM1yHaXNlAABx": {
+        "playerId": "ZfmSwcZcM1yHaXNlAABx",
+        "playerName": "salome madrid",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 195,
+        "distance": 7800,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 18059,
+        "updated_at": "2026-09-11T16:10:16.117Z",
+        "crashed_at": "2026-09-11T16:10:16.117Z"
+      },
+      "KWA4MCHW_npCUEQlAACL": {
+        "playerId": "KWA4MCHW_npCUEQlAACL",
+        "playerName": "maria gabriela",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 48,
+        "distance": 1915,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 33002,
+        "updated_at": "2026-09-11T16:14:47.220Z",
+        "crashed_at": "2026-09-11T16:14:47.220Z"
+      },
+      "xBHdlwDz5lotyyMhAACK": {
+        "playerId": "xBHdlwDz5lotyyMhAACK",
+        "playerName": "jeronimo garz8o",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 50,
+        "distance": 1991,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 33374,
+        "updated_at": "2026-09-11T16:14:47.592Z",
+        "crashed_at": "2026-09-11T16:14:47.592Z"
+      },
+      "t4StUhGicTQ_XPl0AACH": {
+        "playerId": "t4StUhGicTQ_XPl0AACH",
+        "playerName": "camilo",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 54,
+        "distance": 2145,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32533,
+        "updated_at": "2026-09-11T16:14:46.751Z",
+        "crashed_at": "2026-09-11T16:14:46.751Z"
+      },
+      "Wn3PoKJNEM67jAtNAACC": {
+        "playerId": "Wn3PoKJNEM67jAtNAACC",
+        "playerName": "maria campo",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 53,
+        "distance": 2102,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32571,
+        "updated_at": "2026-09-11T16:14:46.789Z",
+        "crashed_at": "2026-09-11T16:14:46.789Z"
+      },
+      "NoaX-hsB4uyqWS1nAACD": {
+        "playerId": "NoaX-hsB4uyqWS1nAACD",
+        "playerName": "elizabeth s",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 54,
+        "distance": 2132,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32655,
+        "updated_at": "2026-09-11T16:14:46.873Z",
+        "crashed_at": "2026-09-11T16:14:46.873Z"
+      },
+      "rzRoKjQb7pSgR8MSAACG": {
+        "playerId": "rzRoKjQb7pSgR8MSAACG",
+        "playerName": "veronicas rojas",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 52,
+        "distance": 2074,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32691,
+        "updated_at": "2026-09-11T16:14:46.909Z",
+        "crashed_at": "2026-09-11T16:14:46.909Z"
+      },
+      "XULAHuoYVj0SFnDAAACE": {
+        "playerId": "XULAHuoYVj0SFnDAAACE",
+        "playerName": "morelomaria",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 48,
+        "distance": 1909,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32638,
+        "updated_at": "2026-09-11T16:14:46.856Z",
+        "crashed_at": "2026-09-11T16:14:46.856Z"
+      },
+      "MY3NezblsrHkb6YIAACY": {
+        "playerId": "MY3NezblsrHkb6YIAACY",
+        "playerName": "luciana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 48,
+        "distance": 1903,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 33405,
+        "updated_at": "2026-09-11T16:14:47.623Z",
+        "crashed_at": "2026-09-11T16:14:47.623Z"
+      },
+      "rGQhNp7oQ1cv5S_QAAB_": {
+        "playerId": "rGQhNp7oQ1cv5S_QAAB_",
+        "playerName": "salome madrid",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 49,
+        "distance": 1957,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32621,
+        "updated_at": "2026-09-11T16:14:46.839Z",
+        "crashed_at": "2026-09-11T16:14:46.839Z"
+      },
+      "6EGeglumYUIxji00AACc": {
+        "playerId": "6EGeglumYUIxji00AACc",
+        "playerName": "luis carrillo",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 49,
+        "distance": 1957,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 34022,
+        "updated_at": "2026-09-11T16:14:48.240Z",
+        "crashed_at": "2026-09-11T16:14:48.240Z"
+      },
+      "gESrA9e33zAZjzmKAACB": {
+        "playerId": "gESrA9e33zAZjzmKAACB",
+        "playerName": "Valeria sophia",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 50,
+        "distance": 1985,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32554,
+        "updated_at": "2026-09-11T16:14:46.772Z",
+        "crashed_at": "2026-09-11T16:14:46.772Z"
+      },
+      "-FaFU5zZjjARhnFeAACV": {
+        "playerId": "-FaFU5zZjjARhnFeAACV",
+        "playerName": "mariana ortiz",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 54,
+        "distance": 2125,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 33420,
+        "updated_at": "2026-09-11T16:14:47.638Z",
+        "crashed_at": "2026-09-11T16:14:47.638Z"
+      },
+      "TitoQ1ruqpAJbil4AACA": {
+        "playerId": "TitoQ1ruqpAJbil4AACA",
+        "playerName": "Ana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 49,
+        "distance": 1955,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32585,
+        "updated_at": "2026-09-11T16:14:46.803Z",
+        "crashed_at": "2026-09-11T16:14:46.803Z"
+      },
+      "R0XQkAY9NdGFnLauAACI": {
+        "playerId": "R0XQkAY9NdGFnLauAACI",
+        "playerName": "lia alaniz",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 52,
+        "distance": 2074,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32836,
+        "updated_at": "2026-09-11T16:14:47.054Z",
+        "crashed_at": "2026-09-11T16:14:47.054Z"
+      },
+      "kjBmIjmFx8kVeaqzAACF": {
+        "playerId": "kjBmIjmFx8kVeaqzAACF",
+        "playerName": "jimenez tizzian",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 76,
+        "distance": 3029,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32602,
+        "updated_at": "2026-09-11T16:14:46.820Z",
+        "crashed_at": "2026-09-11T16:14:46.820Z"
       }
     },
     "7976": {
@@ -6394,6 +7779,190 @@
         "survival_ms": 48744,
         "updated_at": "2026-08-29T14:58:56.450Z",
         "crashed_at": "2026-08-29T14:58:56.450Z"
+      }
+    },
+    "8247": {
+      "6ayoEN0TRvDAyyobAAAL": {
+        "playerId": "6ayoEN0TRvDAyyobAAAL",
+        "playerName": "el bueno",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:56:49.532Z"
+      },
+      "Yzsz1rQ059xTm9uTAAAN": {
+        "playerId": "Yzsz1rQ059xTm9uTAAAN",
+        "playerName": "luis carrillo",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:57:18.066Z"
+      },
+      "lz5BAH8CPPGMPMqjAAAT": {
+        "playerId": "lz5BAH8CPPGMPMqjAAAT",
+        "playerName": "STRAY KIDS",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:58:24.929Z"
+      },
+      "Bq_90Z48dS1QKnz8AAAX": {
+        "playerId": "Bq_90Z48dS1QKnz8AAAX",
+        "playerName": "maria campo",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:58:29.935Z"
+      },
+      "nQEty4mjk68sxO8_AAAZ": {
+        "playerId": "nQEty4mjk68sxO8_AAAZ",
+        "playerName": "lia",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:58:39.590Z"
+      },
+      "5OdY9Vte1VcxmXsOAAAR": {
+        "playerId": "5OdY9Vte1VcxmXsOAAAR",
+        "playerName": "morelomaria",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:58:51.974Z"
+      },
+      "vfiaBZx5S5yJx6jDAAAd": {
+        "playerId": "vfiaBZx5S5yJx6jDAAAd",
+        "playerName": "veronicas rojas",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:59:06.886Z"
+      },
+      "DIbbSAfsgkUeQVw0AAAj": {
+        "playerId": "DIbbSAfsgkUeQVw0AAAj",
+        "playerName": "lia",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:59:17.710Z"
+      },
+      "o_lxPnLsTEpcMAIbAAAh": {
+        "playerId": "o_lxPnLsTEpcMAIbAAAh",
+        "playerName": "jimenez tizzian",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T15:59:35.649Z"
+      },
+      "YoUwp0ezxYR-d93JAAAb": {
+        "playerId": "YoUwp0ezxYR-d93JAAAb",
+        "playerName": "luciana",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:00:11.463Z"
+      },
+      "xcqfw8vvgS6wnZpGAAAV": {
+        "playerId": "xcqfw8vvgS6wnZpGAAAV",
+        "playerName": "elizabeth s",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:00:17.905Z"
+      },
+      "497-0OR1XAVf0dKYAAAf": {
+        "playerId": "497-0OR1XAVf0dKYAAAf",
+        "playerName": "Valeria sophia",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:00:28.217Z"
+      },
+      "ObLAgND4fhVr2tGjAAAr": {
+        "playerId": "ObLAgND4fhVr2tGjAAAr",
+        "playerName": "camilo",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:01:12.412Z"
+      },
+      "r_PPuIQkGOhQIAOiAAAn": {
+        "playerId": "r_PPuIQkGOhQIAOiAAAn",
+        "playerName": "maria gabriela",
+        "color": "#7B1FA2",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-11T16:01:13.104Z"
       }
     },
     "8631": {
@@ -6754,6 +8323,821 @@
         "crashed": false,
         "survival_ms": 0,
         "updated_at": "2026-09-09T13:34:44.039Z"
+      }
+    },
+    "9498": {
+      "qUvbWlkd1zOeuNW4AAAF": {
+        "playerId": "qUvbWlkd1zOeuNW4AAAF",
+        "playerName": "salome ospina",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:25:27.888Z"
+      },
+      "wBPsSotOKWGHMSjnAAAL": {
+        "playerId": "wBPsSotOKWGHMSjnAAAL",
+        "playerName": "nataly serrano",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:25:51.145Z"
+      },
+      "HV9IXiJZFJkC4GKFAAAR": {
+        "playerId": "HV9IXiJZFJkC4GKFAAAR",
+        "playerName": "ivan perez",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:26:02.168Z"
+      },
+      "4E8C9m9u_ZHs7hdTAAAZ": {
+        "playerId": "4E8C9m9u_ZHs7hdTAAAZ",
+        "playerName": "hele",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:26:21.829Z"
+      },
+      "2mmiEYb9I1R0ad9JAAAV": {
+        "playerId": "2mmiEYb9I1R0ad9JAAAV",
+        "playerName": "luci",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:26:22.666Z"
+      },
+      "3HBz7Qpe-4B40iJXAAAP": {
+        "playerId": "3HBz7Qpe-4B40iJXAAAP",
+        "playerName": "Malu1512nina",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:26:32.222Z"
+      },
+      "dZcOHg7J09QnW_XLAAAd": {
+        "playerId": "dZcOHg7J09QnW_XLAAAd",
+        "playerName": "max142",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:26:40.333Z"
+      },
+      "b4C6-LPUoR_29X57AAAl": {
+        "playerId": "b4C6-LPUoR_29X57AAAl",
+        "playerName": "Ana lu",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:13.007Z"
+      },
+      "tjYxPvSwAFmHgW9wAAAr": {
+        "playerId": "tjYxPvSwAFmHgW9wAAAr",
+        "playerName": "santiagoc123",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1735,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 19469,
+        "updated_at": "2026-09-14T13:30:46.741Z",
+        "crashed_at": "2026-09-14T13:30:46.741Z"
+      },
+      "92ljeG6HbBOMSA3FAAAf": {
+        "playerId": "92ljeG6HbBOMSA3FAAAf",
+        "playerName": "ferxxo87667",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:28.439Z"
+      },
+      "_3rtqVXug2DnMB7_AAAb": {
+        "playerId": "_3rtqVXug2DnMB7_AAAb",
+        "playerName": "El pro Mateo",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:33.040Z"
+      },
+      "NLxs_LnrK0XuKDW1AAAt": {
+        "playerId": "NLxs_LnrK0XuKDW1AAAt",
+        "playerName": "salome ospina",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 443,
+        "distance": 17704,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 39477,
+        "updated_at": "2026-09-14T13:31:06.749Z",
+        "crashed_at": "2026-09-14T13:31:06.749Z"
+      },
+      "9SsactNc5WF1mrsnAAAp": {
+        "playerId": "9SsactNc5WF1mrsnAAAp",
+        "playerName": "maria celeste",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 791,
+        "distance": 31619,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 51233,
+        "updated_at": "2026-09-14T13:31:22.579Z",
+        "crashed_at": "2026-09-14T13:31:22.579Z"
+      },
+      "lkcdUSDKuK4rmFNoAAAj": {
+        "playerId": "lkcdUSDKuK4rmFNoAAAj",
+        "playerName": "gabrieldavid",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:39.993Z"
+      },
+      "HbzOzHrpCgjRfoEQAAAn": {
+        "playerId": "HbzOzHrpCgjRfoEQAAAn",
+        "playerName": "checa",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 483,
+        "distance": 19301,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 42010,
+        "updated_at": "2026-09-14T13:31:09.282Z",
+        "crashed_at": "2026-09-14T13:31:09.282Z"
+      },
+      "1QrT2Xk8OTVEHUVyAAAT": {
+        "playerId": "1QrT2Xk8OTVEHUVyAAAT",
+        "playerName": "hannalucia",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:44.720Z"
+      },
+      "1CjZPnbhEfKyh23UAAAX": {
+        "playerId": "1CjZPnbhEfKyh23UAAAX",
+        "playerName": "ilsy causado",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:27:45.758Z"
+      },
+      "GDWs1dQIfPZfHhNrAAA1": {
+        "playerId": "GDWs1dQIfPZfHhNrAAA1",
+        "playerName": "nataly serrano",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 177,
+        "distance": 7043,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 34725,
+        "updated_at": "2026-09-14T13:31:01.998Z",
+        "crashed_at": "2026-09-14T13:31:01.997Z"
+      },
+      "UK69xVLTZs3Ns8YIAAA7": {
+        "playerId": "UK69xVLTZs3Ns8YIAAA7",
+        "playerName": "hannalucia",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 52,
+        "distance": 2067,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 21960,
+        "updated_at": "2026-09-14T13:30:49.232Z",
+        "crashed_at": "2026-09-14T13:30:49.232Z"
+      },
+      "Tg7jIZvTFBuZppo1AAA3": {
+        "playerId": "Tg7jIZvTFBuZppo1AAA3",
+        "playerName": "ivan eduardo xd",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 698,
+        "distance": 27894,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 46553,
+        "updated_at": "2026-09-14T13:31:13.825Z",
+        "crashed_at": "2026-09-14T13:31:13.825Z"
+      },
+      "JItaPRlYFi718woDAABE": {
+        "playerId": "JItaPRlYFi718woDAABE",
+        "playerName": "ilsy causado",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 83,
+        "distance": 3303,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 27774,
+        "updated_at": "2026-09-14T13:30:55.046Z",
+        "crashed_at": "2026-09-14T13:30:55.046Z"
+      },
+      "1eVucrVu2ibK4xC9AAA5": {
+        "playerId": "1eVucrVu2ibK4xC9AAA5",
+        "playerName": "Malu1512nina",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 211,
+        "distance": 8407,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 37920,
+        "updated_at": "2026-09-14T13:31:05.192Z",
+        "crashed_at": "2026-09-14T13:31:05.192Z"
+      },
+      "XwjUT6SJJhyuzALSAABA": {
+        "playerId": "XwjUT6SJJhyuzALSAABA",
+        "playerName": "helena con h",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 194,
+        "distance": 7727,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 37046,
+        "updated_at": "2026-09-14T13:31:04.318Z",
+        "crashed_at": "2026-09-14T13:31:04.318Z"
+      },
+      "tc3eo-fq34ss0Zj6AABC": {
+        "playerId": "tc3eo-fq34ss0Zj6AABC",
+        "playerName": "luci2342",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 442,
+        "distance": 17675,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 41434,
+        "updated_at": "2026-09-14T13:31:08.706Z",
+        "crashed_at": "2026-09-14T13:31:08.706Z"
+      },
+      "Tus1ZNBaHCTyXhjhAABG": {
+        "playerId": "Tus1ZNBaHCTyXhjhAABG",
+        "playerName": "pau",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 324,
+        "distance": 12921,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 39801,
+        "updated_at": "2026-09-14T13:31:07.073Z",
+        "crashed_at": "2026-09-14T13:31:07.073Z"
+      },
+      "ZvrbFrxsOV8HZUhMAABI": {
+        "playerId": "ZvrbFrxsOV8HZUhMAABI",
+        "playerName": "El pro Mateo",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 279,
+        "distance": 11136,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 39331,
+        "updated_at": "2026-09-14T13:31:06.603Z",
+        "crashed_at": "2026-09-14T13:31:06.603Z"
+      },
+      "QQEnbBYSaaF0XMZLAABK": {
+        "playerId": "QQEnbBYSaaF0XMZLAABK",
+        "playerName": "emi",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1736,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 19638,
+        "updated_at": "2026-09-14T13:30:46.910Z",
+        "crashed_at": "2026-09-14T13:30:46.910Z"
+      },
+      "4d69l5t03XntovlYAABO": {
+        "playerId": "4d69l5t03XntovlYAABO",
+        "playerName": "ferxxo87667",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1736,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 20148,
+        "updated_at": "2026-09-14T13:30:47.420Z",
+        "crashed_at": "2026-09-14T13:30:47.420Z"
+      },
+      "AN4hhB-OmxnsVETYAABS": {
+        "playerId": "AN4hhB-OmxnsVETYAABS",
+        "playerName": "gabrieldavid",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 244,
+        "distance": 9745,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 38767,
+        "updated_at": "2026-09-14T13:31:06.039Z",
+        "crashed_at": "2026-09-14T13:31:06.039Z"
+      },
+      "3S0qeSif7HefXaM1AABM": {
+        "playerId": "3S0qeSif7HefXaM1AABM",
+        "playerName": "max412",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1736,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 20197,
+        "updated_at": "2026-09-14T13:30:47.469Z",
+        "crashed_at": "2026-09-14T13:30:47.469Z"
+      },
+      "7jAITk18V_KPybm5AACM": {
+        "playerId": "7jAITk18V_KPybm5AACM",
+        "playerName": "hannalucia",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 87,
+        "distance": 3478,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 8930,
+        "updated_at": "2026-09-14T13:34:00.410Z",
+        "crashed_at": "2026-09-14T13:34:00.410Z"
+      },
+      "ZS_NLkTRizWgfWJUAACD": {
+        "playerId": "ZS_NLkTRizWgfWJUAACD",
+        "playerName": "salome ospina",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 377,
+        "distance": 15067,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32077,
+        "updated_at": "2026-09-14T13:34:23.557Z",
+        "crashed_at": "2026-09-14T13:34:23.557Z"
+      },
+      "iLDmjKic2eoDsu6UAACZ": {
+        "playerId": "iLDmjKic2eoDsu6UAACZ",
+        "playerName": "gabrieldavid",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1731,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4775,
+        "updated_at": "2026-09-14T13:33:56.255Z",
+        "crashed_at": "2026-09-14T13:33:56.255Z"
+      },
+      "Iy0pS1g3vN3pFg0ZAACj": {
+        "playerId": "Iy0pS1g3vN3pFg0ZAACj",
+        "playerName": "El pro Mateo",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1731,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4812,
+        "updated_at": "2026-09-14T13:33:56.292Z",
+        "crashed_at": "2026-09-14T13:33:56.292Z"
+      },
+      "F4_RKNWwvDCu__r0AACS": {
+        "playerId": "F4_RKNWwvDCu__r0AACS",
+        "playerName": "ilsy causado",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 44,
+        "distance": 1731,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 5602,
+        "updated_at": "2026-09-14T13:33:57.082Z",
+        "crashed_at": "2026-09-14T13:33:57.082Z"
+      },
+      "llg7IfGTBPWz-zt-AACN": {
+        "playerId": "llg7IfGTBPWz-zt-AACN",
+        "playerName": "ivan perez",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 88,
+        "distance": 3484,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 8821,
+        "updated_at": "2026-09-14T13:34:00.301Z",
+        "crashed_at": "2026-09-14T13:34:00.301Z"
+      },
+      "vMg9RsMMHLVKCiyiAACe": {
+        "playerId": "vMg9RsMMHLVKCiyiAACe",
+        "playerName": "nataly serrano",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 702,
+        "distance": 28047,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 46518,
+        "updated_at": "2026-09-14T13:34:42.003Z",
+        "crashed_at": "2026-09-14T13:34:42.003Z"
+      },
+      "CrjWWIaJG4tLoVaGAACg": {
+        "playerId": "CrjWWIaJG4tLoVaGAACg",
+        "playerName": "checa",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 702,
+        "distance": 28063,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 48232,
+        "updated_at": "2026-09-14T13:34:43.813Z",
+        "crashed_at": "2026-09-14T13:34:43.813Z"
+      },
+      "wUvywYL98gKc3RqKAACI": {
+        "playerId": "wUvywYL98gKc3RqKAACI",
+        "playerName": "hele",
+        "color": "#FBC02D",
+        "avatar": "🦖",
+        "score": 702,
+        "distance": 28065,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 46939,
+        "updated_at": "2026-09-14T13:34:42.424Z",
+        "crashed_at": "2026-09-14T13:34:42.423Z"
+      },
+      "loockGkukY-oj2fmAACk": {
+        "playerId": "loockGkukY-oj2fmAACk",
+        "playerName": "maria celeste",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 702,
+        "distance": 28045,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 46521,
+        "updated_at": "2026-09-14T13:34:42.028Z",
+        "crashed_at": "2026-09-14T13:34:42.028Z"
+      },
+      "JxzbcMVBPtAiQpPBAACm": {
+        "playerId": "JxzbcMVBPtAiQpPBAACm",
+        "playerName": "mariana",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 84,
+        "distance": 3326,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 8286,
+        "updated_at": "2026-09-14T13:32:41.722Z",
+        "crashed_at": "2026-09-14T13:32:41.722Z"
+      },
+      "yqjDL0E45SyjECbDAACE": {
+        "playerId": "yqjDL0E45SyjECbDAACE",
+        "playerName": "pau",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 80,
+        "distance": 3188,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 8367,
+        "updated_at": "2026-09-14T13:33:59.847Z",
+        "crashed_at": "2026-09-14T13:33:59.847Z"
+      },
+      "CU_xZy_xQ2DV7ThrAACq": {
+        "score": 44,
+        "distance": 1730,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 4577,
+        "updated_at": "2026-09-14T13:33:56.057Z",
+        "crashed_at": "2026-09-14T13:33:56.057Z"
+      },
+      "nmL8JiFmtx3cAZ3XAAC8": {
+        "playerId": "nmL8JiFmtx3cAZ3XAAC8",
+        "playerName": "salome ospina",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:30.489Z"
+      },
+      "1X7vNBNJGBoH1EzdAADM": {
+        "playerId": "1X7vNBNJGBoH1EzdAADM",
+        "playerName": "ivan perez",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:31.025Z"
+      },
+      "OBM-M_Bk7BLhSF3BAADA": {
+        "playerId": "OBM-M_Bk7BLhSF3BAADA",
+        "playerName": "nataly serrano",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:34.551Z"
+      },
+      "tx7aCxGy0APJYIuaAADJ": {
+        "playerId": "tx7aCxGy0APJYIuaAADJ",
+        "playerName": "hele",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:34.735Z"
+      },
+      "fkyILMpmMV_mR6QYAADE": {
+        "playerId": "fkyILMpmMV_mR6QYAADE",
+        "playerName": "mariana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:36.140Z"
+      },
+      "7rJuE0iTeVsrzXI1AAC1": {
+        "playerId": "7rJuE0iTeVsrzXI1AAC1",
+        "playerName": "maria celeste",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:36.846Z"
+      },
+      "vZxx3mQFduFf2H2rAADK": {
+        "playerId": "vZxx3mQFduFf2H2rAADK",
+        "playerName": "checa",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:35:39.078Z"
+      },
+      "8_HJCotQMq9bnKHwAADZ": {
+        "playerId": "8_HJCotQMq9bnKHwAADZ",
+        "playerName": "nataly serrano",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 126,
+        "distance": 5019,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 41153,
+        "updated_at": "2026-09-14T13:36:55.028Z",
+        "crashed_at": "2026-09-14T13:36:55.028Z"
+      },
+      "lAeF4Ij5Tf0BimsjAADi": {
+        "playerId": "lAeF4Ij5Tf0BimsjAADi",
+        "playerName": "maria celeste",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 156,
+        "distance": 6233,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 43624,
+        "updated_at": "2026-09-14T13:36:57.499Z",
+        "crashed_at": "2026-09-14T13:36:57.499Z"
+      },
+      "mXcSQXOblv67HwHLAAD0": {
+        "playerId": "mXcSQXOblv67HwHLAAD0",
+        "playerName": "ivan perez",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 180,
+        "distance": 7162,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 47218,
+        "updated_at": "2026-09-14T13:37:01.093Z",
+        "crashed_at": "2026-09-14T13:37:01.093Z"
+      },
+      "p2HA4ehMN3sNOcOkAADd": {
+        "playerId": "p2HA4ehMN3sNOcOkAADd",
+        "playerName": "mariana",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 95,
+        "distance": 3777,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 32001,
+        "updated_at": "2026-09-14T13:36:45.876Z",
+        "crashed_at": "2026-09-14T13:36:45.876Z"
+      },
+      "0ckj6tqvZmOw-L5PAADx": {
+        "playerId": "0ckj6tqvZmOw-L5PAADx",
+        "playerName": "salome ospina",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 242,
+        "distance": 9666,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 46479,
+        "updated_at": "2026-09-14T13:37:00.354Z",
+        "crashed_at": "2026-09-14T13:37:00.354Z"
+      },
+      "ApYJb-RbYHBfFs3xAADm": {
+        "playerId": "ApYJb-RbYHBfFs3xAADm",
+        "playerName": "hele",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 172,
+        "distance": 6842,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 44993,
+        "updated_at": "2026-09-14T13:36:58.868Z",
+        "crashed_at": "2026-09-14T13:36:58.868Z"
+      },
+      "xoxCTz0ZAOFoy5cgAADl": {
+        "playerId": "xoxCTz0ZAOFoy5cgAADl",
+        "playerName": "checa",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 101,
+        "distance": 4006,
+        "rank": 1,
+        "status": "crashed",
+        "crashed": true,
+        "survival_ms": 33513,
+        "updated_at": "2026-09-14T13:36:47.388Z",
+        "crashed_at": "2026-09-14T13:36:47.388Z"
+      },
+      "0tr8zFeGCLnNpdCsAAEQ": {
+        "playerId": "0tr8zFeGCLnNpdCsAAEQ",
+        "playerName": "checa",
+        "color": "#C2185B",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:38:11.515Z"
+      },
+      "S2lpe4OFONHEwiELAAET": {
+        "playerId": "S2lpe4OFONHEwiELAAET",
+        "playerName": "maria celeste",
+        "color": "#0288D1",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:38:12.419Z"
+      },
+      "KS0x_plPSEcfDHMpAAEL": {
+        "playerId": "KS0x_plPSEcfDHMpAAEL",
+        "playerName": "hele",
+        "color": "#E65100",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:38:54.801Z"
       }
     },
     "9575": {
@@ -7313,6 +9697,21 @@
         "crashed_at": "2026-09-11T14:08:23.987Z"
       }
     },
+    "9667": {
+      "PjTNyTF4rej1isz-AAFr": {
+        "playerId": "PjTNyTF4rej1isz-AAFr",
+        "playerName": "Estudiante1",
+        "color": "#2E7D32",
+        "avatar": "🦖",
+        "score": 0,
+        "distance": 0,
+        "rank": 1,
+        "status": "joined",
+        "crashed": false,
+        "survival_ms": 0,
+        "updated_at": "2026-09-14T13:58:00.101Z"
+      }
+    },
     "9669": {
       "3U4cu4nVAsRJnyFAAAAF": {
         "playerId": "3U4cu4nVAsRJnyFAAAAF",
@@ -7457,6 +9856,3373 @@
     }
   },
   "results": [
+    {
+      "id": "mu1aelkc",
+      "pin": "9498",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-14T13:37:03.660Z",
+      "winner": "ivan perez",
+      "winnerScore": 180,
+      "totalPlayers": 7,
+      "podium": [
+        {
+          "id": "mXcSQXOblv67HwHLAAD0",
+          "name": "ivan perez",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 180,
+          "distance": 7162,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393021093,
+          "survival_ms": 47218,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 381,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "0ckj6tqvZmOw-L5PAADx",
+          "name": "salome ospina",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 242,
+          "distance": 9666,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393020354,
+          "survival_ms": 46479,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 169,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 72,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "ApYJb-RbYHBfFs3xAADm",
+          "name": "hele",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 172,
+          "distance": 6842,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393018868,
+          "survival_ms": 44993,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": -47,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 60,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "mXcSQXOblv67HwHLAAD0",
+          "name": "ivan perez",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 180,
+          "distance": 7162,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393021093,
+          "survival_ms": 47218,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 381,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "0ckj6tqvZmOw-L5PAADx",
+          "name": "salome ospina",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 242,
+          "distance": 9666,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393020354,
+          "survival_ms": 46479,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 169,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 72,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "ApYJb-RbYHBfFs3xAADm",
+          "name": "hele",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 172,
+          "distance": 6842,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393018868,
+          "survival_ms": 44993,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": -47,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 60,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "lAeF4Ij5Tf0BimsjAADi",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 156,
+          "distance": 6233,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393017499,
+          "survival_ms": 43624,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 505,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "8_HJCotQMq9bnKHwAADZ",
+          "name": "nataly serrano",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 126,
+          "distance": 5019,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393015028,
+          "survival_ms": 41153,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 318,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "g-QXD71Mvr-F7XFNAAD6",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 101,
+          "distance": 4006,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393007388,
+          "survival_ms": 33513,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 30,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "p2HA4ehMN3sNOcOkAADd",
+          "name": "mariana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 95,
+          "distance": 3777,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789393005876,
+          "survival_ms": 32001,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 247,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mu1abnm6",
+      "pin": "9498",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-14T13:34:46.350Z",
+      "winner": "checa",
+      "winnerScore": 702,
+      "totalPlayers": 11,
+      "podium": [
+        {
+          "id": "CrjWWIaJG4tLoVaGAACg",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28063,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392879712,
+          "survival_ms": 48232,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 144,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 541,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 62,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "wUvywYL98gKc3RqKAACI",
+          "name": "hele",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28065,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392878419,
+          "survival_ms": 46939,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 216,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 613,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 35,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "loockGkukY-oj2fmAACk",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28045,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392878001,
+          "survival_ms": 46521,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 264,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "CrjWWIaJG4tLoVaGAACg",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28063,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392879712,
+          "survival_ms": 48232,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 144,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 541,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 62,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "wUvywYL98gKc3RqKAACI",
+          "name": "hele",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28065,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392878419,
+          "survival_ms": 46939,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 216,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 613,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 35,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "loockGkukY-oj2fmAACk",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28045,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392878001,
+          "survival_ms": 46521,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 264,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "vMg9RsMMHLVKCiyiAACe",
+          "name": "nataly serrano",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 702,
+          "distance": 28047,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392877998,
+          "survival_ms": 46518,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 172,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 565,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 6,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "ZS_NLkTRizWgfWJUAACD",
+          "name": "salome ospina",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 377,
+          "distance": 15067,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392863557,
+          "survival_ms": 32077,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 49,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 57,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "llg7IfGTBPWz-zt-AACN",
+          "name": "ivan perez",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 88,
+          "distance": 3484,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392840301,
+          "survival_ms": 8821,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "Mhzwqcd2CcQoeT-lAACs",
+          "name": "pau",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 80,
+          "distance": 3189,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392839847,
+          "survival_ms": 8367,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 86,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 366,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "F4_RKNWwvDCu__r0AACS",
+          "name": "ilsy causado",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1731,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392837082,
+          "survival_ms": 5602,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 499,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "Iy0pS1g3vN3pFg0ZAACj",
+          "name": "El pro Mateo",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1731,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392836292,
+          "survival_ms": 4812,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 499,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "iLDmjKic2eoDsu6UAACZ",
+          "name": "gabrieldavid",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1731,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392836255,
+          "survival_ms": 4775,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 499,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "CU_xZy_xQ2DV7ThrAACq",
+          "name": "mariana",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1730,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392836057,
+          "survival_ms": 4577,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 499,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 11,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mu1aa3up",
+      "pin": "9498",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-14T13:33:34.081Z",
+      "winner": "nataly serrano",
+      "winnerScore": 916,
+      "totalPlayers": 11,
+      "podium": [
+        {
+          "id": "vMg9RsMMHLVKCiyiAACe",
+          "name": "nataly serrano",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 916,
+          "distance": 36628,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392811050,
+          "survival_ms": 57614,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 82,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 455,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "llg7IfGTBPWz-zt-AACN",
+          "name": "ivan perez",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 491,
+          "distance": 19633,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392789132,
+          "survival_ms": 35696,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 89,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "ZS_NLkTRizWgfWJUAACD",
+          "name": "salome ospina",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 292,
+          "distance": 11655,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392779449,
+          "survival_ms": 26013,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 60,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "vMg9RsMMHLVKCiyiAACe",
+          "name": "nataly serrano",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 916,
+          "distance": 36628,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392811050,
+          "survival_ms": 57614,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 82,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 455,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "llg7IfGTBPWz-zt-AACN",
+          "name": "ivan perez",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 491,
+          "distance": 19633,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392789132,
+          "survival_ms": 35696,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 89,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "ZS_NLkTRizWgfWJUAACD",
+          "name": "salome ospina",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 292,
+          "distance": 11655,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392779449,
+          "survival_ms": 26013,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 60,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "wUvywYL98gKc3RqKAACI",
+          "name": "hele",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 278,
+          "distance": 11103,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392776494,
+          "survival_ms": 23058,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 75,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "F4_RKNWwvDCu__r0AACS",
+          "name": "ilsy causado",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 240,
+          "distance": 9597,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392773971,
+          "survival_ms": 20535,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 69,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "CrjWWIaJG4tLoVaGAACg",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 234,
+          "distance": 9329,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392773770,
+          "survival_ms": 20334,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 68,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "loockGkukY-oj2fmAACk",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 206,
+          "distance": 8233,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392772098,
+          "survival_ms": 18662,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 15,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "7jAITk18V_KPybm5AACM",
+          "name": "hannalucia",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 179,
+          "distance": 7130,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392769833,
+          "survival_ms": 16397,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 89,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "CU_xZy_xQ2DV7ThrAACq",
+          "name": "mariana",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 84,
+          "distance": 3326,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392761722,
+          "survival_ms": 8286,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 86,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "iLDmjKic2eoDsu6UAACZ",
+          "name": "gabrieldavid",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 55,
+          "distance": 2185,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392759627,
+          "survival_ms": 6191,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 40,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 601,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 70,
+          "speed": 0,
+          "lives": 1,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "Iy0pS1g3vN3pFg0ZAACj",
+          "name": "El pro Mateo",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1731,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392758083,
+          "survival_ms": 4647,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 83,
+              "y": 105,
+              "width": 34,
+              "height": 35,
+              "size": 2
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 437,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 11,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mu1a7cc4",
+      "pin": "9498",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-14T13:31:25.108Z",
+      "winner": "maria celeste",
+      "winnerScore": 791,
+      "totalPlayers": 17,
+      "podium": [
+        {
+          "id": "9SsactNc5WF1mrsnAAAp",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 791,
+          "distance": 31619,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392678505,
+          "survival_ms": 51233,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 607,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 72,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "Tg7jIZvTFBuZppo1AAA3",
+          "name": "ivan eduardo xd",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 698,
+          "distance": 27894,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392673825,
+          "survival_ms": 46553,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 44,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "HbzOzHrpCgjRfoEQAAAn",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 483,
+          "distance": 19301,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392669282,
+          "survival_ms": 42010,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "9SsactNc5WF1mrsnAAAp",
+          "name": "maria celeste",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 791,
+          "distance": 31619,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392678505,
+          "survival_ms": 51233,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 607,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 72,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "Tg7jIZvTFBuZppo1AAA3",
+          "name": "ivan eduardo xd",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 698,
+          "distance": 27894,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392673825,
+          "survival_ms": 46553,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 44,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "HbzOzHrpCgjRfoEQAAAn",
+          "name": "checa",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 483,
+          "distance": 19301,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392669282,
+          "survival_ms": 42010,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "tc3eo-fq34ss0Zj6AABC",
+          "name": "luci2342",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 442,
+          "distance": 17675,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392668706,
+          "survival_ms": 41434,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 64,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 559,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 52,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "Tus1ZNBaHCTyXhjhAABG",
+          "name": "pau",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 324,
+          "distance": 12921,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392667073,
+          "survival_ms": 39801,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "me1Bgmw2FUfewUatAABW",
+          "name": "salome ospina",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 443,
+          "distance": 17704,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392666749,
+          "survival_ms": 39477,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "ZvrbFrxsOV8HZUhMAABI",
+          "name": "El pro Mateo",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 279,
+          "distance": 11136,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392666603,
+          "survival_ms": 39331,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 96,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "AN4hhB-OmxnsVETYAABS",
+          "name": "gabrieldavid",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 244,
+          "distance": 9745,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392666039,
+          "survival_ms": 38767,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 86,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "1eVucrVu2ibK4xC9AAA5",
+          "name": "Malu1512nina",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 211,
+          "distance": 8407,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392665192,
+          "survival_ms": 37920,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "XwjUT6SJJhyuzALSAABA",
+          "name": "helena con h",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 194,
+          "distance": 7727,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392664318,
+          "survival_ms": 37046,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 36,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 52,
+          "speed": 0,
+          "lives": 1,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "GDWs1dQIfPZfHhNrAAA1",
+          "name": "nataly serrano",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 177,
+          "distance": 7043,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392661997,
+          "survival_ms": 34725,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 42,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 78,
+          "speed": 0,
+          "lives": 1,
+          "rank": 11,
+          "rankChange": "same"
+        },
+        {
+          "id": "JItaPRlYFi718woDAABE",
+          "name": "ilsy causado",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 83,
+          "distance": 3303,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392655046,
+          "survival_ms": 27774,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 12,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 12,
+          "rankChange": "same"
+        },
+        {
+          "id": "UK69xVLTZs3Ns8YIAAA7",
+          "name": "hannalucia",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 52,
+          "distance": 2067,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392649232,
+          "survival_ms": 21960,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 82,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 90,
+          "speed": 0,
+          "lives": 1,
+          "rank": 13,
+          "rankChange": "same"
+        },
+        {
+          "id": "3S0qeSif7HefXaM1AABM",
+          "name": "max412",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1736,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392647469,
+          "survival_ms": 20197,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 85,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 371,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 14,
+          "rankChange": "same"
+        },
+        {
+          "id": "4d69l5t03XntovlYAABO",
+          "name": "ferxxo87667",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1736,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392647420,
+          "survival_ms": 20148,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 85,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 371,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 15,
+          "rankChange": "same"
+        },
+        {
+          "id": "QQEnbBYSaaF0XMZLAABK",
+          "name": "emi",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1736,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392646910,
+          "survival_ms": 19638,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 85,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 371,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 16,
+          "rankChange": "same"
+        },
+        {
+          "id": "tjYxPvSwAFmHgW9wAAAr",
+          "name": "santiagoc123",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1735,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789392646741,
+          "survival_ms": 19469,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 85,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 371,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 17,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mtx5pyh1",
+      "pin": "7965",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-11T16:14:50.821Z",
+      "winner": "luis carrillo",
+      "winnerScore": 49,
+      "totalPlayers": 15,
+      "podium": [
+        {
+          "id": "6EGeglumYUIxji00AACc",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 49,
+          "distance": 1957,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143288240,
+          "survival_ms": 34022,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 117,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 38,
+          "speed": 0,
+          "lives": 3,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "-FaFU5zZjjARhnFeAACV",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 54,
+          "distance": 2125,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287638,
+          "survival_ms": 33420,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": -26,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 607,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 70,
+          "speed": 0,
+          "lives": 3,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "MY3NezblsrHkb6YIAACY",
+          "name": "luciana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 48,
+          "distance": 1903,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287623,
+          "survival_ms": 33405,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 167,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 3,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "6EGeglumYUIxji00AACc",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 49,
+          "distance": 1957,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143288240,
+          "survival_ms": 34022,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 117,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 38,
+          "speed": 0,
+          "lives": 3,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "-FaFU5zZjjARhnFeAACV",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 54,
+          "distance": 2125,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287638,
+          "survival_ms": 33420,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": -26,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 607,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 70,
+          "speed": 0,
+          "lives": 3,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "MY3NezblsrHkb6YIAACY",
+          "name": "luciana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 48,
+          "distance": 1903,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287623,
+          "survival_ms": 33405,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 167,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 3,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "xBHdlwDz5lotyyMhAACK",
+          "name": "jeronimo garz8o",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 50,
+          "distance": 1991,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287592,
+          "survival_ms": 33374,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 89,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 16,
+          "speed": 0,
+          "lives": 3,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "KWA4MCHW_npCUEQlAACL",
+          "name": "maria gabriela",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 48,
+          "distance": 1915,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287220,
+          "survival_ms": 33002,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 155,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 46,
+          "speed": 0,
+          "lives": 3,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "R0XQkAY9NdGFnLauAACI",
+          "name": "lia alaniz",
+          "color": "#FBC02D",
+          "avatar": "🦖",
+          "score": 52,
+          "distance": 2074,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143287054,
+          "survival_ms": 32836,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 17,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 8,
+          "speed": 0,
+          "lives": 3,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "rzRoKjQb7pSgR8MSAACG",
+          "name": "veronicas rojas",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 52,
+          "distance": 2074,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286909,
+          "survival_ms": 32691,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 17,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 22,
+          "speed": 0,
+          "lives": 3,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "NoaX-hsB4uyqWS1nAACD",
+          "name": "elizabeth s",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 54,
+          "distance": 2132,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286873,
+          "survival_ms": 32655,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": -31,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 607,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 3,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "XULAHuoYVj0SFnDAAACE",
+          "name": "morelomaria",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 48,
+          "distance": 1909,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286856,
+          "survival_ms": 32638,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 160,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 3,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "rGQhNp7oQ1cv5S_QAAB_",
+          "name": "salome madrid",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 49,
+          "distance": 1957,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286839,
+          "survival_ms": 32621,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 118,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 47,
+          "speed": 0,
+          "lives": 3,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "kjBmIjmFx8kVeaqzAACF",
+          "name": "jimenez tizzian",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 76,
+          "distance": 3029,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286820,
+          "survival_ms": 32602,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 43,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 389,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 5,
+          "speed": 0,
+          "lives": 3,
+          "rank": 11,
+          "rankChange": "same"
+        },
+        {
+          "id": "TitoQ1ruqpAJbil4AACA",
+          "name": "Ana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 49,
+          "distance": 1955,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286803,
+          "survival_ms": 32585,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 119,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 7,
+          "speed": 0,
+          "lives": 3,
+          "rank": 12,
+          "rankChange": "same"
+        },
+        {
+          "id": "Wn3PoKJNEM67jAtNAACC",
+          "name": "maria campo",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 53,
+          "distance": 2102,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286789,
+          "survival_ms": 32571,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": -7,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 26,
+          "speed": 0,
+          "lives": 3,
+          "rank": 13,
+          "rankChange": "same"
+        },
+        {
+          "id": "gESrA9e33zAZjzmKAACB",
+          "name": "Valeria sophia",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 50,
+          "distance": 1985,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286772,
+          "survival_ms": 32554,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 93,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 24,
+          "speed": 0,
+          "lives": 3,
+          "rank": 14,
+          "rankChange": "same"
+        },
+        {
+          "id": "t4StUhGicTQ_XPl0AACH",
+          "name": "camilo",
+          "color": "#0288D1",
+          "avatar": "🦖",
+          "score": 54,
+          "distance": 2145,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143286751,
+          "survival_ms": 32533,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": -43,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 595,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 3,
+          "rank": 15,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mtx5ls57",
+      "pin": "7965",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-11T16:11:35.995Z",
+      "winner": "mariana ortiz",
+      "winnerScore": 1631,
+      "totalPlayers": 15,
+      "podium": [
+        {
+          "id": "zPT4oyWJePY4QBcZAAA5",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 1631,
+          "distance": 65232,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143092967,
+          "survival_ms": 94909,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 41,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "GHysG0VXICr7amppAAA_",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 1161,
+          "distance": 46432,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143068914,
+          "survival_ms": 70856,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 75,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "Xy__E-8OxC7iaeo-AABr",
+          "name": "jeronimo garz8o",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 365,
+          "distance": 14590,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143027314,
+          "survival_ms": 29256,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 66,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 80,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "zPT4oyWJePY4QBcZAAA5",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 1631,
+          "distance": 65232,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143092967,
+          "survival_ms": 94909,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 41,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "GHysG0VXICr7amppAAA_",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 1161,
+          "distance": 46432,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143068914,
+          "survival_ms": 70856,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 75,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "Xy__E-8OxC7iaeo-AABr",
+          "name": "jeronimo garz8o",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 365,
+          "distance": 14590,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143027314,
+          "survival_ms": 29256,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 66,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 80,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "yqaC8tAXHoCQP_4HAAAz",
+          "name": "morelomaria",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 257,
+          "distance": 10272,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143020349,
+          "survival_ms": 22291,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 76,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "ZfmSwcZcM1yHaXNlAABx",
+          "name": "salome madrid",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 195,
+          "distance": 7800,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143016117,
+          "survival_ms": 18059,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 68,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "g-jbd6aTIlbSYK_UAABp",
+          "name": "luciana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 195,
+          "distance": 7793,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143016102,
+          "survival_ms": 18044,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 69,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "vJfi0LQ2aw95ZrnWAABh",
+          "name": "lia alaniz",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 195,
+          "distance": 7771,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143015977,
+          "survival_ms": 17919,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 69,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "oTF3MCk5cKzlweF9AABn",
+          "name": "maria campo",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 181,
+          "distance": 7215,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143014937,
+          "survival_ms": 16879,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 76,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "uRLEDdUeMKemVnpKAABd",
+          "name": "jimenez tizzian",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 148,
+          "distance": 5891,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143013213,
+          "survival_ms": 15155,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 65,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 387,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "e5dHr8vcrYeBuU5kAABl",
+          "name": "veronicas rojas",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 107,
+          "distance": 4279,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143009228,
+          "survival_ms": 11170,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 408,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "bz96Ag-kMZ442R7KAABZ",
+          "name": "camilo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 107,
+          "distance": 4273,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143009202,
+          "survival_ms": 11144,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 408,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 11,
+          "rankChange": "same"
+        },
+        {
+          "id": "DM3xycbyC3ngEkA3AABv",
+          "name": "maria gabriela",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 107,
+          "distance": 4268,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143009167,
+          "survival_ms": 11109,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 408,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 12,
+          "rankChange": "same"
+        },
+        {
+          "id": "JVJfDQsbNXWOSzS8AABF",
+          "name": "Valeria sophia",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 107,
+          "distance": 4270,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143009082,
+          "survival_ms": 11024,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 85,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 408,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 13,
+          "rankChange": "same"
+        },
+        {
+          "id": "5w9ntugzuOMJ3-SxAABX",
+          "name": "elizabeth s",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 45,
+          "distance": 1778,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143003501,
+          "survival_ms": 5443,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 49,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 347,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 63,
+          "speed": 0,
+          "lives": 1,
+          "rank": 14,
+          "rankChange": "same"
+        },
+        {
+          "id": "N7SYDhDJ3P68yMDVAABb",
+          "name": "ana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1752,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789143003434,
+          "survival_ms": 5376,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 67,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 365,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 15,
+          "rankChange": "same"
+        }
+      ]
+    },
+    {
+      "id": "mtx5ibb9",
+      "pin": "7965",
+      "eventName": "Torneo Dino",
+      "matchName": "Ronda 1",
+      "date": "2026-09-11T16:08:54.213Z",
+      "winner": "mariana ortiz",
+      "winnerScore": 934,
+      "totalPlayers": 14,
+      "podium": [
+        {
+          "id": "zPT4oyWJePY4QBcZAAA5",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 934,
+          "distance": 37360,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142931178,
+          "survival_ms": 58694,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "g-jbd6aTIlbSYK_UAABp",
+          "name": "luciana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 934,
+          "distance": 37330,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142930916,
+          "survival_ms": 58432,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 83,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "GHysG0VXICr7amppAAA_",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 822,
+          "distance": 32874,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142925211,
+          "survival_ms": 52727,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 61,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 25,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        }
+      ],
+      "leaderboard": [
+        {
+          "id": "zPT4oyWJePY4QBcZAAA5",
+          "name": "mariana ortiz",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 934,
+          "distance": 37360,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142931178,
+          "survival_ms": 58694,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 1,
+          "rankChange": "same"
+        },
+        {
+          "id": "g-jbd6aTIlbSYK_UAABp",
+          "name": "luciana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 934,
+          "distance": 37330,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142930916,
+          "survival_ms": 58432,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 83,
+          "speed": 0,
+          "lives": 1,
+          "rank": 2,
+          "rankChange": "same"
+        },
+        {
+          "id": "GHysG0VXICr7amppAAA_",
+          "name": "luis carrillo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 822,
+          "distance": 32874,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142925211,
+          "survival_ms": 52727,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 61,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 25,
+          "speed": 0,
+          "lives": 1,
+          "rank": 3,
+          "rankChange": "same"
+        },
+        {
+          "id": "5w9ntugzuOMJ3-SxAABX",
+          "name": "elizabeth s",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 804,
+          "distance": 32150,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142924268,
+          "survival_ms": 51784,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 87,
+              "y": 50,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 42,
+          "speed": 0,
+          "lives": 1,
+          "rank": 4,
+          "rankChange": "same"
+        },
+        {
+          "id": "DM3xycbyC3ngEkA3AABv",
+          "name": "maria gabriela",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 588,
+          "distance": 23481,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142913177,
+          "survival_ms": 40693,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 74,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 52,
+          "speed": 0,
+          "lives": 1,
+          "rank": 5,
+          "rankChange": "same"
+        },
+        {
+          "id": "e5dHr8vcrYeBuU5kAABl",
+          "name": "veronicas rojas",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 418,
+          "distance": 16687,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142904106,
+          "survival_ms": 31622,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 76,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 6,
+          "rankChange": "same"
+        },
+        {
+          "id": "JVJfDQsbNXWOSzS8AABF",
+          "name": "Valeria sophia",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 417,
+          "distance": 16647,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142904029,
+          "survival_ms": 31545,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 76,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 82,
+          "speed": 0,
+          "lives": 1,
+          "rank": 7,
+          "rankChange": "same"
+        },
+        {
+          "id": "oTF3MCk5cKzlweF9AABn",
+          "name": "maria campo",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 362,
+          "distance": 14450,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142900773,
+          "survival_ms": 28289,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 89,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 8,
+          "rankChange": "same"
+        },
+        {
+          "id": "uRLEDdUeMKemVnpKAABd",
+          "name": "jimenez tizzian",
+          "color": "#7B1FA2",
+          "avatar": "🦖",
+          "score": 261,
+          "distance": 10431,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142896080,
+          "survival_ms": 23596,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 70,
+              "y": 75,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 9,
+          "rankChange": "same"
+        },
+        {
+          "id": "vJfi0LQ2aw95ZrnWAABh",
+          "name": "lia alaniz",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 254,
+          "distance": 10146,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142893938,
+          "survival_ms": 21454,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 85,
+              "y": 90,
+              "width": 75,
+              "height": 50,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 10,
+          "rankChange": "same"
+        },
+        {
+          "id": "yqaC8tAXHoCQP_4HAAAz",
+          "name": "morelomaria",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 186,
+          "distance": 7432,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142889144,
+          "survival_ms": 16660,
+          "obstacles": [
+            {
+              "type": "PTERODACTYL",
+              "x": 93,
+              "y": 100,
+              "width": 46,
+              "height": 40,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 11,
+          "rankChange": "same"
+        },
+        {
+          "id": "Xy__E-8OxC7iaeo-AABr",
+          "name": "jeronimo garz8o",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 112,
+          "distance": 4442,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142883249,
+          "survival_ms": 10765,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 86,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 407,
+              "y": 105,
+              "width": 51,
+              "height": 35,
+              "size": 3
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 12,
+          "rankChange": "same"
+        },
+        {
+          "id": "bz96Ag-kMZ442R7KAABZ",
+          "name": "camilo",
+          "color": "#2E7D32",
+          "avatar": "🦖",
+          "score": 94,
+          "distance": 3730,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142881678,
+          "survival_ms": 9194,
+          "obstacles": [
+            {
+              "type": "CACTUS_LARGE",
+              "x": 44,
+              "y": 90,
+              "width": 50,
+              "height": 50,
+              "size": 2
+            }
+          ],
+          "dinoY": 53,
+          "speed": 0,
+          "lives": 1,
+          "rank": 13,
+          "rankChange": "same"
+        },
+        {
+          "id": "N7SYDhDJ3P68yMDVAABb",
+          "name": "ana",
+          "color": "#C2185B",
+          "avatar": "🦖",
+          "score": 44,
+          "distance": 1739,
+          "action": "crashed",
+          "crashed": true,
+          "crashed_at": 1789142877156,
+          "survival_ms": 4672,
+          "obstacles": [
+            {
+              "type": "CACTUS_SMALL",
+              "x": 77,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_SMALL",
+              "x": 335,
+              "y": 105,
+              "width": 17,
+              "height": 35,
+              "size": 1
+            },
+            {
+              "type": "CACTUS_LARGE",
+              "x": 577,
+              "y": 90,
+              "width": 25,
+              "height": 50,
+              "size": 1
+            }
+          ],
+          "dinoY": 93,
+          "speed": 0,
+          "lives": 1,
+          "rank": 14,
+          "rankChange": "same"
+        }
+      ]
+    },
     {
       "id": "mtx17bs2",
       "pin": "9606",
@@ -25019,5 +30785,5 @@
       ]
     }
   ],
-  "last_updated": "2026-09-11T14:08:24.007Z"
+  "last_updated": "2026-09-14T13:58:00.177Z"
 }

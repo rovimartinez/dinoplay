@@ -735,12 +735,13 @@
         </div>
       `;
     } else {
-      // 2. Renderizar únicamente las tarjetas de los jugadores conectados
+      // 2. Renderizar únicamente las tarjetas de los jugadores conectados/en espera
       currentPlayers.forEach((player) => {
         const card = document.createElement('div');
-        card.className = 'player-pill';
+        const isDisconn = !!player.disconnected;
+        card.className = `player-pill ${isDisconn ? 'player-disconnected' : ''}`;
         if (player.color) {
-          card.style.borderColor = `${player.color}55`;
+          card.style.borderColor = isDisconn ? '#f59e0b' : `${player.color}55`;
         }
         card.innerHTML = `
           <div class="player-avatar" style="background: ${player.color ? player.color + '25' : 'rgba(6, 182, 212, 0.15)'}; border-color: ${player.color || '#06b6d4'};">
@@ -748,7 +749,11 @@
           </div>
           <div class="player-info">
             <div class="player-name">${escapeHtml(player.name.toUpperCase())}</div>
-            <div class="player-role"><span class="live-dot" style="width: 5px; height: 5px; margin-right: 4px;"></span> Conectado</div>
+            <div class="player-role">
+              ${isDisconn
+                ? '<span style="color: #fbbf24;">⚡ Reconectando...</span>'
+                : '<span class="live-dot" style="width: 5px; height: 5px; margin-right: 4px;"></span> Conectado'}
+            </div>
           </div>
           <button class="btn-kick" title="Expulsar" data-id="${player.id}">✕</button>
         `;
