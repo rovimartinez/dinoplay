@@ -494,10 +494,12 @@ io.on('connection', (socket) => {
       p.crashed_at = null;
       p.survival_ms = 0;
       p.prevRank = null;
-      p.lastUpdateAt = 0;
+      p.lastUpdateAt = Date.now();
       p.obstacles = [];
       p.dinoY = 93;
       p.speed = 6;
+      p.disconnected = false; // Resetear bandera de desconexión al iniciar partida
+      p.disconnectedAt = null;
     });
 
     console.log(`[INICIANDO PARTIDA] Sala: ${safePin} | Modo: ${room.gameMode} | Evento: ${room.eventName} | Partida: ${room.matchName} | Semilla: ${raceSeed}`);
@@ -530,6 +532,10 @@ io.on('connection', (socket) => {
         room.started_at = Date.now();
         room.raceConfig.started_at = room.started_at;
         room.countdown = 0;
+        if (room.finishingTimer) {
+          clearTimeout(room.finishingTimer);
+          room.finishingTimer = null;
+        }
 
         // Actualizar inicio en Base de Datos
         Database.saveMatch({
@@ -950,8 +956,9 @@ io.on('connection', (socket) => {
     player.dinoY = clampNumber(dinoY, 0, 160, 93);
     player.speed = isCrashed ? 0 : clampNumber(speed, 0, 20, 6);
 
-    // Si todos los jugadores han chocado en partida activa, autocompletar la partida con retardo dramático de 3 segundos
-    if (room.status === 'playing') {
+    // Si todos los jugadores han chocado en partida activa, autocompletar la partida con retardo de 3 segundos
+    // Salvaguarda: solo si la partida ya lleva al menos 3.5 segundos en curso
+    if (room.status === 'playing' && room.started_at && (now - room.started_at) > 3500) {
       const allPlayers = Object.values(room.players);
       const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
       if (allCrashed && !room.finishingTimer) {
@@ -1059,31 +1066,34 @@ setInterval(() => {
       }
 
       // Si todos los jugadores de la partida chocaron, autocompletar la carrera
-      const allPlayers = Object.values(room.players);
-      const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
-      if (allCrashed && !room.finishingTimer) {
-        room.finishingTimer = setTimeout(() => {
-          room.finishingTimer = null;
-          if (room.status !== 'playing') return;
-          room.status = 'finished';
-          const leaderboard = getLeaderboard(room);
-          const resultSummary = {
-            id: Date.now().toString(36),
-            pin: room.pin,
-            eventName: room.eventName || 'Torneo',
-            matchName: room.matchName || 'Carrera',
-            date: new Date().toISOString(),
-            winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
-            winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
-            totalPlayers: leaderboard.length,
-            podium: leaderboard.slice(0, 3),
-            leaderboard: leaderboard
-          };
-          if (!room.matchHistory) room.matchHistory = [];
-          room.matchHistory.unshift(resultSummary);
-          Database.saveMatchResult(resultSummary);
-          io.to(pin).emit('game:ended', resultSummary);
-        }, 2500);
+      // Salvaguarda: solo si la partida lleva más de 3.5 segundos en curso
+      if (room.started_at && (now - room.started_at) > 3500) {
+        const allPlayers = Object.values(room.players);
+        const allCrashed = allPlayers.length > 0 && allPlayers.every(p => p.crashed);
+        if (allCrashed && !room.finishingTimer) {
+          room.finishingTimer = setTimeout(() => {
+            room.finishingTimer = null;
+            if (room.status !== 'playing') return;
+            room.status = 'finished';
+            const leaderboard = getLeaderboard(room);
+            const resultSummary = {
+              id: Date.now().toString(36),
+              pin: room.pin,
+              eventName: room.eventName || 'Torneo',
+              matchName: room.matchName || 'Carrera',
+              date: new Date().toISOString(),
+              winner: leaderboard[0] ? leaderboard[0].name : 'Nadie',
+              winnerScore: leaderboard[0] ? leaderboard[0].score : 0,
+              totalPlayers: leaderboard.length,
+              podium: leaderboard.slice(0, 3),
+              leaderboard: leaderboard
+            };
+            if (!room.matchHistory) room.matchHistory = [];
+            room.matchHistory.unshift(resultSummary);
+            Database.saveMatchResult(resultSummary);
+            io.to(pin).emit('game:ended', resultSummary);
+          }, 2500);
+        }
       }
     }
 

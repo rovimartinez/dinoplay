@@ -455,6 +455,7 @@
   }
 
   // Cuenta regresiva
+  let countdownFallbackTimer = null;
   socket.on('game:countdown', (data) => {
     stopMiniPractice();
     if (lobbyPracticeViewport) lobbyPracticeViewport.style.display = 'none';
@@ -463,10 +464,23 @@
     lastRaceSeed = data.race_seed;
     currentGameMode = data.gameMode || 'sudden_death';
     currentMaxLives = data.maxLives || (currentGameMode === 'three_lives' ? 3 : 1);
+
+    // Fallback de seguridad: si pasados 3.8s desde el conteo no ha llegado game:start, forzar arranque
+    if (countdownFallbackTimer) clearTimeout(countdownFallbackTimer);
+    countdownFallbackTimer = setTimeout(() => {
+      if (screens.countdown.classList.contains('active')) {
+        console.log('⚡ Iniciando juego por fallback de cuenta regresiva...');
+        startLiveGame(lastRaceSeed);
+      }
+    }, (data.countdown * 1000) + 900);
   });
 
   // Inicio de partida
   socket.on('game:start', (data) => {
+    if (countdownFallbackTimer) {
+      clearTimeout(countdownFallbackTimer);
+      countdownFallbackTimer = null;
+    }
     stopMiniPractice();
     if (data && data.gameMode) currentGameMode = data.gameMode;
     if (data && data.maxLives) currentMaxLives = data.maxLives;
