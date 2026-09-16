@@ -633,6 +633,8 @@
     };
 
     let gameStartTime = Date.now();
+    let lastClientEmitTime = 0;
+    let lastEmittedAction = '';
 
     dinoGame = window.createDinoGame('#dino-game-container', {
       dinoColor: selectedColor,
@@ -663,13 +665,20 @@
 
         const survivalMs = Math.max(0, Date.now() - gameStartTime);
 
-        if (socket && socket.connected) {
+        const now = Date.now();
+        const actionChanged = state.action !== lastEmittedAction;
+        const stateCrashed = (currentGameMode === 'time_attack') ? false : !!state.crashed;
+        const timeToEmit = (now - lastClientEmitTime) >= 50;
+
+        if (socket && socket.connected && (actionChanged || stateCrashed || timeToEmit)) {
+          lastClientEmitTime = now;
+          lastEmittedAction = state.action;
           socket.emit('player:update_state', {
             pin: currentPin,
             score: validScore,
             distance: Number.isFinite(state.distance) ? state.distance : 0,
             action: state.action,
-            crashed: (currentGameMode === 'time_attack') ? false : state.crashed,
+            crashed: stateCrashed,
             lives: (state.lives !== undefined) ? state.lives : (state.crashed ? 0 : currentMaxLives),
             obstacles: state.obstacles || [],
             dinoY: Number.isFinite(state.dinoY) ? state.dinoY : 93,

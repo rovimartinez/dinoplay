@@ -223,6 +223,91 @@
     }
   });
 
+  // Mapeo inteligente de fotos de estudiantes
+  const studentPhotos = [
+    { keys: ['mariana', 'ortiz'], url: '/fotos_estudiantes/3A - ORTIZ CAVIEDES MARIANA.jpg' },
+    { keys: ['luis david', 'carrillo'], url: '/fotos_estudiantes/3A - CARRILLO OROZCO LUIS DAVID.jpg' },
+    { keys: ['luciana', 'santodomingo'], url: '/fotos_estudiantes/3A - SANTODOMINGO BARROS LUCIANA.jpg' },
+    { keys: ['emiliano', 'osorio'], url: '/fotos_estudiantes/3B - OSORIO BERMUDEZ EMILIANO JOSE.jpg' },
+    { keys: ['alejandro', 'cuisman'], url: '/fotos_estudiantes/3B - CUISMAN OSORIO ALEJANDRO DE JESUS.jpg' },
+    { keys: ['matias', 'campo'], url: '/fotos_estudiantes/3B - CAMPO MAZENET MATIAS.jpg' },
+    { keys: ['nataly', 'serrano'], url: '/fotos_estudiantes/4A - SERRANO TAPIAS NATALY SOFIA.jpg' },
+    { keys: ['ivan', 'perez'], url: '/fotos_estudiantes/4A - PEREZ GAMEZ IVAN EDUARDO.jpg' },
+    { keys: ['salome', 'ospina'], url: '/fotos_estudiantes/4A - OSPINA LOBO SALOME.jpg' },
+    { keys: ['victoria', 'posada'], url: '/fotos_estudiantes/5A - POSADA RODRIGUEZ VICTORIA ISABELL.jpg' },
+    { keys: ['maria paula', 'aponte', 'maria p'], url: '/fotos_estudiantes/5A - APONTE CHACUTO MARIA PAULA.jpg' },
+    { keys: ['elena', 'elenita', 'corredor'], url: '/fotos_estudiantes/5A - CORREDOR DIAZ ELENA.jpg' },
+    { keys: ['fiorella', 'becerra'], url: '/fotos_estudiantes/5B - BECERRA QUINTERO FIORELLA.jpg' },
+    { keys: ['valery', 'martinez'], url: '/fotos_estudiantes/5B - MARTINEZ MONTENEGRO VALERY MISHELL.jpg' },
+    { keys: ['yhirliz', 'yepes'], url: '/fotos_estudiantes/5B - YEPES VILLERO YHIRLIZ SOFIA.jpg' },
+    { keys: ['mariangel', 'arenillas'], url: '/fotos_estudiantes/6A - ARENILLAS CAMARGO MARIANGEL.jpg' },
+    { keys: ['samanta', 'sami', 'linero'], url: '/fotos_estudiantes/6A - LINERO SALCEDO SAMANTA.jpg' },
+    { keys: ['maria jose', 'bermudez', 'maria uni'], url: '/fotos_estudiantes/6A - BERMUDEZ GOMEZ MARIA JOSE.jpg' },
+    { keys: ['dania', 'marin'], url: '/fotos_estudiantes/7A - MARIN YANET DANIA MICHELLE.jpg' },
+    { keys: ['gabriela', 'salcedo'], url: '/fotos_estudiantes/7A - SALCEDO ACEVEDO GABRIELA.jpg' },
+    { keys: ['juanita', 'ariza'], url: '/fotos_estudiantes/7A - ARIZA LESMES JUANITA KALAME.jpg' },
+    { keys: ['antonella', 'antoneli', 'ramos'], url: '/fotos_estudiantes/8A - RAMOS CASTRO ANTONELLA DE JESUS.jpg' },
+    { keys: ['alison', 'de la rosa'], url: '/fotos_estudiantes/8A - DE LA ROSA SANCHEZ ALISON SOPHIA.jpg' },
+    { keys: ['sofia', 'rodriguez'], url: '/fotos_estudiantes/8A - RODRIGUEZ MACIAS SOFIA ALEJANDRA.jpg' }
+  ];
+
+  function getStudentPhoto(name) {
+    if (!name || typeof name !== 'string') return null;
+    const clean = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    for (const item of studentPhotos) {
+      for (const key of item.keys) {
+        if (clean.includes(key) || key.includes(clean)) {
+          return item.url;
+        }
+      }
+    }
+    return null;
+  }
+
+  // Manejo de Columnas para Espectador
+  let specSelectedCols = localStorage.getItem('dino_spec_cols') || 'auto';
+
+  function getOptimalSpecColumns(count) {
+    if (count <= 1) return 1;
+    if (count <= 4) return 2;
+    if (count <= 9) return 3;
+    if (count <= 16) return 4;
+    return 5;
+  }
+
+  function setSpecColumns(cols) {
+    specSelectedCols = String(cols || 'auto').toLowerCase();
+    localStorage.setItem('dino_spec_cols', specSelectedCols);
+
+    document.querySelectorAll('.btn-spec-col').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.cols === specSelectedCols);
+    });
+
+    updateSpecGridClass();
+  }
+
+  function updateSpecGridClass() {
+    if (!specLeaderboardList) return;
+    const count = specLeaderboardList.children.length;
+    if (specSelectedCols && specSelectedCols !== 'auto') {
+      const cols = parseInt(specSelectedCols, 10) || 2;
+      specLeaderboardList.style.setProperty('--spec-cols', cols);
+      specLeaderboardList.className = `spec-leaderboard-list custom-cols-${cols}`;
+    } else {
+      const cols = getOptimalSpecColumns(count);
+      specLeaderboardList.style.setProperty('--spec-cols', cols);
+      specLeaderboardList.className = `spec-leaderboard-list cols-${cols}`;
+    }
+  }
+
+  document.querySelectorAll('.btn-spec-col').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setSpecColumns(btn.dataset.cols);
+    });
+  });
+
+  setSpecColumns(specSelectedCols);
+
   socket.on('leaderboard:sync', (data) => {
     specActiveNum.textContent = data.activeCount || 0;
     specCrashedNum.textContent = data.crashedCount || 0;
@@ -233,37 +318,54 @@
 
     leaderboard.forEach((player) => {
       const card = document.createElement('div');
-      card.className = 'spec-card';
-      card.style.setProperty('--p-color', player.color);
+      const isCrashed = !!player.crashed;
+      card.className = `spec-card ${isCrashed ? 'crashed-card' : ''}`;
+      card.style.setProperty('--p-color', player.color || '#00ff66');
 
       let medal = `#${player.rank}`;
-      if (player.rank === 1) medal = '🥇';
-      else if (player.rank === 2) medal = '🥈';
-      else if (player.rank === 3) medal = '🥉';
+      if (player.rank === 1) medal = '🥇 1º';
+      else if (player.rank === 2) medal = '🥈 2º';
+      else if (player.rank === 3) medal = '🥉 3º';
 
-      let actLabel = '🏃 Corriendo';
-      let actClass = 'running';
-      if (player.action === 'jumping') { actLabel = '🦘 Saltando'; actClass = 'jumping'; }
-      else if (player.action === 'ducking') { actLabel = '🦆 Agachado'; actClass = 'ducking'; }
-      if (player.crashed) { actLabel = '💥 Chocado'; actClass = 'crashed'; }
+      const photoUrl = getStudentPhoto(player.name);
 
       card.innerHTML = `
         <div class="spec-card-left">
-          <div class="spec-card-rank">${medal}</div>
-          <div class="spec-card-avatar" style="display:flex;align-items:center;justify-content:center;background:${player.color ? player.color + '22' : 'transparent'};border-radius:50%;padding:4px;border:1px solid ${player.color || '#00ff66'};">${getDinoSvg(player.color || '#00ff66', 20)}</div>
-          <div>
-            <div class="spec-card-name">${escapeHtml(player.name)}</div>
-            <div class="spec-card-action ${actClass}">${actLabel}</div>
+          <div class="spec-card-rank-badge ${player.rank <= 3 ? 'rank-' + player.rank : ''}">${medal}</div>
+          
+          <div class="spec-photo-frame" style="border-color: ${player.color || '#00ff66'};">
+            ${photoUrl 
+              ? `<img src="${encodeURI(photoUrl)}" class="spec-student-img" alt="${escapeHtml(player.name)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                 <div class="spec-fallback-avatar" style="display: none; background: ${player.color}25;">
+                   ${getDinoSvg(player.color || '#00ff66', 32)}
+                 </div>`
+              : `<div class="spec-fallback-avatar" style="display: flex; background: ${player.color}25;">
+                   ${getDinoSvg(player.color || '#00ff66', 32)}
+                 </div>`
+            }
+            <span class="spec-dino-mini-tag" style="background: ${player.color || '#00ff66'};">${getDinoSvg('#000000', 12)}</span>
+          </div>
+
+          <div class="spec-card-details">
+            <div class="spec-card-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
+            <div class="spec-card-subinfo">
+              ${isCrashed 
+                ? '<span class="spec-status-chip crashed">💥 ELIMINADO</span>' 
+                : '<span class="spec-status-chip running"><span class="spec-live-dot"></span> EN CARRERA</span>'}
+            </div>
           </div>
         </div>
+
         <div class="spec-card-right">
-          <div class="spec-card-score">${String(player.score).padStart(5, '0')}</div>
+          <div class="spec-card-score">${String(player.score).padStart(5, '0')} <span class="spec-pts-tag">pts</span></div>
           <div class="spec-card-dist">${Math.round(player.distance || 0)} px</div>
         </div>
       `;
 
       specLeaderboardList.appendChild(card);
     });
+
+    updateSpecGridClass();
   });
 
   socket.on('game:ended', (data) => {
@@ -287,10 +389,18 @@
         slot.style.display = 'flex';
         nameEl.textContent = p.name;
         scoreEl.textContent = `${p.score} pts`;
-        avatarEl.innerHTML = getDinoSvg(p.color || '#00ff66', 36);
+
+        const pPhoto = getStudentPhoto(p.name);
+        if (pPhoto) {
+          avatarEl.innerHTML = `
+            <img src="${encodeURI(pPhoto)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='${getDinoSvg(p.color || '#00ff66', 36)}';">
+          `;
+        } else {
+          avatarEl.innerHTML = getDinoSvg(p.color || '#00ff66', 36);
+        }
         avatarEl.style.background = `${p.color}22`;
         avatarEl.style.border = `2px solid ${p.color}`;
-        avatarEl.style.boxShadow = `0 0 16px ${p.color}`;
+        avatarEl.style.boxShadow = `0 0 18px ${p.color}`;
       } else {
         slot.style.display = 'none';
       }
@@ -300,11 +410,15 @@
     leaderboard.forEach((player) => {
       const row = document.createElement('tr');
       const survivalSec = player.survival_ms ? (player.survival_ms / 1000).toFixed(1) + 's' : '-';
+      const rPhoto = getStudentPhoto(player.name);
       row.innerHTML = `
         <td><strong>#${player.rank}</strong></td>
         <td>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${player.color};"></span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            ${rPhoto 
+              ? `<img src="${encodeURI(rPhoto)}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid ${player.color};" alt="${escapeHtml(player.name)}" onerror="this.style.display='none';">`
+              : `<span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${player.color};"></span>`
+            }
             <strong>${escapeHtml(player.name)}</strong>
           </div>
         </td>

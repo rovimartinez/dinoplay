@@ -260,33 +260,35 @@ function getLeaderboard(room) {
 
       return (a.joinedAt || 0) - (b.joinedAt || 0);
     });
-  } else {
-    // Reglas clásicas para Muerte Súbita y 3 Vidas:
-    // 1. Jugador VIVO (!crashed) SIEMPRE antes que jugador ELIMINADO (crashed)
-    // 2. Entre jugadores VIVOS: Mayor puntaje, luego mayor distancia
-    // 3. Entre jugadores ELIMINADOS: Quien sobrevivió más tiempo (crashed_at o survival_ms más alto), luego mayor puntaje
-    // 4. Orden de ingreso (joinedAt)
+    // Reglas para Muerte Súbita y 3 Vidas:
+    // 1. Jugadores con puntaje > 0 siempre van antes que jugadores inactivos con 0 puntos.
+    // 2. Jugadores sobrevivientes que jugaron van primero (ordenados por puntaje/distancia).
+    // 3. Jugadores chocados se ordenan por puntaje, distancia y tiempo de supervivencia.
+    // 4. Jugadores inactivos/desconectados con 0 puntos van al fondo.
     playersList.sort((a, b) => {
-      if (a.crashed !== b.crashed) {
-        return a.crashed ? 1 : -1;
+      const aScore = a.score || 0;
+      const bScore = b.score || 0;
+      const aDist = a.distance || 0;
+      const bDist = b.distance || 0;
+      const aPlayed = aScore > 0 || aDist > 0;
+      const bPlayed = bScore > 0 || bDist > 0;
+
+      // Quien haya jugado siempre va antes que quien tenga 0 pts
+      if (aPlayed !== bPlayed) {
+        return aPlayed ? -1 : 1;
       }
 
-      if (!a.crashed && !b.crashed) {
-        if (b.score !== a.score) return b.score - a.score;
-        if (b.distance !== a.distance) return b.distance - a.distance;
-        return (a.joinedAt || 0) - (b.joinedAt || 0);
-      }
+      // Si uno está vivo y el otro chocado (y ambos jugaron):
+      if (!a.crashed && b.crashed) return -1;
+      if (a.crashed && !b.crashed) return 1;
 
-      const aCrashTime = a.crashed_at || 0;
-      const bCrashTime = b.crashed_at || 0;
-      if (bCrashTime !== aCrashTime) return bCrashTime - aCrashTime;
+      // Si ambos tienen el mismo estado (ambos vivos o ambos chocados):
+      if (bScore !== aScore) return bScore - aScore;
+      if (bDist !== aDist) return bDist - aDist;
 
-      const aSurvival = a.survival_ms || 0;
-      const bSurvival = b.survival_ms || 0;
+      const aSurvival = a.survival_ms || (a.crashed_at && room.started_at ? Math.max(0, a.crashed_at - room.started_at) : 0);
+      const bSurvival = b.survival_ms || (b.crashed_at && room.started_at ? Math.max(0, b.crashed_at - room.started_at) : 0);
       if (bSurvival !== aSurvival) return bSurvival - aSurvival;
-
-      if (b.score !== a.score) return b.score - a.score;
-      if (b.distance !== a.distance) return b.distance - a.distance;
 
       return (a.joinedAt || 0) - (b.joinedAt || 0);
     });
@@ -620,6 +622,28 @@ io.on('connection', (socket) => {
           status: 'playing'
         });
 
+        // Sincronización en vivo a alta frecuencia (100ms) para Admin y Espectador
+        if (room.syncInterval) {
+          clearInterval(room.syncInterval);
+          room.syncInterval = null;
+        }
+
+        room.syncInterval = setInterval(() => {
+          if (room.status !== 'playing') {
+            clearInterval(room.syncInterval);
+            room.syncInterval = null;
+            return;
+          }
+          const liveLeaderboard = getLeaderboard(room);
+          io.to(safePin).emit('leaderboard:sync', {
+            leaderboard: liveLeaderboard,
+            totalPlayers: liveLeaderboard.length,
+            activeCount: liveLeaderboard.filter(p => !p.crashed).length,
+            crashedCount: liveLeaderboard.filter(p => p.crashed).length,
+            status: room.status
+          });
+        }, 100);
+
         io.to(safePin).emit('game:start', {
           race_seed: raceSeed,
           speed: 6,
@@ -638,6 +662,19 @@ io.on('connection', (socket) => {
   socket.on('admin:end_game', ({ pin }) => {
     const room = rooms.get(cleanRoomPin(pin));
     if (!room || room.hostId !== socket.id) return;
+
+    if (room.syncInterval) {
+      clearInterval(room.syncInterval);
+      room.syncInterval = null;
+    }
+    if (room.gameTimerInterval) {
+      clearInterval(room.gameTimerInterval);
+      room.gameTimerInterval = null;
+    }
+    if (room.finishingTimer) {
+      clearTimeout(room.finishingTimer);
+      room.finishingTimer = null;
+    }
 
     room.status = 'finished';
     const leaderboard = getLeaderboard(room);
@@ -667,6 +704,19 @@ io.on('connection', (socket) => {
   socket.on('admin:reset_to_lobby', ({ pin }) => {
     const room = rooms.get(cleanRoomPin(pin));
     if (!room || room.hostId !== socket.id) return;
+
+    if (room.syncInterval) {
+      clearInterval(room.syncInterval);
+      room.syncInterval = null;
+    }
+    if (room.gameTimerInterval) {
+      clearInterval(room.gameTimerInterval);
+      room.gameTimerInterval = null;
+    }
+    if (room.finishingTimer) {
+      clearTimeout(room.finishingTimer);
+      room.finishingTimer = null;
+    }
 
     room.status = 'lobby';
     room.race_seed = null;
@@ -1065,6 +1115,10 @@ function finishMatchAutomatically(safePin) {
   const room = rooms.get(safePin);
   if (!room || room.status !== 'playing') return;
 
+  if (room.syncInterval) {
+    clearInterval(room.syncInterval);
+    room.syncInterval = null;
+  }
   if (room.gameTimerInterval) {
     clearInterval(room.gameTimerInterval);
     room.gameTimerInterval = null;

@@ -1773,7 +1773,100 @@ body {
   box-shadow: 0 0 15px var(--danger-glow);
 }
 
-/* CUADRÍCULA DE JUGADORES (CSS GRID INTELIGENTE) */
+.game-control-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* SELECTOR DE COLUMNAS EN BARRA EN VIVO */
+.grid-columns-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.grid-cols-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.grid-cols-pill-group {
+  display: flex;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px;
+  border-radius: 8px;
+}
+
+.btn-grid-col {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-grid-col:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-grid-col.active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.3), rgba(0, 255, 102, 0.25));
+  border-color: #00e5ff;
+  color: #00ff66;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+/* GRUPO DE BOTONES EN EL LOBBY CARD */
+.cols-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.cols-toggle-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  padding: 6px 2px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.cols-toggle-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cols-toggle-btn.active {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: #00e5ff;
+  color: #00ff66;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+}
+
+/* CUADRÍCULA DE JUGADORES (CSS GRID INTELIGENTE Y CONFIGURABLE) */
 .multiscreen-container {
   flex: 1;
   display: flex;
@@ -1789,44 +1882,51 @@ body {
   align-content: start;
 }
 
-/* REGLAS RESPONSIVAS Y BALANCEADAS SEGÚN CANTIDAD DE JUGADORES */
-.players-grid.count-1 {
+/* CLASES DE COLUMNAS FORZADAS / SELECCIONADAS POR EL USUARIO */
+.players-grid.custom-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.players-grid.custom-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.players-grid.custom-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+.players-grid.custom-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+.players-grid.custom-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+
+/* REGLAS RESPONSIVAS CUANDO ESTÁ EN MODO AUTO */
+.players-grid:not([class*="custom-cols-"]).count-1 {
   grid-template-columns: minmax(320px, 600px);
   justify-content: center;
 }
 
-.players-grid.count-2 {
+.players-grid:not([class*="custom-cols-"]).count-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.players-grid.count-3 {
+.players-grid:not([class*="custom-cols-"]).count-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.players-grid.count-4 {
+.players-grid:not([class*="custom-cols-"]).count-4 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (max-width: 1300px) {
-  .players-grid {
+  .players-grid:not([class*="custom-cols-"]) {
     grid-template-columns: repeat(min(var(--grid-cols, 4), 4), minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1000px) {
-  .players-grid {
+  .players-grid:not([class*="custom-cols-"]) {
     grid-template-columns: repeat(min(var(--grid-cols, 3), 3), minmax(0, 1fr));
   }
 }
 
 @media (max-width: 700px) {
-  .players-grid {
+  .players-grid:not([class*="custom-cols-"]) {
     grid-template-columns: repeat(min(var(--grid-cols, 2), 2), minmax(0, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .players-grid {
+  .players-grid:not([class*="custom-cols-"]) {
     grid-template-columns: 1fr;
   }
 }
@@ -1883,75 +1983,67 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 8px;
+  min-height: 30px;
+}
+
+.card-player-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.card-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-player-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.card-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .player-rank-badge {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 3px 8px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   color: #cbd5e1;
+  flex-shrink: 0;
 }
 
 .rank-1 .player-rank-badge { background: #ffd700; color: #000000; }
 .rank-2 .player-rank-badge { background: #e2e8f0; color: #000000; }
 .rank-3 .player-rank-badge { background: #cd7f32; color: #ffffff; }
 
-.player-action-tag {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-}
-
-.player-action-tag.running { color: #4ade80; background: rgba(74, 222, 128, 0.15); }
-.player-action-tag.jumping { color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
-.player-action-tag.ducking { color: #fbbf24; background: rgba(251, 191, 36, 0.15); }
-.player-action-tag.crashed { color: #f87171; background: rgba(248, 113, 113, 0.15); }
-
-.card-main-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.card-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--p-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  box-shadow: 0 0 10px var(--p-color);
-  flex-shrink: 0;
-}
-
-.card-details {
-  flex: 1;
-  overflow: hidden;
-}
-
-.card-player-name {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .card-score-box {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 900;
   color: #4ade80;
   font-family: monospace;
+  flex-shrink: 0;
 }
 
 /* ESCENARIO DEL DINO EN TIEMPO REAL (PROPORCIÓN EXACTA 4:1) */

@@ -154,6 +154,19 @@
                   <option value="300">5 Minutos (300s)</option>
                 </select>
               </div>
+
+              <!-- Campo: Distribución de Columnas en Pantalla -->
+              <div class="config-field-group">
+                <span class="config-field-label">📐 ORGANIZACIÓN DE COLUMNAS</span>
+                <div class="cols-toggle-group">
+                  <button type="button" class="cols-toggle-btn active" data-cols="auto">Auto</button>
+                  <button type="button" class="cols-toggle-btn" data-cols="2">2 Col</button>
+                  <button type="button" class="cols-toggle-btn" data-cols="3">3 Col</button>
+                  <button type="button" class="cols-toggle-btn" data-cols="4">4 Col</button>
+                  <button type="button" class="cols-toggle-btn" data-cols="5">5 Col</button>
+                  <button type="button" class="cols-toggle-btn" data-cols="6">6 Col</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -233,6 +246,19 @@
       </div>
 
       <div class="game-control-actions">
+        <!-- SELECTOR RÁPIDO DE COLUMNAS EN VIVO -->
+        <div class="grid-columns-selector" title="Cambiar distribución de columnas en pantalla">
+          <span class="grid-cols-label">🔲 Columnas:</span>
+          <div class="grid-cols-pill-group">
+            <button type="button" class="btn-grid-col active" data-cols="auto" title="Automático">Auto</button>
+            <button type="button" class="btn-grid-col" data-cols="2" title="2 Columnas">2</button>
+            <button type="button" class="btn-grid-col" data-cols="3" title="3 Columnas">3</button>
+            <button type="button" class="btn-grid-col" data-cols="4" title="4 Columnas">4</button>
+            <button type="button" class="btn-grid-col" data-cols="5" title="5 Columnas">5</button>
+            <button type="button" class="btn-grid-col" data-cols="6" title="6 Columnas">6</button>
+          </div>
+        </div>
+
         <button id="btn-end-game" class="btn-danger">
           ⏹️ Finalizar Partida
         </button>
@@ -416,6 +442,21 @@
             <select id="select-game-mode" class="setup-select" style="width: 100%; font-size: 14px; padding: 10px 14px;">
               <option value="sudden_death" selected>💀 Muerte Súbita (1 vida)</option>
               <option value="three_lives">❤️ 3 Vidas (Modo Torneo por Puntos)</option>
+              <option value="time_attack">⏱️ Contrarreloj</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="select-grid-cols-modal" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              📐 Distribución de Columnas
+            </label>
+            <select id="select-grid-cols-modal" class="setup-select" style="width: 100%; font-size: 14px; padding: 10px 14px;">
+              <option value="auto" selected>Automático (según jugadores)</option>
+              <option value="2">2 Columnas</option>
+              <option value="3">3 Columnas</option>
+              <option value="4">4 Columnas</option>
+              <option value="5">5 Columnas</option>
+              <option value="6">6 Columnas</option>
             </select>
           </div>
 

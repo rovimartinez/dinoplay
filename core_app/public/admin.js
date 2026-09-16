@@ -770,6 +770,10 @@
         lobbyRosterTitle.textContent = `👥 Participantes Conectados (${currentPlayers.length} / ${maxPlayers > 0 ? maxPlayers : '∞'})`;
       }
 
+      if (selectGridColsModal) {
+        setGridColumns(selectGridColsModal.value);
+      }
+
       if (socket && currentPin) {
         socket.emit('admin:update_config', {
           pin: currentPin,
@@ -1084,6 +1088,10 @@
     }
   });
 
+  // Control y Persistencia de Distribución de Columnas (2, 3, 4, 5, 6 o Auto)
+  let userSelectedCols = localStorage.getItem('dino_grid_columns') || 'auto';
+  const selectGridColsModal = document.getElementById('select-grid-cols-modal');
+
   function getOptimalGridColumns(count) {
     if (count <= 1) return 1;
     if (count === 2) return 2;
@@ -1096,14 +1104,64 @@
     if (count <= 15) return 5; // 13-15 -> 3 filas de 5
     if (count <= 18) return 6; // 16-18 -> 3 filas de 6
     if (count <= 24) return 6; // 4 filas de 6
-    return 7;
+    return 6;
+  }
+
+  function setGridColumns(cols) {
+    userSelectedCols = String(cols || 'auto').toLowerCase();
+    localStorage.setItem('dino_grid_columns', userSelectedCols);
+
+    // Sincronizar botones en barra en vivo y en lobby
+    document.querySelectorAll('.btn-grid-col').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.cols === userSelectedCols);
+    });
+
+    document.querySelectorAll('.cols-toggle-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.cols === userSelectedCols);
+    });
+
+    if (selectGridColsModal) {
+      selectGridColsModal.value = userSelectedCols;
+    }
+
+    updateGridClass(currentPlayers ? currentPlayers.length : 0);
   }
 
   function updateGridClass(count) {
-    const cols = getOptimalGridColumns(count);
-    playersMonitoringGrid.style.setProperty('--grid-cols', cols);
-    playersMonitoringGrid.className = `players-grid count-${count} cols-${cols}`;
+    if (!playersMonitoringGrid) return;
+    if (userSelectedCols && userSelectedCols !== 'auto') {
+      const cols = parseInt(userSelectedCols, 10) || 4;
+      playersMonitoringGrid.style.setProperty('--grid-cols', cols);
+      playersMonitoringGrid.className = `players-grid count-${count} cols-${cols} custom-cols-${cols}`;
+    } else {
+      const cols = getOptimalGridColumns(count);
+      playersMonitoringGrid.style.setProperty('--grid-cols', cols);
+      playersMonitoringGrid.className = `players-grid count-${count} cols-${cols}`;
+    }
   }
+
+  // Event Listeners para botones de columnas en vivo
+  document.querySelectorAll('.btn-grid-col').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setGridColumns(btn.dataset.cols);
+    });
+  });
+
+  // Event Listeners para botones de columnas en la tarjeta del lobby
+  document.querySelectorAll('.cols-toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setGridColumns(btn.dataset.cols);
+    });
+  });
+
+  if (selectGridColsModal) {
+    selectGridColsModal.addEventListener('change', () => {
+      setGridColumns(selectGridColsModal.value);
+    });
+  }
+
+  // Inicializar estado de columnas guardado
+  setGridColumns(userSelectedCols);
 
   function createPlayerVisualizerCard(player) {
     let existing = document.getElementById(`admin-player-card-${player.id}`);
@@ -1116,15 +1174,14 @@
 
     card.innerHTML = `
       <div class="card-top-row">
-        <div class="card-player-info" style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-          <span class="card-avatar" style="width: 28px; height: 28px; border-radius: 50%; background: ${player.color}25; border: 1px solid ${player.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 8px ${player.color};">${getDinoSvg(player.color || '#00ff66', 18)}</span>
-          <span class="card-player-name" style="font-weight: 800; font-size: 1.05rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(player.name)}</span>
+        <div class="card-player-info">
+          <span class="card-avatar" style="width: 26px; height: 26px; border-radius: 50%; background: ${player.color}25; border: 1.5px solid ${player.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 8px ${player.color};">${getDinoSvg(player.color || '#00ff66', 16)}</span>
+          <span class="card-player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+        <div class="card-meta-info">
           <span class="player-lives-badge" style="display: none;">❤️❤️❤️</span>
           <span class="player-rank-badge">#--</span>
-          <span class="player-action-tag running">🏃 Corriendo</span>
-          <div class="card-score-box" style="font-size: 1.15rem; font-weight: 900; color: #4ade80; font-family: monospace;">
+          <div class="card-score-box">
             00000 <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>
           </div>
         </div>
@@ -1225,22 +1282,11 @@
       else if (player.rank === 2) medalSymbol = '🥈 2º';
       else if (player.rank === 3) medalSymbol = '🥉 3º';
 
-      let actionLabel = '🏃 Corriendo';
-      let actionClass = 'running';
-      if (player.action === 'jumping') { actionLabel = '🦘 Saltando'; actionClass = 'jumping'; }
-      else if (player.action === 'ducking') { actionLabel = '🦆 Agachado'; actionClass = 'ducking'; }
+      const rankBadge = card.querySelector('.player-rank-badge');
+      if (rankBadge) rankBadge.textContent = medalSymbol;
 
-      card.querySelector('.player-rank-badge').textContent = medalSymbol;
-      const actTag = card.querySelector('.player-action-tag');
-      if (player.crashed) {
-        actTag.style.display = 'none';
-      } else {
-        actTag.style.display = 'inline-flex';
-        actTag.textContent = actionLabel;
-        actTag.className = `player-action-tag ${actionClass}`;
-      }
-
-      card.querySelector('.card-score-box').innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>`;
+      const scoreBox = card.querySelector('.card-score-box');
+      if (scoreBox) scoreBox.innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>`;
 
       const elimScore = card.querySelector('.elim-score-val');
       if (elimScore) elimScore.textContent = player.score;
