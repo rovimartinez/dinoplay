@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DinoPlay — El Torneo Multijugador Definitivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #070914;
+      --bg-card: rgba(13, 17, 34, 0.85);
+      --font-pixel: 'Press Start 2P', monospace;
+      --font-body: 'Outfit', sans-serif;
+      
+      /* Colores Neón Retro */
+      --neon-cyan: #00e5ff;
+      --neon-pink: #ff007f;
+      --neon-yellow: #ffe600;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    /* Luces de fondo arcade */
+    .bg-glow-1, .bg-glow-2, .bg-glow-3 {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+
+    .bg-glow-1 {
+      top: -10%;
+      left: 20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #00e5ff 0%, transparent 70%);
+    }
+
+    .bg-glow-2 {
+      bottom: 5%;
+      right: 10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #ff007f 0%, transparent 70%);
+    }
+
+    .bg-glow-3 {
+      top: 45%;
+      left: -10%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, #ffe600 0%, transparent 70%);
+    }
+
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 0, 127, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 10px 20px 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER SUPERIOR CENTRADO */
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 24px;
+      gap: 16px;
+      position: relative;
+    }
+
+    .brand-group-centered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+    }
+
+    .brand-title-hero {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand-icon-side {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 16px rgba(0, 255, 102, 0.7));
+      transition: filter 0.4s ease;
+    }
+
+    .brand-icon-side.dino-offline {
+      filter: drop-shadow(0 0 16px rgba(255, 0, 85, 0.85)) drop-shadow(0 0 25px rgba(255, 0, 85, 0.5));
+    }
+
+    .brand-icon-side.dino-online {
+      filter: drop-shadow(0 0 16px rgba(0, 255, 102, 0.85)) drop-shadow(0 0 25px rgba(0, 255, 102, 0.5));
+    }
+
+    .brand-icon-side.left-dino {
+      animation: dinoBobLeft 2.2s infinite ease-in-out;
+    }
+
+    .brand-icon-side.right-dino {
+      animation: dinoBobRight 2.2s infinite ease-in-out;
+    }
+
+    @keyframes dinoBobLeft {
+      0%, 100% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    @keyframes dinoBobRight {
+      0%, 100% { transform: translateY(0px) rotate(3deg); }
+      50% { transform: translateY(-8px) rotate(-3deg); }
+    }
+
+    .brand-text-giant {
+      font-family: var(--font-pixel);
+      font-size: clamp(1.4rem, 4vw, 2.5rem);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 24px rgba(0, 229, 255, 0.8), 3px 3px 0px #000;
+      letter-spacing: 2px;
+      margin: 0;
+      text-align: center;
+      line-height: 1.25;
+      transition: color 0.4s ease, text-shadow 0.4s ease;
+    }
+
+    .brand-text-giant.title-offline {
+      color: #ff0055 !important;
+      text-shadow: 0 0 24px rgba(255, 0, 85, 0.9), 3px 3px 0px #000 !important;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-family: var(--font-pixel);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .status-online {
+      background: rgba(0, 255, 102, 0.12);
+      border-color: #00ff66;
+      color: #00ff66;
+      box-shadow: 0 0 16px rgba(0, 255, 102, 0.4);
+    }
+
+    .status-offline {
+      background: rgba(255, 0, 85, 0.12);
+      border-color: #ff0055;
+      color: #ff0055;
+      box-shadow: 0 0 16px rgba(255, 0, 85, 0.4);
+    }
+
+    .status-dino-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-online .status-dino-icon svg {
+      filter: drop-shadow(0 0 8px #00ff66);
+    }
+
+    .status-offline .status-dino-icon svg {
+      filter: drop-shadow(0 0 8px #ff0055);
+    }
+
+    /* BOTÓN ANFITRIÓN CENTRADO ABAJO */
+    .bottom-admin-container {
+      margin-top: 64px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-bottom-host {
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      color: #ffffff;
+      background: #ff007f;
+      border: 2px solid #ff4da6;
+      padding: 14px 28px;
+      border-radius: 14px;
+      text-decoration: none;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-bottom-host:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 0 35px rgba(255, 0, 127, 0.95), inset 0 0 14px rgba(255, 255, 255, 0.5);
+      background: #ff1a8c;
+    }
+
+    /* HERO & TÍTULO PRINCIPAL */
+    .hero {
+      padding: 10px 0 30px;
+      text-align: center;
+    }
+
+    .hero-title-pixel {
+      font-family: var(--font-pixel);
+      font-size: clamp(1.2rem, 3.2vw, 2.2rem);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 20px rgba(0, 229, 255, 0.6), 3px 3px 0px #000;
+      letter-spacing: 2px;
+      line-height: 1.4;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .hero-subtitle-pixel {
+      font-family: var(--font-body);
+      font-size: clamp(1rem, 1.6vw, 1.15rem);
+      color: #94a3b8;
+      font-weight: 500;
+      margin-bottom: 40px;
+    }
+
+    /* GRID DE 3 TARJETAS EXACTO AL DISEÑO */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .modes-grid {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      header {
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+
+    .card-mode {
+      background: #090e1f;
+      border-radius: 18px;
+      padding: 26px 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .card-mode:hover {
+      transform: translateY(-6px);
+    }
+
+    /* CARD 1: GLOBAL (CYAN) */
+    .card-cyan {
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.05);
+    }
+    .card-cyan:hover {
+      box-shadow: 0 0 35px rgba(0, 229, 255, 0.45), inset 0 0 20px rgba(0, 229, 255, 0.1);
+    }
+
+    /* CARD 2: LOCAL (YELLOW) */
+    .card-yellow {
+      border: 2px solid var(--neon-yellow);
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.25), inset 0 0 15px rgba(255, 230, 0, 0.05);
+    }
+    .card-yellow:hover {
+      box-shadow: 0 0 35px rgba(255, 230, 0, 0.45), inset 0 0 20px rgba(255, 230, 0, 0.1);
+    }
+
+    /* CARD ESTADO DESHABILITADO CUANDO SERVIDOR ESTÁ OFF */
+    .card-mode.card-disabled {
+      opacity: 0.45;
+      filter: grayscale(0.7);
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      box-shadow: none !important;
+      pointer-events: none;
+      cursor: not-allowed;
+      transform: none !important;
+      transition: all 0.3s ease;
+    }
+
+    .card-mode.card-disabled .card-btn {
+      background: #1e293b !important;
+      color: #64748b !important;
+      box-shadow: none !important;
+      cursor: not-allowed;
+    }
+
+    .card-mode.card-disabled .card-extra-links a {
+      color: #475569 !important;
+      pointer-events: none;
+    }
+
+    /* CARD 3: PRACTICE (PINK) */
+    .card-pink {
+      border: 2px solid var(--neon-pink);
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.25), inset 0 0 15px rgba(255, 0, 127, 0.05);
+    }
+    .card-pink:hover {
+      box-shadow: 0 0 35px rgba(255, 0, 127, 0.45), inset 0 0 20px rgba(255, 0, 127, 0.1);
+    }
+
+    /* HEADER DE CADA TARJETA */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .card-icon-frame {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .card-tag-pill {
+      font-family: var(--font-pixel);
+      font-size: 0.62rem;
+      padding: 6px 12px;
+      border-radius: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .tag-cyan {
+      border: 1.5px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 255, 0.1);
+    }
+
+    .tag-yellow {
+      border: 1.5px solid var(--neon-yellow);
+      color: var(--neon-yellow);
+      background: rgba(255, 230, 0, 0.1);
+    }
+
+    .tag-pink {
+      border: 1.5px solid var(--neon-pink);
+      color: var(--neon-pink);
+      background: rgba(255, 0, 127, 0.1);
+    }
+
+    /* TÍTULOS PIXELADOS DE LAS TARJETAS */
+    .card-title-pixel {
+      font-family: var(--font-pixel);
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    .title-cyan {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+
+    .title-yellow {
+      color: var(--neon-yellow);
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+    }
+
+    .title-pink {
+      color: var(--neon-pink);
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+    }
+
+    .card-desc {
+      color: #94a3b8;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin-bottom: 24px;
+      min-height: 64px;
+    }
+
+    /* BOTONES DE ACCIÓN PIXELADOS */
+    .card-btn {
+      font-family: var(--font-pixel);
+      font-size: 0.78rem;
+      padding: 16px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .btn-cyan {
+      background: var(--neon-cyan);
+      color: #050b18;
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.7);
+      border: none;
+    }
+
+    .btn-cyan:hover {
+      background: #70f3ff;
+      box-shadow: 0 0 28px rgba(0, 229, 255, 0.95);
+      transform: translateY(-3px);
+    }
+
+    .btn-yellow {
+      background: var(--neon-yellow);
+      color: #0f172a;
+      box-shadow: 0 0 18px rgba(255, 230, 0, 0.7);
+      border: none;
+    }
+
+    .btn-yellow:hover {
+      background: #fff066;
+      box-shadow: 0 0 28px rgba(255, 230, 0, 0.95);
+      transform: translateY(-3px);
+    }
+
+    .btn-pink {
+      background: var(--neon-pink);
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(255, 0, 127, 0.7);
+      border: none;
+    }
+
+    .btn-pink:hover {
+      background: #ff3399;
+      box-shadow: 0 0 28px rgba(255, 0, 127, 0.95);
+      transform: translateY(-3px);
+    }
+
+    /* ENLACES SECUNDARIOS DEBAJO DE LAS TARJETAS */
+    .card-extra-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .extra-link {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .extra-link:hover {
+      color: #cbd5e1;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="bg-glow-3"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="container">
+    <header>
+      <div class="brand-group-centered">
+        <div class="brand-title-hero">
+          <span class="brand-icon-side left-dino">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="48" height="48">
+              <path id="left-dino-path" fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+            </svg>
+          </span>
+          <h1 class="brand-text-giant">DINO FEST TECH INSLAMI</h1>
+          <span class="brand-icon-side right-dino">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="48" height="48" style="transform: scaleX(-1);">
+              <path id="right-dino-path" fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero">
+      <!-- 3 TARJETAS DE MODO DE JUEGO -->
+      <div class="modes-grid">
+        
+        <!-- CARD 1: GLOBAL / EN LÍNEA -->
+        <div id="card-online" class="card-mode card-cyan">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-frame">🌐</div>
+              <span class="card-tag-pill tag-cyan">GLOBAL</span>
+            </div>
+
+            <h2 class="card-title-pixel title-cyan">
+              Jugar en Línea
+            </h2>
+          </div>
+
+          <div>
+            <a id="btn-player-online" href="/player.html" class="card-btn btn-cyan">
+              <span>🌎</span>
+              <span>ENTRAR CON PIN</span>
+            </a>
+            <div class="card-extra-links">
+              <a id="btn-spectator-online" href="/spectator.html" class="extra-link" target="_blank">📺 Pantalla Espectador Online</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: AULA / LAN -->
+        <div id="card-lan" class="card-mode card-yellow">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-frame">📶</div>
+              <span class="card-tag-pill tag-yellow">AULA / LAN</span>
+            </div>
+
+            <h2 class="card-title-pixel title-yellow">
+              Jugar en Local
+            </h2>
+          </div>
+
+          <div>
+            <a id="btn-player-local" href="/player.html" class="card-btn btn-yellow">
+              <span>⚡</span>
+              <span>VER IP & UNIRSE</span>
+            </a>
+            <div class="card-extra-links">
+              <a id="btn-spectator-local" href="/spectator.html" class="extra-link" target="_blank">📺 Espectador en Red Local</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3: OFFLINE / PRÁCTICA -->
+        <div id="card-practice" class="card-mode card-pink">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-frame">🕹️</div>
+              <span class="card-tag-pill tag-pink">OFFLINE</span>
+            </div>
+
+            <h2 class="card-title-pixel title-pink">
+              Modo Individual
+            </h2>
+          </div>
+
+          <div>
+            <a id="btn-practice-main" href="/practice.html" class="card-btn btn-pink">
+              <span>⚡</span>
+              <span>JUGAR PRÁCTICA</span>
+            </a>
+            <div class="card-extra-links">
+              <a href="/practice.html" class="extra-link">Entrenamiento Libre</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTÓN ANFITRIÓN CENTRADO ABAJO -->
+      <div class="bottom-admin-container">
+        <a id="btn-admin-top" href="/admin.html" class="btn-bottom-host" target="_blank">
+          <span>👑</span>
+          <span>PANEL ANFITRIÓN</span>
+        </a>
+      </div>
+    </main>
+
+    <script>
+      const leftDinoIcon = document.querySelector('.left-dino');
+      const rightDinoIcon = document.querySelector('.right-dino');
+      const leftDinoPath = document.getElementById('left-dino-path');
+      const rightDinoPath = document.getElementById('right-dino-path');
+
+      // Botones Online
+      const btnPlayerOnline = document.getElementById('btn-player-online');
+      const btnSpectatorOnline = document.getElementById('btn-spectator-online');
+      const btnAdminTop = document.getElementById('btn-admin-top');
+
+      // Botones Local
+      const btnPlayerLocal = document.getElementById('btn-player-local');
+      const btnSpectatorLocal = document.getElementById('btn-spectator-local');
+      const btnPracticeMain = document.getElementById('btn-practice-main');
+
+      let currentActiveUrl = null;
+      let currentWifiUrl = null;
+
+      function isLocalEnvironment() {
+        return ['localhost', '127.0.0.1'].some(h => window.location.origin.includes(h)) ||
+               window.location.origin.includes('192.168.') ||
+               window.location.origin.includes('172.16.') ||
+               window.location.protocol === 'file:';
+      }
+
+      const cardOnline = document.getElementById('card-online');
+      const cardLan = document.getElementById('card-lan');
+      const cardPractice = document.getElementById('card-practice');
+      const btnAdminBottom = document.getElementById('btn-admin-top');
+
+      const mainTitle = document.querySelector('.brand-text-giant');
+
+      function updateDinoStatusVisuals(isOnline) {
+        const color = isOnline ? '#00ff66' : '#ff0055';
+        if (leftDinoPath) {
+          leftDinoPath.setAttribute('fill', color);
+          leftDinoPath.setAttribute('stroke', color);
+        }
+        if (rightDinoPath) {
+          rightDinoPath.setAttribute('fill', color);
+          rightDinoPath.setAttribute('stroke', color);
+        }
+        if (leftDinoIcon) {
+          leftDinoIcon.className = `brand-icon-side left-dino ${isOnline ? 'dino-online' : 'dino-offline'}`;
+          leftDinoIcon.title = isOnline ? 'Servidor Conectado (En Línea)' : 'Servidor Desconectado (Inicia INICIAR_JUEGO.bat)';
+        }
+        if (rightDinoIcon) {
+          rightDinoIcon.className = `brand-icon-side right-dino ${isOnline ? 'dino-online' : 'dino-offline'}`;
+          rightDinoIcon.title = isOnline ? 'Servidor Conectado (En Línea)' : 'Servidor Desconectado (Inicia INICIAR_JUEGO.bat)';
+        }
+        if (mainTitle) {
+          if (isOnline) {
+            mainTitle.classList.remove('title-offline');
+          } else {
+            mainTitle.classList.add('title-offline');
+          }
+        }
+
+        // Habilitar / Inhabilitar todas las tarjetas cuando el servidor esté off
+        if (cardOnline) {
+          if (isOnline) {
+            cardOnline.classList.remove('card-disabled');
+          } else {
+            cardOnline.classList.add('card-disabled');
+          }
+        }
+        if (cardLan) {
+          if (isOnline) {
+            cardLan.classList.remove('card-disabled');
+          } else {
+            cardLan.classList.add('card-disabled');
+          }
+        }
+        if (cardPractice) {
+          if (isOnline) {
+            cardPractice.classList.remove('card-disabled');
+          } else {
+            cardPractice.classList.add('card-disabled');
+          }
+        }
+        if (btnAdminBottom) {
+          if (isOnline) {
+            btnAdminBottom.style.opacity = '1';
+            btnAdminBottom.style.pointerEvents = 'auto';
+          } else {
+            btnAdminBottom.style.opacity = '0.5';
+            btnAdminBottom.style.pointerEvents = 'none';
+          }
+        }
+      }
+
+      async function checkServerStatus() {
+        const isLocal = isLocalEnvironment();
+
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+          const apiUrl = isLocal ? '/api/server-url' : 'https://juegodino.pages.dev/api/server-url';
+
+          const response = await fetch(apiUrl + '?t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json' },
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) throw new Error('API offline');
+          const data = await response.json();
+
+          if (data.ok && data.is_online) {
+            currentActiveUrl = data.active_url ? data.active_url.replace(/\/+$/, '') : window.location.origin;
+            currentWifiUrl = data.wifi_url ? data.wifi_url.replace(/\/+$/, '') : (isLocal ? window.location.origin : null);
+
+            updateDinoStatusVisuals(true);
+
+            // 1. Configurar botones ONLINE
+            const onlineTarget = currentActiveUrl || window.location.origin;
+            btnPlayerOnline.href = `${onlineTarget}/player.html`;
+            if (btnSpectatorOnline) btnSpectatorOnline.href = `${onlineTarget}/spectator.html`;
+            if (btnAdminTop) btnAdminTop.href = isLocal ? '/admin.html' : `${onlineTarget}/admin.html`;
+
+            // 2. Configurar botones LOCAL / WI-FI
+            const localBase = currentWifiUrl || (isLocal ? window.location.origin : 'http://localhost:3000');
+            btnPlayerLocal.href = `${localBase}/player.html`;
+            if (btnSpectatorLocal) btnSpectatorLocal.href = `${localBase}/spectator.html`;
+            return;
+          }
+
+          throw new Error('Server not active');
+        } catch (err) {
+          // Servidor apagado o desconectado -> Inhabilitar modos multijugador
+          updateDinoStatusVisuals(false);
+
+          btnPlayerOnline.href = '#';
+          btnPlayerLocal.href = '#';
+          if (btnAdminTop) btnAdminTop.href = '#';
+        }
+      }
+
+      function handleOnlineClick(e) {
+        if (!isLocalEnvironment() && !currentActiveUrl) {
+          e.preventDefault();
+          alert('⚠️ El servidor ONLINE aún no está iniciado.\n\nPara que los jugadores puedan entrar desde internet, ejecuta "INICIAR_JUEGO.bat" en tu computadora.');
+        }
+      }
+
+      function handleLocalClick(e) {
+        if (!isLocalEnvironment() && !currentWifiUrl) {
+          e.preventDefault();
+          alert('⚠️ Para jugar en Red Local / Wi-Fi:\n\n1. Conéctate a la misma red Wi-Fi de la computadora organizadora.\n2. Asegúrate de que "INICIAR_JUEGO.bat" esté abierto en la PC.');
+        }
+      }
+
+      btnPlayerOnline.addEventListener('click', handleOnlineClick);
+      if (btnSpectatorOnline) btnSpectatorOnline.addEventListener('click', handleOnlineClick);
+      btnPlayerLocal.addEventListener('click', handleLocalClick);
+      if (btnSpectatorLocal) btnSpectatorLocal.addEventListener('click', handleLocalClick);
+
+      checkServerStatus();
+      setInterval(checkServerStatus, 2000);
+    </script>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Tournament - Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- BANNER DE ESTADO DE CONEXIÓN -->
+  <div id="admin-connection-banner" class="admin-connection-banner" style="display: none;">
+    <span class="banner-pulse"></span>
+    <span id="admin-connection-banner-text">⚠️ Sin conexión con el servidor. Ejecuta <code>JUGAR_ONLINE.bat</code> o <code>INICIAR_JUEGO.bat</code>.</span>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- 1. BARRA SUPERIOR INTEGRADA Y LIMPIA -->
+    <header class="top-command-bar">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="24" height="24">
+            <path fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">DINO FEST TECH INSLAMI</div>
+        </div>
+      </div>
+
+      <!-- Elementos de compatibilidad en segundo plano -->
+      <div style="display: none;">
+        <button id="btn-open-config-pill"><span id="summary-pill-text"></span></button>
+        <span id="header-match-badge"><span id="header-event-name"></span><span id="header-match-name"></span></span>
+        <span id="header-pin">----</span>
+        <span id="db-sync-badge"></span>
+        <span id="connection-url-badge"><span id="host-url-text"></span><button id="btn-copy-header-link"></button><button id="btn-show-qr-header"></button></span>
+      </div>
+
+      <div class="top-actions">
+        <button id="btn-open-config" class="btn-action" title="Abrir ventana de ajustes">
+          ⚙️ Ajustes
+        </button>
+        <button id="btn-open-brackets" class="btn-action gold" title="Cuadro de Eliminatorias">
+          🏆 Brackets
+        </button>
+        <button id="btn-open-spectator" class="btn-action" title="Pantalla para espectadores">
+          👁️ Espectador
+        </button>
+        <button id="btn-open-history" class="btn-action" title="Ver partidas anteriores">
+          📜 Historial
+        </button>
+        <button id="btn-sound-toggle" class="btn-action btn-sound-icon" title="Sonido: Activado">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- 1. VISTA: LOBBY DE ESPERA (PROYECTOR) -->
+    <section id="admin-view-lobby" class="admin-view active">
+      <main class="dashboard-layout">
+        
+        <!-- COLUMNA IZQUIERDA: ACCESO & CONTROL -->
+        <div class="control-column">
+          
+          <!-- Card de Estado de Conexión -->
+          <div id="lobby-live-card" class="live-status-card">
+            <span id="lobby-live-dot" class="live-dot-glow"></span>
+            <span id="lobby-live-text" class="live-text-arcade">EN VIVO</span>
+          </div>
+
+          <!-- Tarjeta de Acceso Limpia con CÓDIGO DE SALA -->
+          <div class="access-card access-card-clean">
+            <div class="access-header-centered">
+              <span class="access-title">CÓDIGO DE SALA</span>
+            </div>
+
+            <div class="pin-giant-wrapper">
+              <div id="lobby-big-pin" class="pin-giant-number">----</div>
+            </div>
+
+            <!-- Elementos ocultos para compatibilidad -->
+            <div style="display: none;">
+              <button id="btn-copy-pin"></button>
+              <div class="qr-frame" id="btn-qr-click-zoom"><img id="lobby-qr-img" src="" alt="QR"></div>
+              <span id="lobby-join-url"></span>
+              <button id="btn-copy-lobby-url"></button>
+            </div>
+          </div>
+
+          <!-- 2. NUEVA TARJETA: AJUSTES DE PARTIDA (ENTRE CÓDIGO Y LANZAMIENTO) -->
+          <div class="access-card config-card-inline">
+            <div class="config-card-header">
+              <span class="config-card-title">⚙️ AJUSTES DE LA PARTIDA</span>
+            </div>
+
+            <div class="config-fields-stack">
+              <!-- Campo: Ronda / Fase -->
+              <div class="config-field-group">
+                <label for="quick-match-select" class="config-field-label">⚔️ RONDA / FASE</label>
+                <select id="quick-match-select" class="config-round-select">
+                  <option value="Práctica" selected>🎮 Práctica / Calentamiento</option>
+                  <option value="Duelo 3°A">Duelo 3°A</option>
+                  <option value="Duelo 3°B">Duelo 3°B</option>
+                  <option value="Duelo 4°A">Duelo 4°A</option>
+                  <option value="Duelo 5°A">Duelo 5°A</option>
+                  <option value="Duelo 5°B">Duelo 5°B</option>
+                  <option value="Duelo 6°A">Duelo 6°A</option>
+                  <option value="Duelo 7°A">Duelo 7°A</option>
+                  <option value="Duelo 8°A">Duelo 8°A</option>
+                  <option value="Fase 3 - Junior Tech">Fase 3: Junior Tech (3° - 5°) 🏆</option>
+                  <option value="Fase 3 - Máster Tech">Fase 3: Máster Tech (6° - 8°) 🏆</option>
+                </select>
+              </div>
+
+              <!-- Campo: Modo de Juego Seleccionable con Botones/Píldoras -->
+              <div class="config-field-group">
+                <span class="config-field-label">💀 MODO DE JUEGO</span>
+                <div class="mode-toggle-group mode-toggle-group-3">
+                  <button type="button" class="mode-toggle-btn active" data-mode="sudden_death" id="mode-btn-sudden">
+                    <span class="mode-icon">💀</span>
+                    <span class="mode-text">Muerte Súbita<small>1 vida</small></span>
+                  </button>
+                  <button type="button" class="mode-toggle-btn" data-mode="three_lives" id="mode-btn-lives">
+                    <span class="mode-icon">❤️</span>
+                    <span class="mode-text">3 Vidas<small>Torneo</small></span>
+                  </button>
+                  <button type="button" class="mode-toggle-btn" data-mode="time_attack" id="mode-btn-time">
+                    <span class="mode-icon">⏱️</span>
+                    <span class="mode-text">Contrarreloj<small>Récords</small></span>
+                  </button>
+                </div>
+                <!-- Input oculto para sincronización -->
+                <input type="hidden" id="quick-mode-select" value="sudden_death">
+              </div>
+
+              <!-- Campo: Duración del Temporizador (Visible solo en Contrarreloj) -->
+              <div class="config-field-group" id="group-duration-select" style="display: none;">
+                <label for="quick-duration-select" class="config-field-label">⏱️ DURACIÓN DEL TEMPORIZADOR</label>
+                <select id="quick-duration-select" class="config-round-select">
+                  <option value="60">1 Minuto (60s)</option>
+                  <option value="120" selected>2 Minutos (120s)</option>
+                  <option value="180">3 Minutos (180s)</option>
+                  <option value="300">5 Minutos (300s)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. TARJETA DE CONTROL Y LANZAMIENTO LIMPIA -->
+          <div class="cta-card">
+            <!-- Compatibilidad en segundo plano para contadores JS y texto listo -->
+            <span id="start-hint" style="display: none;"></span>
+            <span id="lobby-count" style="display: none;">0</span>
+            <span id="max-players-label" style="display: none;">/ ∞</span>
+
+            <button id="btn-start-game" class="btn-launch" disabled>
+              ▶ Iniciar Partida
+            </button>
+          </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: SALA DE PARTICIPANTES COMPLETA -->
+        <div class="lobby-column">
+          <div class="lobby-top">
+            <div id="lobby-roster-title" class="lobby-title">
+              👥 Participantes Conectados (0 / 30)
+            </div>
+          </div>
+
+          <div id="lobby-players-grid" class="roster-grid">
+            <!-- Mensaje único de estado vacío cuando no hay nadie conectado -->
+            <div class="lobby-empty-state">
+              <div class="empty-state-icon">
+                <svg class="dino-empty-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="90" height="90">
+                  <path fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+                </svg>
+              </div>
+              <div class="empty-state-title">Esperando participantes</div>
+              <p class="empty-state-subtitle">Los jugadores conectados aparecerán aquí en tiempo real cuando ingresen con el PIN.</p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </section>
+
+  <!-- 2. VISTA: CUENTA REGRESIVA SINCRONIZADA (PROYECTOR) -->
+  <section id="admin-view-countdown" class="admin-view">
+    <div class="countdown-hero glass-panel">
+      <div class="countdown-stage">
+        <div class="countdown-shockwave ring-1"></div>
+        <div class="countdown-shockwave ring-2"></div>
+        <div class="countdown-circle" id="admin-countdown-circle">
+          <span id="admin-countdown-num" class="countdown-giant-number">3</span>
+        </div>
+      </div>
+      <h2 class="countdown-hero-title" id="admin-countdown-title">¡PREPARADOS!</h2>
+      <p class="countdown-hero-desc" id="admin-countdown-desc">La carrera comenzará simultáneamente para todos los jugadores...</p>
+    </div>
+  </section>
+
+  <!-- 3. VISTA: PARTIDA EN VIVO (PANTALLA DIVIDIDA DINÁMICA) -->
+  <section id="admin-view-game" class="admin-view">
+    <div class="game-control-bar glass-panel">
+      <div class="game-stats-summary">
+        <div class="stat-badge live">
+          <span class="dot-live"></span> <strong id="game-status-label">EN VIVO</strong>
+        </div>
+        <div class="stat-item stat-timer-item" id="admin-game-timer-box" style="display: none; background: rgba(0, 229, 255, 0.15); border: 1.5px solid #00e5ff; border-radius: 8px; padding: 4px 10px;">
+          <span>⏱️ Tiempo:</span> <strong id="admin-game-timer-val" style="color: #00e5ff; font-family: monospace; font-size: 1.1rem; font-weight: 900;">00:00</strong>
+        </div>
+        <div class="stat-item">
+          <span>Corriendo:</span> <strong id="stat-active-count" class="text-green">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Chocados:</span> <strong id="stat-crashed-count" class="text-red">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Total:</span> <strong id="stat-total-count">0</strong>
+        </div>
+      </div>
+
+      <div class="game-control-actions">
+        <button id="btn-end-game" class="btn-danger">
+          ⏹️ Finalizar Partida
+        </button>
+      </div>
+    </div>
+
+    <!-- CUADRÍCULA MULTIJUGADOR DINÁMICA (HASTA 30+ JUGADORES) -->
+    <div class="multiscreen-container">
+      <div id="players-monitoring-grid" class="players-grid">
+        <!-- Celdas de jugadores generadas en tiempo real -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. VISTA: PODIO Y RESULTADOS FINALES -->
+  <section id="admin-view-podium" class="admin-view">
+    <div class="podium-container glass-panel">
+      <div class="podium-header-meta">
+        <div id="podium-match-title" class="podium-match-title">Resultados de la Carrera</div>
+        <div id="podium-match-subtitle" class="podium-match-subtitle"></div>
+      </div>
+
+      <h1 class="podium-heading">🏆 GANADORES DE LA CARRERA 🏆</h1>
+      <p class="podium-subheading">¡Felicitaciones a los mejores dinosaurios!</p>
+
+      <!-- ESTRUCTURA DEL PODIO (2º, 1º, 3º) -->
+      <div class="podium-stage">
+        <!-- 2do Lugar -->
+        <div class="podium-pillar rank-2" id="podium-slot-2">
+          <div class="winner-avatar" id="winner-avatar-2" style="display:flex;align-items:center;justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="32" height="32">
+              <path fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+            </svg>
+          </div>
+          <div class="winner-name" id="winner-name-2">--</div>
+          <div class="winner-score" id="winner-score-2">0 pts</div>
+          <div class="step step-2">
+            <span class="medal">🥈</span>
+            <span class="step-num">2</span>
+          </div>
+        </div>
+
+        <!-- 1er Lugar -->
+        <div class="podium-pillar rank-1" id="podium-slot-1">
+          <div class="crown">👑</div>
+          <div class="winner-avatar" id="winner-avatar-1" style="display:flex;align-items:center;justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="36" height="36">
+              <path fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+            </svg>
+          </div>
+          <div class="winner-name" id="winner-name-1">--</div>
+          <div class="winner-score" id="winner-score-1">0 pts</div>
+          <div class="step step-1">
+            <span class="medal">🥇</span>
+            <span class="step-num">1</span>
+          </div>
+        </div>
+
+        <!-- 3er Lugar -->
+        <div class="podium-pillar rank-3" id="podium-slot-3">
+          <div class="winner-avatar" id="winner-avatar-3" style="display:flex;align-items:center;justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 462 462" width="32" height="32">
+              <path fill="#00ff66" stroke="#00ff66" stroke-width="0" d="M 250 20 L 404 20 L 404 39 L 422.5 39 L 423 39.5 L 423 129 L 327.5 129 L 327 129.5 L 327 148 L 384.5 148 L 385 148.5 L 385 167 L 308 167 L 308 205 L 346 205 L 346 244 L 327 244 L 327 225 L 308 225 L 308 295 L 289 295 L 289 327 L 269 327 L 269 346 L 250.5 346 L 250 346.5 L 250 423 L 269 423 L 269 442 L 225 442 L 225 385 L 205 385 L 205 365 L 186 365 L 186 385 L 167 385 L 167 404 L 148 404 L 148 423 L 167 423 L 167 442 L 129 442 L 129 365 L 109 365 L 109 346 L 90 346 L 90 327 L 71 327 L 71 301 L 52 301 L 52 282 L 33 282 L 33 167 L 52 167 L 52 205 L 71 205 L 71 225 L 90 225 L 90 244 L 129 244 L 129 225 L 148 225 L 148 205 L 180 205 L 180 186 L 205 186 L 205 167 L 225 167 L 225 39.5 L 225.5 39 L 250 39 L 250 20 Z M 269 52 L 269 71 L 289 71 L 289 52 L 269 52 Z "/>
+            </svg>
+          </div>
+          <div class="winner-name" id="winner-name-3">--</div>
+          <div class="winner-score" id="winner-score-3">0 pts</div>
+          <div class="step step-3">
+            <span class="medal">🥉</span>
+            <span class="step-num">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARRA DE EXPORTACIÓN DE RESULTADOS -->
+      <div class="export-toolbar">
+        <button id="btn-export-csv" class="btn-export">
+          📥 Exportar CSV
+        </button>
+        <button id="btn-export-json" class="btn-export">
+          📋 Exportar JSON
+        </button>
+        <button id="btn-print-results" class="btn-export">
+          🖨️ Imprimir Reporte
+        </button>
+      </div>
+
+      <!-- TABLA COMPLETA DE RESULTADOS -->
+      <div class="full-leaderboard-box">
+        <h3>Tabla General de Posiciones</h3>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Posición</th>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th>Distancia</th>
+              <th>Supervivencia</th>
+              <th>Estado Final</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-table-body">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN POST-PARTIDA -->
+      <div class="podium-actions">
+        <button id="btn-replay-same-room" class="btn-primary-large">
+          🔄 Jugar Otra Partida (Misma Sala)
+        </button>
+        <button id="btn-new-room" class="btn-secondary-large">
+          🏠 Crear Nueva Sala
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: HISTORIAL DE PARTIDAS -->
+  <div id="history-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 650px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h2>📜 Historial de Partidas</h2>
+          <a href="/api/db/export/csv" download="historial_completo_dinoplay.csv" class="btn-action" style="text-decoration: none; padding: 4px 10px; font-size: 11px; color: #38bdf8; border-color: rgba(6, 182, 212, 0.35); background: rgba(6, 182, 212, 0.12);" title="Descargar todo el historial (CSV / Excel)">
+            📥 Descargar CSV
+          </a>
+        </div>
+        <button id="btn-close-history" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="history-empty" class="history-empty-msg">No hay partidas registradas en la Base de Datos todavía.</div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTENTICACIÓN DEL ANFITRIÓN -->
+  <div id="admin-auth-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 440px; text-align: center;">
+      <div class="modal-header" style="justify-content: center;">
+        <h2>🔑 Acceso de Anfitrión</h2>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Ingresa la clave secreta de organizador para administrar salas y torneos.
+        </p>
+        <form id="admin-auth-form">
+          <input type="password" id="input-admin-key" class="setup-input" placeholder="Clave de anfitrión" style="width: 100%; text-align: center; font-size: 1.1rem; padding: 12px; margin-bottom: 14px;" required autocomplete="current-password">
+          <button type="submit" class="btn-primary-large" style="width: 100%;">Ingresar al Panel</button>
+        </form>
+        <div id="admin-auth-error" class="error-msg" style="display: none; margin-top: 12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURACIÓN Y AJUSTES DE PARTIDA -->
+  <div id="modal-room-config" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2>⚙️ Ajustes de la Partida</h2>
+        <button id="btn-close-room-config" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-room-config" style="display: flex; flex-direction: column; gap: 16px;">
+          <input type="hidden" id="input-event-name" value="Dino Fest Tech">
+          <input type="hidden" id="select-max-players" value="0">
+
+          <div>
+            <label for="input-match-name" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              ⚔️ Nombre de la Ronda / Fase
+            </label>
+            <input type="text" id="input-match-name" value="Ronda 1" class="setup-input" maxlength="40" style="width: 100%; font-size: 14px; padding: 10px 14px;" placeholder="Ej: Ronda 1 / Duelo 3°A">
+          </div>
+
+          <div>
+            <label for="select-game-mode" style="font-size: 11px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+              💀 Modo de Juego
+            </label>
+            <select id="select-game-mode" class="setup-select" style="width: 100%; font-size: 14px; padding: 10px 14px;">
+              <option value="sudden_death" selected>💀 Muerte Súbita (1 vida)</option>
+              <option value="three_lives">❤️ 3 Vidas (Modo Torneo por Puntos)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 8px;">
+            <button type="submit" class="btn-primary-large" style="flex: 1; padding: 12px; font-size: 14px;">
+              💾 Guardar y Aplicar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CÓDIGO QR GIGANTE PARA PROYECTOR -->
+  <div id="modal-qr-zoom" class="modal-backdrop" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 480px; text-align: center;">
+      <div class="modal-header">
+        <h2>📱 Escanea para Unirte a la Sala</h2>
+        <button id="btn-close-qr-zoom" class="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div class="modal-qr-frame">
+          <img id="modal-qr-big-img" src="" alt="QR Gigante" style="width: 260px; height: 260px; border-radius: 16px; background: white; padding: 12px; box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);" />
+        </div>
+        <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff;">
+          PIN DE SALA: <span id="modal-qr-pin-text" style="color: #38bdf8; font-size: 1.8rem; letter-spacing: 4px; margin-left: 8px;">----</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Apunta con la cámara de tu celular o tablet para entrar automáticamente sin escribir la URL.
+        </p>
+        <button id="btn-copy-modal-link" class="btn-copy-accent" style="width: 100%; padding: 14px; font-size: 1rem;">📋 Copiar Enlace Directo</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- CANVAS PARA CONFETI -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  </div>
+
+  <script src="dino-engine.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

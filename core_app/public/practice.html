@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dino Runner - Modo Práctica (Solitario)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="player.css">
+  <style>
+    .practice-header {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+      gap: 10px;
+    }
+
+    .practice-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 229, 255, 0.12);
+      border: 3px solid #00e5ff;
+      color: #00e5ff;
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.65rem;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      border-radius: 0;
+      box-shadow: 4px 4px 0 #000;
+      text-transform: uppercase;
+    }
+
+    .btn-nav-multiplayer {
+      background: rgba(0, 255, 102, 0.12);
+      border: 3px solid #00ff66;
+      color: #00ff66;
+      text-decoration: none;
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.65rem;
+      padding: 10px 14px;
+      border-radius: 0;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .btn-nav-multiplayer:hover {
+      background: #00ff66;
+      color: #070914;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 #000;
+    }
+
+    .btn-nav-multiplayer:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .practice-color-bar {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(9, 14, 31, 0.95);
+      border: 3px solid #00e5ff;
+      border-radius: 0;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .practice-color-label {
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.65rem;
+      color: #00e5ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .color-options-mini {
+      display: flex;
+      gap: 10px;
+    }
+
+    .color-btn-mini {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      background: var(--c);
+      border: 3px solid #000;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+      transition: transform 0.1s ease;
+    }
+
+    .color-btn-mini:hover {
+      transform: scale(1.15);
+    }
+
+    .color-btn-mini.active {
+      border: 3px solid #ffffff;
+      outline: 2px solid #000;
+      transform: scale(1.2);
+      box-shadow: 0 0 10px var(--c), 3px 3px 0 #000;
+    }
+
+    .practice-hud {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(9, 14, 31, 0.95);
+      border: 3px solid #00e5ff;
+      border-radius: 0;
+      padding: 12px 18px;
+      margin-bottom: 12px;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .score-lbl {
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.58rem;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .score-digit {
+      font-size: 1.15rem;
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      color: #00ff66;
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+    }
+
+    .hiscore-digit {
+      color: #ffe600;
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+    }
+
+    .game-viewport-wrapper {
+      border-radius: 0 !important;
+      border: 4px solid #00e5ff !important;
+      box-shadow: 6px 6px 0 #000, 0 0 20px rgba(0, 229, 255, 0.25) !important;
+      background: #ffffff !important;
+    }
+
+    .touch-controls-bar {
+      margin-top: 14px;
+      gap: 12px;
+    }
+
+    /* Ocultar en PC con ratón/teclado y mostrar en móviles/táctiles */
+    @media (hover: hover) and (pointer: fine) {
+      .touch-controls-bar {
+        display: none !important;
+      }
+    }
+
+    .touch-btn {
+      border-radius: 0 !important;
+      border: 3px solid #000 !important;
+      box-shadow: 4px 4px 0 #000 !important;
+      font-family: var(--font-pixel, 'Press Start 2P', monospace) !important;
+      font-size: 0.72rem !important;
+      padding: 18px 10px !important;
+      letter-spacing: 0.5px;
+      transition: all 0.1s ease !important;
+    }
+
+    .touch-btn:active {
+      transform: translate(2px, 2px) !important;
+      box-shadow: 2px 2px 0 #000 !important;
+    }
+
+    .duck-btn {
+      background: #1e293b !important;
+      border: 3px solid #00e5ff !important;
+      color: #00e5ff !important;
+    }
+
+    .jump-btn {
+      background: #008744 !important;
+      border: 3px solid #00ff66 !important;
+      color: #ffffff !important;
+      box-shadow: 4px 4px 0 #000, 0 0 15px rgba(0, 255, 102, 0.3) !important;
+    }
+
+    .instructions-hint {
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.55rem;
+      line-height: 2;
+      color: #94a3b8;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .instructions-hint kbd {
+      background: #0f172a;
+      border: 2px solid #00e5ff;
+      border-radius: 0;
+      padding: 3px 6px;
+      color: #00e5ff;
+      font-family: var(--font-pixel, 'Press Start 2P', monospace);
+      font-size: 0.55rem;
+      box-shadow: 2px 2px 0 #000;
+      display: inline-block;
+      margin: 0 2px;
+    }
+  </style>
+  <script src="dino-engine.js"></script>
+</head>
+<body>
+
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <div class="practice-header">
+    <div class="practice-badge">🎮 MODO PRÁCTICA (SOLITARIO)</div>
+    <a href="/player" class="btn-nav-multiplayer">
+      <span>👥 Ir a Multijugador</span>
+    </a>
+  </div>
+
+  <!-- SELECTOR DE COLOR RÁPIDO -->
+  <div class="practice-color-bar">
+    <span class="practice-color-label">Color de tu Dino:</span>
+    <div class="color-options-mini">
+      <button type="button" class="color-btn-mini active" data-color="#2E7D32" style="--c: #2E7D32;" title="Verde"></button>
+      <button type="button" class="color-btn-mini" data-color="#0288D1" style="--c: #0288D1;" title="Azul"></button>
+      <button type="button" class="color-btn-mini" data-color="#7B1FA2" style="--c: #7B1FA2;" title="Púrpura"></button>
+      <button type="button" class="color-btn-mini" data-color="#E65100" style="--c: #E65100;" title="Naranja"></button>
+      <button type="button" class="color-btn-mini" data-color="#C2185B" style="--c: #C2185B;" title="Rojo"></button>
+      <button type="button" class="color-btn-mini" data-color="#FBC02D" style="--c: #FBC02D;" title="Dorado"></button>
+    </div>
+  </div>
+
+  <!-- HUD DE PUNTUACIÓN -->
+  <div class="practice-hud">
+    <div class="score-box">
+      <span class="score-lbl">PUNTOS ACTUALES</span>
+      <span class="score-digit" id="practice-current-score">00000</span>
+    </div>
+    <div class="score-box" style="text-align: right;">
+      <span class="score-lbl">MEJOR RÉCORD (HI)</span>
+      <span class="score-digit hiscore-digit" id="practice-high-score">00000</span>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR DEL JUEGO -->
+  <div id="screen-game" class="screen active" style="max-width: 650px; padding: 0;">
+    <div class="game-viewport-wrapper">
+      <div id="dino-game-container" class="dino-runner-canvas-box"></div>
+    </div>
+
+    <!-- CONTROLES TÁCTILES PARA CELULARES -->
+    <div class="touch-controls-bar">
+      <button type="button" id="touch-duck" class="touch-btn duck-btn">
+        <span class="icon">🔻</span>
+        <span class="txt">AGACHARSE (↓)</span>
+      </button>
+      <button type="button" id="touch-jump" class="touch-btn jump-btn">
+        <span class="icon">🔺</span>
+        <span class="txt">SALTAR (ESPACIO)</span>
+      </button>
+    </div>
+
+    <div class="instructions-hint">
+      Presiona <kbd>Espacio</kbd> o <kbd>↑</kbd> para saltar y <kbd>↓</kbd> para agacharte.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      let selectedColor = localStorage.getItem('dino_practice_color') || '#2E7D32';
+      let highScore = parseInt(localStorage.getItem('dino_practice_hiscore') || '0', 10);
+      let dinoGame = null;
+
+      const scoreEl = document.getElementById('practice-current-score');
+      const hiScoreEl = document.getElementById('practice-high-score');
+      const colorBtns = document.querySelectorAll('.color-btn-mini');
+      const touchJump = document.getElementById('touch-jump');
+      const touchDuck = document.getElementById('touch-duck');
+
+      hiScoreEl.textContent = String(highScore).padStart(5, '0');
+
+      // Configurar selector de color
+      colorBtns.forEach(btn => {
+        if (btn.getAttribute('data-color') === selectedColor) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+
+        btn.addEventListener('click', () => {
+          colorBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedColor = btn.getAttribute('data-color');
+          localStorage.setItem('dino_practice_color', selectedColor);
+          initGame();
+        });
+      });
+
+      function initGame() {
+        const container = document.getElementById('dino-game-container');
+        container.innerHTML = '';
+
+        dinoGame = window.createDinoGame('#dino-game-container', {
+          dinoColor: selectedColor,
+          onEngineReady: () => {
+            if (dinoGame) {
+              dinoGame.startGame();
+              dinoGame.update();
+            }
+          },
+          onStateUpdate: (state) => {
+            const currentScore = Number.isFinite(state.score) ? state.score : 0;
+            scoreEl.textContent = String(currentScore).padStart(5, '0');
+
+            if (currentScore > highScore) {
+              highScore = currentScore;
+              hiScoreEl.textContent = String(highScore).padStart(5, '0');
+              localStorage.setItem('dino_practice_hiscore', String(highScore));
+            }
+          },
+          onCrash: (state) => {
+            const currentScore = Number.isFinite(state.score) ? state.score : 0;
+            if (currentScore > highScore) {
+              highScore = currentScore;
+              hiScoreEl.textContent = String(highScore).padStart(5, '0');
+              localStorage.setItem('dino_practice_hiscore', String(highScore));
+            }
+          }
+        });
+
+        if (dinoGame && dinoGame.canvas) {
+          dinoGame.startGame();
+          dinoGame.update();
+        }
+      }
+
+      // Iniciar el juego
+      initGame();
+
+      // Controles táctiles
+      if (touchJump) {
+        const triggerJump = (e) => {
+          e.preventDefault();
+          if (dinoGame) {
+            if (dinoGame.crashed) {
+              dinoGame.restart();
+            } else if (dinoGame.playing && !dinoGame.tRex.jumping && !dinoGame.tRex.ducking) {
+              dinoGame.playSound(dinoGame.soundFx.BUTTON_PRESS);
+              dinoGame.tRex.startJump(dinoGame.currentSpeed);
+            }
+          }
+        };
+        touchJump.addEventListener('touchstart', triggerJump, { passive: false });
+        touchJump.addEventListener('mousedown', triggerJump);
+      }
+
+      if (touchDuck) {
+        const startDuck = (e) => {
+          e.preventDefault();
+          if (dinoGame && dinoGame.playing && !dinoGame.crashed) {
+            if (dinoGame.tRex.jumping) {
+              dinoGame.tRex.setSpeedDrop();
+            } else {
+              dinoGame.tRex.setDuck(true);
+            }
+          }
+        };
+
+        const endDuck = (e) => {
+          e.preventDefault();
+          if (dinoGame && dinoGame.playing) {
+            dinoGame.tRex.speedDrop = false;
+            dinoGame.tRex.setDuck(false);
+          }
+        };
+
+        touchDuck.addEventListener('touchstart', startDuck, { passive: false });
+        touchDuck.addEventListener('touchend', endDuck, { passive: false });
+        touchDuck.addEventListener('mousedown', startDuck);
+        touchDuck.addEventListener('mouseup', endDuck);
+        touchDuck.addEventListener('mouseleave', endDuck);
+      }
+
+      const isJumpKey = (e) => {
+        if (!e) return false;
+        const keyCode = e.keyCode || e.which || 0;
+        const code = e.code || '';
+        const key = (e.key || '').toLowerCase();
+        return (
+          keyCode === 32 || keyCode === 38 || keyCode === 87 || keyCode === 68 || keyCode === 75 || keyCode === 104 ||
+          code === 'Space' || code === 'ArrowUp' || code === 'KeyW' || code === 'KeyD' || code === 'KeyK' ||
+          code === 'Numpad8' || code === 'NumpadUp' || code === 'Up' ||
+          key === ' ' || key === 'space' || key === 'spacebar' ||
+          key === 'arrowup' || key === 'up' || key === 'arrow_up' ||
+          key === 'w' || key === 'd' || key === 'k'
+        );
+      };
+
+      const isDuckKey = (e) => {
+        if (!e) return false;
+        const keyCode = e.keyCode || e.which || 0;
+        const code = e.code || '';
+        const key = (e.key || '').toLowerCase();
+        return (
+          keyCode === 40 || keyCode === 83 || keyCode === 65 || keyCode === 74 || keyCode === 98 ||
+          code === 'ArrowDown' || code === 'KeyS' || code === 'KeyA' || code === 'KeyJ' ||
+          code === 'Numpad2' || code === 'NumpadDown' || code === 'Down' ||
+          key === 'arrowdown' || key === 'down' || key === 'arrow_down' ||
+          key === 's' || key === 'a' || key === 'j'
+        );
+      };
+
+      // Manejo global de teclado en práctica (ASDW, Flechas, Espacio) con capture
+      window.addEventListener('keydown', (e) => {
+        if (isJumpKey(e)) {
+          e.preventDefault();
+          if (dinoGame) {
+            if (dinoGame.crashed) {
+              dinoGame.restart();
+            } else if (dinoGame.playing && !dinoGame.tRex.jumping && !dinoGame.tRex.ducking) {
+              dinoGame.playSound(dinoGame.soundFx.BUTTON_PRESS);
+              dinoGame.tRex.startJump(dinoGame.currentSpeed);
+            }
+          }
+        } else if (isDuckKey(e)) {
+          e.preventDefault();
+          if (dinoGame && dinoGame.playing && !dinoGame.crashed) {
+            if (dinoGame.tRex.jumping) {
+              dinoGame.tRex.setSpeedDrop();
+            } else {
+              dinoGame.tRex.setDuck(true);
+            }
+          }
+        }
+      }, { capture: true, passive: false });
+
+      window.addEventListener('keyup', (e) => {
+        if (isDuckKey(e)) {
+          if (dinoGame && dinoGame.playing && dinoGame.tRex) {
+            dinoGame.tRex.speedDrop = false;
+            dinoGame.tRex.setDuck(false);
+          }
+        } else if (isJumpKey(e)) {
+          if (dinoGame && dinoGame.tRex) {
+            dinoGame.tRex.endJump();
+          }
+        }
+      }, { capture: true, passive: false });
+
+      window.addEventListener('blur', () => {
+        if (dinoGame && dinoGame.playing && dinoGame.tRex) {
+          dinoGame.tRex.speedDrop = false;
+          dinoGame.tRex.setDuck(false);
+        }
+      });
+
+      try { window.focus(); } catch (e) {}
+    })();
+  </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 @echo off
 title DinoPlay - Servidor Completo (Local y Online)
 color 0a
-cd /d "%~dp0"
+cd /d "%~dp0core_app"
 
 echo =============================================================
 echo               🦖 INICIANDO DINOPLAY 🦖
