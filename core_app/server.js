@@ -260,11 +260,13 @@ function getLeaderboard(room) {
 
       return (a.joinedAt || 0) - (b.joinedAt || 0);
     });
+  } else {
     // Reglas para Muerte Súbita y 3 Vidas:
     // 1. Jugadores con puntaje > 0 siempre van antes que jugadores inactivos con 0 puntos.
-    // 2. Jugadores sobrevivientes que jugaron van primero (ordenados por puntaje/distancia).
-    // 3. Jugadores chocados se ordenan por puntaje, distancia y tiempo de supervivencia.
-    // 4. Jugadores inactivos/desconectados con 0 puntos van al fondo.
+    // 2. Puntaje más alto primero.
+    // 3. Distancia más alta primero.
+    // 4. Si tienen igual puntaje, el jugador vivo va antes que el chocado.
+    // 5. Tiempo de supervivencia y orden de llegada como desempate final.
     playersList.sort((a, b) => {
       const aScore = a.score || 0;
       const bScore = b.score || 0;
@@ -278,13 +280,14 @@ function getLeaderboard(room) {
         return aPlayed ? -1 : 1;
       }
 
-      // Si uno está vivo y el otro chocado (y ambos jugaron):
+      // Puntaje mayor primero
+      if (bScore !== aScore) return bScore - aScore;
+      // Distancia mayor primero
+      if (bDist !== aDist) return bDist - aDist;
+
+      // Si tienen el mismo puntaje, el jugador activo va antes que el chocado
       if (!a.crashed && b.crashed) return -1;
       if (a.crashed && !b.crashed) return 1;
-
-      // Si ambos tienen el mismo estado (ambos vivos o ambos chocados):
-      if (bScore !== aScore) return bScore - aScore;
-      if (bDist !== aDist) return bDist - aDist;
 
       const aSurvival = a.survival_ms || (a.crashed_at && room.started_at ? Math.max(0, a.crashed_at - room.started_at) : 0);
       const bSurvival = b.survival_ms || (b.crashed_at && room.started_at ? Math.max(0, b.crashed_at - room.started_at) : 0);
