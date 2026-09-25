@@ -799,6 +799,8 @@
                         }
                     } else {
                         this.lives = 0;
+                        this.invulnerable = false;
+                        this.invulnerableTimer = 0;
                         this.gameOver();
                     }
                 }
@@ -2068,8 +2070,8 @@
          * @param {number} y
          */
         draw: function (x, y) {
-            // Parpadeo visual durante invulnerabilidad tras perder vida
-            if (Runner.instance_ && Runner.instance_.invulnerable) {
+            // Parpadeo visual durante invulnerabilidad tras perder vida (solo si sigue vivo y no ha chocado)
+            if (Runner.instance_ && Runner.instance_.invulnerable && !Runner.instance_.crashed && Runner.instance_.lives > 0) {
                 if (Math.floor(Runner.instance_.invulnerableTimer / 100) % 2 === 0) {
                     return;
                 }

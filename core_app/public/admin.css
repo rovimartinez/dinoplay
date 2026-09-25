@@ -1960,8 +1960,7 @@ body {
 .player-monitor-card.crashed {
   border-color: #ef4444 !important;
   background: linear-gradient(135deg, rgba(127, 29, 29, 0.96) 0%, rgba(69, 10, 10, 0.98) 100%) !important;
-  box-shadow: 0 0 35px rgba(239, 68, 68, 0.75) !important;
-  animation: pulseCrashedCard 1.8s infinite alternate;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.75) !important;
 }
 
 @keyframes pulseCrashedCard {
@@ -2165,11 +2164,10 @@ body {
   border: 1.5px solid #ff4d4d;
   padding: 3px 14px;
   border-radius: 20px;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
   z-index: 3;
   position: relative;
   text-transform: uppercase;
-  animation: pulseElim 1.4s infinite alternate;
 }
 
 @keyframes pulseElim {
