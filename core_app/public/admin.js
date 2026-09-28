@@ -1191,8 +1191,8 @@
         <div class="eliminated-overlay" id="elim-overlay-${player.id}">
           <div class="elim-stamp-box">
             <div class="elim-giant-x">✕</div>
-            <div class="elim-badge-text">ELIMINADO</div>
-            <div class="elim-sub-stats">Puntaje final: <strong class="elim-score-val" style="color: #4ade80; font-size: 1.1rem;">0</strong> pts</div>
+            <div class="elim-badge-text">${escapeHtml(player.name.toUpperCase())}</div>
+            <div class="elim-sub-stats">Puntaje final: <strong class="elim-score-val">0</strong> pts</div>
           </div>
         </div>
       </div>
@@ -1287,6 +1287,9 @@
 
       const scoreBox = card.querySelector('.card-score-box');
       if (scoreBox) scoreBox.innerHTML = `${String(player.score).padStart(5, '0')} <span style="font-size: 0.72rem; color: var(--text-muted);">pts</span>`;
+
+      const elimBadge = card.querySelector('.elim-badge-text');
+      if (elimBadge) elimBadge.textContent = player.name;
 
       const elimScore = card.querySelector('.elim-score-val');
       if (elimScore) elimScore.textContent = player.score;
